@@ -1,0 +1,15 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- background -->
+  <rect width="512" height="512" rx="100" fill="#1e1e3a"/>
+  <!-- sword blade -->
+  <rect x="238" y="60" width="36" height="280" rx="8" fill="#B8CCDD"/>
+  <!-- sword crossguard -->
+  <rect x="168" y="290" width="176" height="36" rx="10" fill="#FFAA00"/>
+  <!-- sword pommel -->
+  <circle cx="256" cy="390" r="36" fill="#FFAA00"/>
+  <!-- blade shine -->
+  <rect x="248" y="75" width="12" height="240" rx="4" fill="#E8F4FF" opacity="0.6"/>
+  <!-- star top -->
+  <polygon points="256,30 266,58 296,58 273,75 282,103 256,87 230,103 239,75 216,58 246,58"
+           fill="#FFD700" stroke="#FFA000" stroke-width="2"/>
+</svg>

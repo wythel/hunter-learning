@@ -1,0 +1,18 @@
+{
+  "name": "算數大戰",
+  "short_name": "算數大戰",
+  "description": "答對題目，打敗怪物！",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1e1e3a",
+  "theme_color": "#1e1e3a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
