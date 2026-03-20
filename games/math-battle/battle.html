@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>算數大戰</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="battle-body">
+
+  <!-- ===== Battle Screen ===== -->
+  <div id="battle-screen">
+
+    <!-- Field -->
+    <div class="battle-field" id="battle-field">
+
+      <!-- Enemy info: top-left -->
+      <div class="enemy-info-box">
+        <div class="enemy-name" id="enemy-name">小毛蟲</div>
+        <div class="hp-bar-container">
+          <span class="hp-label">HP</span>
+          <div class="hp-segments">
+            <div class="hp-seg" id="hp-seg-0"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enemy sprite: top-right -->
+      <div class="enemy-sprite-area">
+        <div class="enemy-sprite" id="enemy-sprite">🐛</div>
+        <div class="damage-float" id="enemy-damage"></div>
+      </div>
+
+      <!-- Player sprite: bottom-left -->
+      <div class="player-sprite-area">
+        <div class="player-sprite" id="player-sprite">🧒</div>
+        <div class="damage-float" id="player-damage"></div>
+      </div>
+
+      <!-- Player info: bottom-right -->
+      <div class="player-info-box">
+        <div class="player-name">勇者</div>
+        <div class="player-hearts">
+          <span class="heart" id="heart-0">❤️</span>
+          <span class="heart" id="heart-1">❤️</span>
+          <span class="heart" id="heart-2">❤️</span>
+        </div>
+      </div>
+
+      <!-- Screen flash overlay -->
+      <div class="flash-overlay" id="flash-overlay"></div>
+    </div>
+
+    <!-- UI Panel -->
+    <div class="battle-ui">
+      <div class="question-area">
+        <div class="progress" id="progress">第 1 / 10 題</div>
+        <div class="question" id="question">?</div>
+        <div class="answer-display" id="answer-display">_</div>
+      </div>
+
+      <div class="numpad">
+        <button class="num-btn" data-num="1">1</button>
+        <button class="num-btn" data-num="2">2</button>
+        <button class="num-btn" data-num="3">3</button>
+        <button class="num-btn" data-num="4">4</button>
+        <button class="num-btn" data-num="5">5</button>
+        <button class="num-btn" data-num="6">6</button>
+        <button class="num-btn" data-num="7">7</button>
+        <button class="num-btn" data-num="8">8</button>
+        <button class="num-btn" data-num="9">9</button>
+        <button class="num-btn back-btn" data-num="back">⌫</button>
+        <button class="num-btn" data-num="0">0</button>
+        <button class="num-btn ok-btn" data-num="ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Result Screen ===== -->
+  <div id="result-screen" class="hidden">
+    <div class="result-content">
+      <div class="result-title" id="result-title">戰鬥結束！</div>
+      <div class="stars-display" id="stars-display">⭐⭐⭐</div>
+      <div class="result-stats">
+        <div class="stat">
+          <span class="stat-icon">✅</span>
+          <span class="stat-label">答對</span>
+          <span class="stat-value" id="correct-count">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat-icon">❌</span>
+          <span class="stat-label">答錯</span>
+          <span class="stat-value" id="wrong-count">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat-icon">⏱️</span>
+          <span class="stat-label">用時</span>
+          <span class="stat-value" id="time-count">—</span>
+        </div>
+      </div>
+      <div class="result-btns">
+        <button class="result-btn primary" id="retry-btn">再玩一次</button>
+        <button class="result-btn secondary" id="menu-btn">換設定</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="effects.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
