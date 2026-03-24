@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hunter 學習遊戲</title>
+  <meta name="theme-color" content="#1e1e3a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', 'Microsoft JhengHei', Arial, sans-serif;
+      background: linear-gradient(160deg, #0d0d2b 0%, #1a2744 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 20px;
+      color: #f0f0ff;
+    }
+
+    .lobby {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .title-area { text-align: center; }
+
+    .title-icon { font-size: 52px; margin-bottom: 8px; }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 900;
+      color: #FFD700;
+      text-shadow: 0 0 24px rgba(255,215,0,0.4);
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #9090b0;
+      margin-top: 6px;
+    }
+
+    .games {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .game-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 2px solid #3a3a6a;
+      border-radius: 20px;
+      padding: 20px 22px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .game-card:active {
+      transform: scale(0.97);
+      border-color: #FFD700;
+      background: rgba(255,215,0,0.08);
+    }
+
+    .card-icon {
+      font-size: 44px;
+      flex-shrink: 0;
+    }
+
+    .card-text { flex: 1; }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #f0f0ff;
+      letter-spacing: 1px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: #9090b0;
+      margin-top: 4px;
+    }
+
+    .card-arrow {
+      font-size: 22px;
+      color: #9090b0;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="lobby">
+    <div class="title-area">
+      <div class="title-icon">🎮</div>
+      <h1>Hunter 學習遊戲</h1>
+      <p class="subtitle">選一個遊戲開始吧！</p>
+    </div>
+
+    <div class="games">
+      <a class="game-card" href="games/math-battle/index.html">
+        <div class="card-icon">⚔️</div>
+        <div class="card-text">
+          <div class="card-title">算數大戰</div>
+          <div class="card-desc">答對題目，打敗怪物！</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </a>
+
+      <a class="game-card" href="games/clock-reading/index.html">
+        <div class="card-icon">🕐</div>
+        <div class="card-text">
+          <div class="card-title">學看時鐘</div>
+          <div class="card-desc">認識指針時鐘與數字時鐘</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

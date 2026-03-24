@@ -159,7 +159,7 @@ const Clock = (() => {
 
   // ---- Enable interactive input (Mode 2) ----
   function enableInput(difficulty, onHour, onMinute) {
-    if (difficulty === 'precise') {
+    if (difficulty === 'precise' || difficulty === 'half') {
       zoneRing.setAttribute('opacity', '0.55');
     }
 
@@ -175,12 +175,14 @@ const Clock = (() => {
 
       if (dist > 146) return; // outside face
 
-      if (difficulty === 'precise' && dist >= 90) {
-        // Outer ring → minute (5-min snap)
-        const minute = (Math.round(angle / 30) * 5) % 60;
+      if ((difficulty === 'precise' || difficulty === 'half') && dist >= 90) {
+        // Outer ring → minute
+        const minute = difficulty === 'half'
+          ? Math.round(angle / 180) * 30 % 60
+          : (Math.round(angle / 30) * 5) % 60;
         setMinute(minute);
         onMinute(minute);
-      } else {
+      } else if (dist < 90) {
         // Inner area → hour
         const hour = Math.round(angle / 30) % 12 || 12;
         setHour(hour);

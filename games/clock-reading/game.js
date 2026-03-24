@@ -38,7 +38,6 @@ const instruction  = document.getElementById('set-instruction');
 const progressEl   = document.getElementById('progress');
 const choicesGrid  = document.getElementById('choices-grid');
 const setControls  = document.getElementById('set-controls');
-const minuteBtns   = document.getElementById('minute-btns');
 const confirmBtn   = document.getElementById('confirm-btn');
 const gameScreen   = document.getElementById('game-screen');
 const resultScreen = document.getElementById('result-screen');
@@ -219,9 +218,6 @@ function loadMode2Question() {
   const neutralHour = (currentQuestion.hour + 4 - 1) % 12 + 1;
   Clock.setTime(neutralHour, 0, true);
 
-  // Hide minute buttons
-  minuteBtns.classList.add('hidden');
-  document.querySelectorAll('.min-btn').forEach(b => b.classList.remove('selected'));
 
   // Reset confirm button
   confirmBtn.disabled = true;
@@ -230,7 +226,7 @@ function loadMode2Question() {
   // Set instruction
   const instrMap = {
     hour:    '點時鐘，設定幾點',
-    half:    '點時鐘，設定幾點',
+    half:    '點時鐘中間設時、外圍選整半點',
     precise: '點時鐘中間設時、外圍設分',
   };
   setInstruction(instrMap[DIFFICULTY]);
@@ -260,9 +256,9 @@ function onHourTap(hour) {
     setDigital(hour, '00');
     activateConfirm();
   } else if (DIFFICULTY === 'half') {
-    // Show :00/:30 picker
-    minuteBtns.classList.remove('hidden');
-    setInstruction('選整點或半點');
+    // Wait for outer-ring minute tap
+    if (m2.minuteSet) activateConfirm();
+    else setInstruction('點時鐘外圍，選整點或半點');
   } else {
     // Precise: wait for outer ring minute tap
     if (m2.minuteSet) activateConfirm();
@@ -272,6 +268,7 @@ function onHourTap(hour) {
 
 function onMinuteTap(minute) {
   if (state.locked) return;
+  Sound.tickMinute();
   m2.minuteSet = true;
   m2.minute    = minute;
 
@@ -291,22 +288,6 @@ function activateConfirm() {
   Sound.ready();
   setInstruction('按確認送出！', true);
 }
-
-// ================================
-// Mode 2 — Minute buttons (:00 / :30)
-// ================================
-minuteBtns.addEventListener('click', e => {
-  const btn = e.target.closest('.min-btn');
-  if (!btn || state.locked) return;
-  Sound.tickMinute();
-
-  const min = parseInt(btn.dataset.min);
-  document.querySelectorAll('.min-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-
-  Clock.setMinute(min);
-  onMinuteTap(min);
-});
 
 // ================================
 // Mode 2 — Confirm
