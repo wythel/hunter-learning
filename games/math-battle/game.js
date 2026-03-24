@@ -349,6 +349,10 @@ document.getElementById('menu-btn').addEventListener('click', () => {
   window.location.href = 'index.html';
 });
 
+document.getElementById('lobby-btn').addEventListener('click', () => {
+  window.location.href = '../../index.html';
+});
+
 // ================================
 // Init
 // ================================

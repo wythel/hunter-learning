@@ -2,17 +2,42 @@
    Variables & Reset
 ================================ */
 :root {
-  --ui-bg:      #1e1e3a;
-  --ui-border:  #3a3a6a;
-  --text:       #f0f0ff;
-  --text-muted: #9090b0;
-  --accent:     #FFD700;
-  --btn-num:    #2a2a4a;
-  --btn-ok:     #1a6fc4;
-  --shadow:     0 4px 20px rgba(0,0,0,0.5);
-
+  /* game constants — unchanged across themes */
   --correct: #22cc66;
   --wrong:   #dd3333;
+
+  /* light mode defaults */
+  --ui-bg:           #ffffff;
+  --ui-border:       #d0d0e0;
+  --text:            #1a1a2e;
+  --text-muted:      #5a5a80;
+  --accent:          #5b4fcf;
+  --accent-glow:     rgba(91,79,207,0.25);
+  --accent-tint:     rgba(91,79,207,0.12);
+  --btn-num:         #ebebf5;
+  --btn-ok:          #2563eb;
+  --shadow:          0 2px 12px rgba(0,0,0,0.08);
+  --page-gradient:   linear-gradient(160deg, #f5f5fb 0%, #e8e8f5 100%);
+  --card-bg:         rgba(0,0,0,0.04);
+  --secondary-btn-bg: rgba(0,0,0,0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ui-bg:           #1e1e3a;
+    --ui-border:       #3a3a6a;
+    --text:            #f0f0ff;
+    --text-muted:      #9090b0;
+    --accent:          #FFD700;
+    --accent-glow:     rgba(255,215,0,0.4);
+    --accent-tint:     rgba(255,215,0,0.12);
+    --btn-num:         #2a2a4a;
+    --btn-ok:          #1a6fc4;
+    --shadow:          0 4px 20px rgba(0,0,0,0.5);
+    --page-gradient:   linear-gradient(160deg, #0d0d2b 0%, #1a2744 100%);
+    --card-bg:         rgba(255,255,255,0.05);
+    --secondary-btn-bg: rgba(255,255,255,0.07);
+  }
 }
 
 * {
@@ -41,7 +66,7 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(160deg, #0d0d2b 0%, #1a2744 100%);
+  background: var(--page-gradient);
   overflow: auto;
 }
 
@@ -62,7 +87,7 @@ body {
   font-size: 34px;
   font-weight: 900;
   color: var(--accent);
-  text-shadow: 0 0 24px rgba(255,215,0,0.4);
+  text-shadow: 0 0 24px var(--accent-glow);
   letter-spacing: 2px;
 }
 
@@ -74,7 +99,7 @@ body {
 
 .settings-card {
   width: 100%;
-  background: rgba(255,255,255,0.05);
+  background: var(--card-bg);
   border: 1px solid var(--ui-border);
   border-radius: 20px;
   padding: 22px 18px;
@@ -116,7 +141,7 @@ body {
 
 .option-btn.active {
   border-color: var(--accent);
-  background: rgba(255,215,0,0.12);
+  background: var(--accent-tint);
   color: var(--accent);
 }
 
@@ -423,7 +448,7 @@ body {
 #result-screen {
   position: fixed;
   inset: 0;
-  background: linear-gradient(160deg, #0d0d2b 0%, #1a2744 100%);
+  background: var(--page-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -454,7 +479,7 @@ body {
 
 .result-stats {
   width: 100%;
-  background: rgba(255,255,255,0.05);
+  background: var(--card-bg);
   border: 1px solid var(--ui-border);
   border-radius: 18px;
   padding: 16px 20px;
@@ -501,7 +526,25 @@ body {
 }
 
 .result-btn.secondary {
-  background: rgba(255,255,255,0.07);
+  background: var(--secondary-btn-bg);
   border: 1px solid var(--ui-border);
   color: var(--text);
 }
+
+.result-btn.lobby {
+  background: transparent;
+  border: 1px solid var(--ui-border);
+  color: var(--text-muted);
+  font-size: 15px;
+  padding: 12px;
+}
+
+.back-link {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: opacity 0.1s;
+}
+.back-link:active { opacity: 0.5; }

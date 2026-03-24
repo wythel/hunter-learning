@@ -4,10 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Hunter 學習遊戲</title>
-  <meta name="theme-color" content="#1e1e3a">
+  <meta name="theme-color" content="#f5f5fb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1e1e3a" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
+    :root {
+      --bg:          linear-gradient(160deg, #f5f5fb 0%, #e8e8f5 100%);
+      --text:        #1a1a2e;
+      --text-muted:  #5a5a80;
+      --accent:      #5b4fcf;
+      --accent-glow: rgba(91,79,207,0.25);
+      --card-bg:     #ffffff;
+      --card-border: #d0d0e0;
+      --card-active-border: #5b4fcf;
+      --card-active-bg:     rgba(91,79,207,0.08);
+      --shadow:      0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:          linear-gradient(160deg, #0d0d2b 0%, #1a2744 100%);
+        --text:        #f0f0ff;
+        --text-muted:  #9090b0;
+        --accent:      #FFD700;
+        --accent-glow: rgba(255,215,0,0.4);
+        --card-bg:     rgba(255,255,255,0.05);
+        --card-border: #3a3a6a;
+        --card-active-border: #FFD700;
+        --card-active-bg:     rgba(255,215,0,0.08);
+        --shadow:      0 4px 20px rgba(0,0,0,0.4);
+      }
+    }
+
     * {
       box-sizing: border-box;
       margin: 0; padding: 0;
@@ -17,13 +46,13 @@
 
     body {
       font-family: 'Helvetica Neue', 'Microsoft JhengHei', Arial, sans-serif;
-      background: linear-gradient(160deg, #0d0d2b 0%, #1a2744 100%);
+      background: var(--bg);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 28px 20px;
-      color: #f0f0ff;
+      color: var(--text);
     }
 
     .lobby {
@@ -42,14 +71,14 @@
     h1 {
       font-size: 28px;
       font-weight: 900;
-      color: #FFD700;
-      text-shadow: 0 0 24px rgba(255,215,0,0.4);
+      color: var(--accent);
+      text-shadow: 0 0 24px var(--accent-glow);
       letter-spacing: 2px;
     }
 
     .subtitle {
       font-size: 13px;
-      color: #9090b0;
+      color: var(--text-muted);
       margin-top: 6px;
     }
 
@@ -64,20 +93,20 @@
       display: flex;
       align-items: center;
       gap: 18px;
-      background: rgba(255,255,255,0.05);
-      border: 2px solid #3a3a6a;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
       border-radius: 20px;
       padding: 20px 22px;
       text-decoration: none;
       color: inherit;
       transition: border-color 0.15s, background 0.15s, transform 0.1s;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      box-shadow: var(--shadow);
     }
 
     .game-card:active {
       transform: scale(0.97);
-      border-color: #FFD700;
-      background: rgba(255,215,0,0.08);
+      border-color: var(--card-active-border);
+      background: var(--card-active-bg);
     }
 
     .card-icon {
@@ -90,19 +119,18 @@
     .card-title {
       font-size: 20px;
       font-weight: 900;
-      color: #f0f0ff;
       letter-spacing: 1px;
     }
 
     .card-desc {
       font-size: 13px;
-      color: #9090b0;
+      color: var(--text-muted);
       margin-top: 4px;
     }
 
     .card-arrow {
       font-size: 22px;
-      color: #9090b0;
+      color: var(--text-muted);
       flex-shrink: 0;
     }
   </style>
