@@ -73,6 +73,7 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--page-gradient);
   overflow: auto;
 }
@@ -82,7 +83,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 28px;
-  padding: 32px 20px;
+  padding: max(32px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom));
   width: 100%;
   max-width: 420px;
 }
@@ -192,6 +193,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -347,7 +349,8 @@ body {
   flex-shrink: 0;
   background: var(--ui-bg);
   border-top: 3px solid var(--ui-border);
-  padding: 10px 14px 14px;
+  padding: 10px 14px;
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
 }
 
 .question-area {
