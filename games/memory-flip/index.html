@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>記憶翻牌</title>
+  <meta name="theme-color" content="#1e1e3a">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="start-body">
+  <div class="start-screen">
+    <div class="title-area">
+      <div class="title-icon">🃏</div>
+      <h1 class="title">記憶翻牌</h1>
+      <p class="subtitle">翻出所有配對！</p>
+    </div>
+
+    <div class="settings-card">
+      <div class="setting-group">
+        <div class="setting-label">配對類型</div>
+        <div class="btn-group" id="type-group">
+          <button class="option-btn active" data-value="en-zh">
+            <span class="btn-icon">🔤</span>
+            <span class="btn-text">英中</span>
+            <span class="btn-sub">英文配中文</span>
+          </button>
+          <button class="option-btn" data-value="math">
+            <span class="btn-icon">🔢</span>
+            <span class="btn-text">算式</span>
+            <span class="btn-sub">算式配答案</span>
+          </button>
+          <button class="option-btn" data-value="zh-en">
+            <span class="btn-icon">💬</span>
+            <span class="btn-text">中英</span>
+            <span class="btn-sub">中文配英文</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="setting-label">難度</div>
+        <div class="btn-group" id="difficulty-group">
+          <button class="option-btn active" data-value="easy">
+            <span class="btn-icon">⭐</span>
+            <span class="btn-text">簡單</span>
+            <span class="btn-sub">3×4 = 12張</span>
+          </button>
+          <button class="option-btn" data-value="hard">
+            <span class="btn-icon">⭐⭐</span>
+            <span class="btn-text">普通</span>
+            <span class="btn-sub">4×4 = 16張</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button class="start-btn" id="start-btn">開始翻牌！</button>
+    <a class="back-link" href="../../index.html">← 回到大廳</a>
+  </div>
+
+  <script>
+    let selectedType = 'en-zh';
+    let selectedDifficulty = 'easy';
+
+    document.getElementById('type-group').addEventListener('click', e => {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      document.querySelectorAll('#type-group .option-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedType = btn.dataset.value;
+    });
+
+    document.getElementById('difficulty-group').addEventListener('click', e => {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      document.querySelectorAll('#difficulty-group .option-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedDifficulty = btn.dataset.value;
+    });
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+      const params = new URLSearchParams({ type: selectedType, difficulty: selectedDifficulty });
+      window.location.href = `game.html?${params}`;
+    });
+  </script>
+</body>
+</html>

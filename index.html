@@ -144,6 +144,15 @@
       color: var(--text-muted);
       flex-shrink: 0;
     }
+
+    @media (max-height: 700px) {
+      .game-card { padding: 14px 18px; }
+      .card-icon { font-size: 36px; }
+      .lobby { gap: 16px; }
+      .games { gap: 10px; }
+      h1 { font-size: 24px; }
+      .title-icon { font-size: 40px; }
+    }
   </style>
 </head>
 <body>
@@ -169,6 +178,42 @@
         <div class="card-text">
           <div class="card-title">學看時鐘</div>
           <div class="card-desc">認識指針時鐘與數字時鐘</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </a>
+
+      <a class="game-card" href="games/chain-math/index.html">
+        <div class="card-icon">➕</div>
+        <div class="card-text">
+          <div class="card-title">連鎖算數大戰</div>
+          <div class="card-desc">三個數字連續計算！</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </a>
+
+      <a class="game-card" href="games/english-match/index.html">
+        <div class="card-icon">🔤</div>
+        <div class="card-text">
+          <div class="card-title">英文單字配對</div>
+          <div class="card-desc">看中文選英文，輕鬆記單字</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </a>
+
+      <a class="game-card" href="games/memory-flip/index.html">
+        <div class="card-icon">🃏</div>
+        <div class="card-text">
+          <div class="card-title">記憶翻牌</div>
+          <div class="card-desc">找出所有配對，考驗記憶力</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </a>
+
+      <a class="game-card" href="games/math-mole/index.html">
+        <div class="card-icon">🦔</div>
+        <div class="card-text">
+          <div class="card-title">打地鼠算數</div>
+          <div class="card-desc">打中正確答案的地鼠！</div>
         </div>
         <div class="card-arrow">›</div>
       </a>

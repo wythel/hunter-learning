@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>英文單字配對</title>
+  <meta name="theme-color" content="#1e1e3a">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="start-body">
+  <div class="start-screen">
+    <div class="title-area">
+      <div class="title-icon">🔤</div>
+      <h1 class="title">英文單字配對</h1>
+      <p class="subtitle">看中文，選英文！</p>
+    </div>
+
+    <div class="settings-card">
+      <div class="setting-group">
+        <div class="setting-label">主題類別</div>
+        <div class="btn-group" id="topic-group" style="flex-wrap: wrap;">
+          <button class="option-btn active" data-value="animals" style="flex-basis: calc(50% - 5px); min-width: 0;">
+            <span class="btn-icon">🐶</span>
+            <span class="btn-text">動物</span>
+          </button>
+          <button class="option-btn" data-value="fruits" style="flex-basis: calc(50% - 5px); min-width: 0;">
+            <span class="btn-icon">🍎</span>
+            <span class="btn-text">水果</span>
+          </button>
+          <button class="option-btn" data-value="colors" style="flex-basis: calc(50% - 5px); min-width: 0;">
+            <span class="btn-icon">🔴</span>
+            <span class="btn-text">顏色</span>
+          </button>
+          <button class="option-btn" data-value="body" style="flex-basis: calc(50% - 5px); min-width: 0;">
+            <span class="btn-icon">✋</span>
+            <span class="btn-text">身體</span>
+          </button>
+          <button class="option-btn" data-value="mix" style="flex-basis: 100%; min-width: 0;">
+            <span class="btn-icon">🔀</span>
+            <span class="btn-text">混合全部</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="setting-label">題目數量</div>
+        <div class="btn-group" id="count-group">
+          <button class="option-btn active" data-value="5">5 題</button>
+          <button class="option-btn" data-value="10">10 題</button>
+          <button class="option-btn" data-value="20">20 題</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="start-btn" id="start-btn">開始配對！</button>
+    <a class="back-link" href="../../index.html">← 回到大廳</a>
+  </div>
+
+  <script>
+    let selectedTopic = 'animals';
+    let selectedCount = 5;
+
+    document.getElementById('topic-group').addEventListener('click', e => {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      document.querySelectorAll('#topic-group .option-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedTopic = btn.dataset.value;
+    });
+
+    document.getElementById('count-group').addEventListener('click', e => {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      document.querySelectorAll('#count-group .option-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedCount = parseInt(btn.dataset.value);
+    });
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+      const params = new URLSearchParams({ topic: selectedTopic, count: selectedCount });
+      window.location.href = `game.html?${params}`;
+    });
+  </script>
+</body>
+</html>

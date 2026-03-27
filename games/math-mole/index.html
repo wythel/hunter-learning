@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>打地鼠算數</title>
+  <meta name="theme-color" content="#1e1e3a">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="start-body">
+  <div class="start-screen">
+    <div class="title-area">
+      <div class="title-icon">🦔</div>
+      <h1 class="title">打地鼠算數</h1>
+      <p class="subtitle">打中正確答案的地鼠！</p>
+    </div>
+
+    <div class="settings-card">
+      <div class="setting-group">
+        <div class="setting-label">難度</div>
+        <div class="btn-group" id="difficulty-group">
+          <button class="option-btn active" data-value="easy">
+            <span class="btn-icon">⭐</span>
+            <span class="btn-text">簡單</span>
+            <span class="btn-sub">答案 1-10</span>
+          </button>
+          <button class="option-btn" data-value="hard">
+            <span class="btn-icon">⭐⭐</span>
+            <span class="btn-text">困難</span>
+            <span class="btn-sub">答案 1-20</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="setting-label">遊戲時間</div>
+        <div class="btn-group" id="time-group">
+          <button class="option-btn active" data-value="30">
+            <span class="btn-text">30</span>
+            <span class="btn-sub">秒</span>
+          </button>
+          <button class="option-btn" data-value="60">
+            <span class="btn-text">60</span>
+            <span class="btn-sub">秒</span>
+          </button>
+          <button class="option-btn" data-value="90">
+            <span class="btn-text">90</span>
+            <span class="btn-sub">秒</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button class="start-btn" id="start-btn">開始打地鼠！</button>
+    <a class="back-link" href="../../index.html">← 回到大廳</a>
+  </div>
+
+  <script>
+    let selectedDifficulty = 'easy';
+    let selectedTime = 30;
+
+    document.getElementById('difficulty-group').addEventListener('click', e => {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      document.querySelectorAll('#difficulty-group .option-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedDifficulty = btn.dataset.value;
+    });
+
+    document.getElementById('time-group').addEventListener('click', e => {
+      const btn = e.target.closest('.option-btn');
+      if (!btn) return;
+      document.querySelectorAll('#time-group .option-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedTime = parseInt(btn.dataset.value);
+    });
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+      const params = new URLSearchParams({ difficulty: selectedDifficulty, time: selectedTime });
+      window.location.href = `game.html?${params}`;
+    });
+  </script>
+</body>
+</html>
