@@ -1,0 +1,39 @@
+:root {
+  --bg: #0d1117;
+  --bg-card: #161b22;
+  --border: #30363d;
+  --teal: #12b886;
+  --teal-dim: rgba(18, 184, 134, 0.5);
+  --teal-glow: rgba(18, 184, 134, 0.3);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: #c9d1d9;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Star twinkle animation */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.4); }
+}
+
+/* Page transition */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
