@@ -55,17 +55,17 @@ export default function SymmetryGame() {
     checkPuzzle,
   } = game;
 
-  // Show teaching screen first
-  if (teaching) {
-    return <Teaching mode={mode} onDone={() => setTeaching(false)} />;
-  }
-
   // After each cell click in mode 2, check if puzzle is complete
   useEffect(() => {
     if (mode === 'mode2') {
       checkPuzzle();
     }
   }, [userGrid, mode, checkPuzzle]);
+
+  // ── Teaching screen (shown before first play) ─────────────────────────────
+  if (teaching) {
+    return <Teaching mode={mode} onDone={() => setTeaching(false)} />;
+  }
 
   // ── Result screen ────────────────────────────────────────────────────────
   if (phase === 'result') {
