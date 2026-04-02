@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Teaching from './Teaching';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Stack, Text, Title, Group } from '@mantine/core';
 import StarField from '../../components/StarField';
@@ -30,7 +31,8 @@ function getShapeFeedback(idx, selected, feedback, correctIdx) {
 export default function SymmetryGame() {
   const location = useLocation();
   const navigate  = useNavigate();
-  const { mode = 'mode1', difficulty = 'easy', count = 5 } = location.state || {};
+  const { mode = 'mode1', difficulty = 'easy', count = 5, skipTeach = false } = location.state || {};
+  const [teaching, setTeaching] = useState(!skipTeach);
 
   const game = useGame({ mode, difficulty, count });
 
@@ -52,6 +54,11 @@ export default function SymmetryGame() {
     handleCellClick,
     checkPuzzle,
   } = game;
+
+  // Show teaching screen first
+  if (teaching) {
+    return <Teaching mode={mode} onDone={() => setTeaching(false)} />;
+  }
 
   // After each cell click in mode 2, check if puzzle is complete
   useEffect(() => {
@@ -81,7 +88,7 @@ export default function SymmetryGame() {
           { icon: '❌', label: mode === 'mode1' ? '答錯' : '錯誤格子', value: `${mode === 'mode1' ? stats.wrong : mistakes}` },
           { icon: '⏱️', label: '時間', value: `${elapsedSec} 秒` },
         ]}
-        onRetry={()  => navigate('/symmetry/play', { state: { mode, difficulty, count } })}
+        onRetry={()  => navigate('/symmetry/play', { state: { mode, difficulty, count, skipTeach: true } })}
         onMenu={()   => navigate('/symmetry')}
         onLobby={()  => navigate('/')}
       />
