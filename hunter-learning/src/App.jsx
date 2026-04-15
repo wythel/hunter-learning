@@ -14,6 +14,8 @@ import MoleSettings      from './games/math-mole/Settings';
 import MoleGame          from './games/math-mole/Game';
 import SymmetrySettings  from './games/symmetry/Settings';
 import SymmetryGame      from './games/symmetry/Game';
+import OddEvenSettings   from './games/odd-even/Settings';
+import OddEvenGame       from './games/odd-even/Game';
 
 export default function App() {
   return (
@@ -34,6 +36,8 @@ export default function App() {
         <Route path="/math-mole/play"     element={<MoleGame />} />
         <Route path="/symmetry"           element={<SymmetrySettings />} />
         <Route path="/symmetry/play"      element={<SymmetryGame />} />
+        <Route path="/odd-even"           element={<OddEvenSettings />} />
+        <Route path="/odd-even/play"      element={<OddEvenGame />} />
       </Routes>
     </HashRouter>
   );

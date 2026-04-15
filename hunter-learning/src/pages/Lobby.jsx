@@ -11,6 +11,7 @@ const GAMES = [
   { path: '/memory-flip',   icon: '🃏',  title: '記憶翻牌',     desc: '找出所有配對，考驗記憶力' },
   { path: '/math-mole',     icon: '🦔',  title: '打地鼠算數',   desc: '打中正確答案的地鼠！' },
   { path: '/symmetry',      icon: '🪞',  title: '對稱遊戲',     desc: '學習對稱與對稱軸！' },
+  { path: '/odd-even',      icon: '🔢',  title: '奇偶小偵探',   desc: '學習奇數和偶數！' },
 ];
 
 const container = {
