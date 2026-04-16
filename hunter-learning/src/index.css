@@ -1,39 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
 :root {
-  --bg: #0d1117;
-  --bg-card: #161b22;
-  --border: #30363d;
-  --teal: #12b886;
-  --teal-dim: rgba(18, 184, 134, 0.5);
-  --teal-glow: rgba(18, 184, 134, 0.3);
+  --bg:        #060c14;
+  --bg-card:   #0a1626;
+  --border:    #1a2c3d;
+  --teal:      #12b886;
+  --teal-glow: rgba(18, 184, 134, 0.28);
+
+  /* Per-game signature colors */
+  --c-math-battle: #ff6b6b;
+  --c-chain-math:  #845ef7;
+  --c-clock:       #ffd43b;
+  --c-english:     #51cf66;
+  --c-memory:      #cc5de8;
+  --c-mole:        #ff922b;
+  --c-symmetry:    #4dabf7;
+  --c-oddeven:     #f783ac;
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* ── Reset ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; width: 100%; }
 
-html, body, #root {
-  height: 100%;
-  width: 100%;
-}
-
+/* ── Base ──────────────────────────────────────────────────────────────────── */
 body {
   background: var(--bg);
   color: #c9d1d9;
-  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-family: 'Nunito', 'Noto Sans TC', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
-/* Star twinkle animation */
-@keyframes twinkle {
-  0%, 100% { opacity: 0.25; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.4); }
+/* ── Nebula atmosphere ─────────────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 45% at  8% 65%, rgba(123,31,162,0.10) 0%, transparent 100%),
+    radial-gradient(ellipse 45% 55% at 92% 15%, rgba(18,184,134,0.08) 0%, transparent 100%),
+    radial-gradient(ellipse 65% 45% at 55% 95%, rgba(77,171,247,0.07) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* Page transition */
-@keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* ── Animations ────────────────────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0  0  0px rgba(18,184,134,0.4); }
+  70%  { box-shadow: 0 0 0 14px rgba(18,184,134,0); }
+  100% { box-shadow: 0 0  0  0px rgba(18,184,134,0); }
 }

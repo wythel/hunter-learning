@@ -2,17 +2,24 @@ import { createTheme } from '@mantine/core';
 
 export const theme = createTheme({
   primaryColor: 'teal',
-  defaultRadius: 'md',
-  fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+  defaultRadius: 'lg',
+  fontFamily: "'Nunito', 'Noto Sans TC', system-ui, -apple-system, sans-serif",
+  headings: {
+    fontFamily: "'Nunito', 'Noto Sans TC', system-ui, -apple-system, sans-serif",
+    fontWeight: '900',
+  },
   colors: {
     dark: [
-      '#C1C2C5', '#A6A7AB', '#909296',
-      '#5c5f66', '#373A40', '#2C2E33',
-      '#25262b', '#1A1B1E', '#141517', '#101113',
+      '#adb5bd', '#868e96', '#6c757d',
+      '#495057', '#343a40', '#2a3647',
+      '#1a2535', '#0f1c2e', '#0a1626', '#060c14',
     ],
   },
   components: {
-    Button: { defaultProps: { radius: 'xl' } },
-    Card:   { defaultProps: { radius: 'lg' } },
+    Button: {
+      defaultProps: { radius: 'xl' },
+      styles: { root: { fontFamily: "'Nunito', system-ui, sans-serif", fontWeight: 800 } },
+    },
+    Card: { defaultProps: { radius: 'xl' } },
   },
 });
