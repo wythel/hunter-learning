@@ -13,7 +13,7 @@ export default function ChainMathGame() {
 
   const {
     question, answer, phase, currentQ, stats,
-    playerHP, monster, playerSvg,
+    playerHP, monster, monsterHP, monsterMaxHP, playerSvg,
     monsterFlash, playerFlash, playerAttacking, monsterAttacking,
     stars, title, elapsedSec, handleKey,
   } = useGame({ operation, difficulty, count });
@@ -50,6 +50,8 @@ export default function ChainMathGame() {
       <BattleField
         monsterSvg={monster.svg}
         monsterName={monster.name}
+        monsterHP={monsterHP}
+        monsterMaxHP={monsterMaxHP}
         playerSvg={playerSvg}
         playerHP={playerHP}
         monsterFlash={monsterFlash}
@@ -60,7 +62,8 @@ export default function ChainMathGame() {
       <BattleUI
         question={question.text}
         answer={answer}
-        progress={`第 ${currentQ + 1} / ${count} 題`}
+        currentQ={currentQ}
+        count={count}
         onKey={handleKey}
         locked={false}
       />

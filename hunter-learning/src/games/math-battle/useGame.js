@@ -12,24 +12,27 @@ export function useGame({ difficulty, count }) {
   const [stats, setStats]                 = useState({ correct: 0, wrong: 0 });
   const [playerHP, setPlayerHP]           = useState(3);
   const [monsterIdx, setMonsterIdx]       = useState(0);
+  const [monsterHP, setMonsterHP]         = useState(3);
   const [monsterFlash, setMonsterFlash]   = useState(false);
   const [playerFlash, setPlayerFlash]     = useState(false);
   const [playerAttacking, setPlayerAttacking] = useState(false);
   const [monsterAttacking, setMonsterAttacking] = useState(false);
   const [completed, setCompleted]         = useState(true);
 
-  const locked      = useRef(false);
-  const answerRef   = useRef('');
-  const questionRef = useRef(question);
-  const currentQRef = useRef(0);
-  const playerHPRef = useRef(3);
-  const startTime   = useRef(Date.now());
-  const sound       = useSound();
+  const locked        = useRef(false);
+  const answerRef     = useRef('');
+  const questionRef   = useRef(question);
+  const currentQRef   = useRef(0);
+  const playerHPRef   = useRef(3);
+  const monsterHPRef  = useRef(3);
+  const startTime     = useRef(Date.now());
+  const sound         = useSound();
 
   // Keep refs in sync
-  questionRef.current = question;
-  currentQRef.current = currentQ;
-  playerHPRef.current = playerHP;
+  questionRef.current  = question;
+  currentQRef.current  = currentQ;
+  playerHPRef.current  = playerHP;
+  monsterHPRef.current = monsterHP;
 
   const handleKey = useCallback(async (key) => {
     if (locked.current) return;
@@ -70,7 +73,15 @@ export function useGame({ difficulty, count }) {
       setMonsterFlash(false);
 
       setStats(s => ({ ...s, correct: s.correct + 1 }));
-      if (newQ % 3 === 0) setMonsterIdx(i => (i + 1) % MONSTERS.length);
+      const nextMonsterHP = monsterHPRef.current - 1;
+      if (nextMonsterHP <= 0) {
+        setMonsterIdx(i => (i + 1) % MONSTERS.length);
+        setMonsterHP(3);
+        monsterHPRef.current = 3;
+      } else {
+        setMonsterHP(nextMonsterHP);
+        monsterHPRef.current = nextMonsterHP;
+      }
     } else {
       sound.wrong();
       setMonsterAttacking(true);
@@ -116,7 +127,7 @@ export function useGame({ difficulty, count }) {
 
   return {
     question, answer, phase, currentQ, stats, playerHP,
-    monster, playerSvg: PLAYER_SVG,
+    monster, monsterHP, monsterMaxHP: 3, playerSvg: PLAYER_SVG,
     monsterFlash, playerFlash, playerAttacking, monsterAttacking,
     stars, title, elapsedSec, handleKey,
   };
