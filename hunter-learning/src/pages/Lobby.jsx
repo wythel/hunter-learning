@@ -13,6 +13,7 @@ const GAMES = [
   { path: '/math-mole',     icon: '🦔',  title: '打地鼠',     desc: '打對答案！',   color: '#ff922b', glow: 'rgba(255,146,43,0.32)'  },
   { path: '/symmetry',      icon: '🪞',  title: '對稱遊戲',   desc: '學對稱軸！',   color: '#4dabf7', glow: 'rgba(77,171,247,0.32)'  },
   { path: '/odd-even',      icon: '🔢',  title: '奇偶偵探',   desc: '奇數偶數！',   color: '#f783ac', glow: 'rgba(247,131,172,0.32)' },
+  { path: '/make-ten',      icon: '🔟',  title: '湊十大師',   desc: '湊成10！',     color: '#ff9f43', glow: 'rgba(255,159,67,0.32)'  },
 ];
 
 function hexToRgb(hex) {

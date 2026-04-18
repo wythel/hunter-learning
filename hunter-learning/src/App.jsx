@@ -16,6 +16,8 @@ import SymmetrySettings  from './games/symmetry/Settings';
 import SymmetryGame      from './games/symmetry/Game';
 import OddEvenSettings   from './games/odd-even/Settings';
 import OddEvenGame       from './games/odd-even/Game';
+import MakeTenSettings   from './games/make-ten/Settings';
+import MakeTenGame       from './games/make-ten/Game';
 
 export default function App() {
   return (
@@ -38,6 +40,8 @@ export default function App() {
         <Route path="/symmetry/play"      element={<SymmetryGame />} />
         <Route path="/odd-even"           element={<OddEvenSettings />} />
         <Route path="/odd-even/play"      element={<OddEvenGame />} />
+        <Route path="/make-ten"           element={<MakeTenSettings />} />
+        <Route path="/make-ten/play"      element={<MakeTenGame />} />
       </Routes>
     </HashRouter>
   );
