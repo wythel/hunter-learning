@@ -135,5 +135,13 @@ export function useSound() {
       const t = ctx.currentTime;
       tone(ctx, 800, 'sine', t, 0.08, 0.15);
     },
+
+    playNote(midi, dur = 0.55) {
+      const ctx = getCtx();
+      const t = ctx.currentTime;
+      const freq = 440 * Math.pow(2, (midi - 69) / 12);
+      tone(ctx, freq,     'triangle', t,        dur,        0.22);
+      tone(ctx, freq * 2, 'sine',     t,        dur * 0.6,  0.06);
+    },
   };
 }

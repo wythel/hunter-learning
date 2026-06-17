@@ -18,6 +18,8 @@ import OddEvenSettings   from './games/odd-even/Settings';
 import OddEvenGame       from './games/odd-even/Game';
 import MakeTenSettings   from './games/make-ten/Settings';
 import MakeTenGame       from './games/make-ten/Game';
+import NoteStaffSettings from './games/note-staff/Settings';
+import NoteStaffGame     from './games/note-staff/Game';
 
 export default function App() {
   return (
@@ -42,6 +44,8 @@ export default function App() {
         <Route path="/odd-even/play"      element={<OddEvenGame />} />
         <Route path="/make-ten"           element={<MakeTenSettings />} />
         <Route path="/make-ten/play"      element={<MakeTenGame />} />
+        <Route path="/note-staff"         element={<NoteStaffSettings />} />
+        <Route path="/note-staff/play"    element={<NoteStaffGame />} />
       </Routes>
     </HashRouter>
   );
