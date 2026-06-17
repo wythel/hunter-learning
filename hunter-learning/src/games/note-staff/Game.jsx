@@ -92,7 +92,15 @@ function PianoPad({ note, feedback, wrongValue, onAnswer }) {
 
 // ── Main Game ────────────────────────────────────────────────────────────────
 
+// Outer shell: forces the inner component to fully remount whenever the user
+// navigates to /note-staff/play again (e.g. clicking "再玩一次"), so all useState
+// and useRef values reset cleanly.
 export default function NoteStaffGame() {
+  const location = useLocation();
+  return <NoteStaffGameInner key={location.key} />;
+}
+
+function NoteStaffGameInner() {
   const location = useLocation();
   const navigate = useNavigate();
   const { clefMode = 'treble', answerMode = 'name', skipTeach } = location.state || {};
