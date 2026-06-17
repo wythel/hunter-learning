@@ -1,24 +1,26 @@
 // staffPos: 0 = bottom line (1st line), 1 = 1st space, 2 = 2nd line, ...
 // (each integer step = half a stave space, going upward)
 
+// Treble: C4(middle C, 1 ledger below) → B4(middle line). Full Do-Ti octave.
 export const TREBLE_NOTES = [
-  { id: 'E4', clef: 'treble', midi: 64, solfege: 'Mi',  staffPos: 0 },
-  { id: 'F4', clef: 'treble', midi: 65, solfege: 'Fa',  staffPos: 1 },
-  { id: 'G4', clef: 'treble', midi: 67, solfege: 'Sol', staffPos: 2 },
-  { id: 'A4', clef: 'treble', midi: 69, solfege: 'La',  staffPos: 3 },
-  { id: 'B4', clef: 'treble', midi: 71, solfege: 'Ti',  staffPos: 4 },
-  { id: 'C5', clef: 'treble', midi: 72, solfege: 'Do',  staffPos: 5 },
-  { id: 'D5', clef: 'treble', midi: 74, solfege: 'Re',  staffPos: 6 },
+  { id: 'C4', clef: 'treble', midi: 60, solfege: 'Do',  staffPos: -2 },
+  { id: 'D4', clef: 'treble', midi: 62, solfege: 'Re',  staffPos: -1 },
+  { id: 'E4', clef: 'treble', midi: 64, solfege: 'Mi',  staffPos: 0  },
+  { id: 'F4', clef: 'treble', midi: 65, solfege: 'Fa',  staffPos: 1  },
+  { id: 'G4', clef: 'treble', midi: 67, solfege: 'Sol', staffPos: 2  },
+  { id: 'A4', clef: 'treble', midi: 69, solfege: 'La',  staffPos: 3  },
+  { id: 'B4', clef: 'treble', midi: 71, solfege: 'Ti',  staffPos: 4  },
 ];
 
+// Bass: C3(2nd space) → B3(space above top line). Full Do-Ti octave.
 export const BASS_NOTES = [
-  { id: 'G2', clef: 'bass', midi: 43, solfege: 'Sol', staffPos: 0 },
-  { id: 'A2', clef: 'bass', midi: 45, solfege: 'La',  staffPos: 1 },
-  { id: 'B2', clef: 'bass', midi: 47, solfege: 'Ti',  staffPos: 2 },
   { id: 'C3', clef: 'bass', midi: 48, solfege: 'Do',  staffPos: 3 },
   { id: 'D3', clef: 'bass', midi: 50, solfege: 'Re',  staffPos: 4 },
   { id: 'E3', clef: 'bass', midi: 52, solfege: 'Mi',  staffPos: 5 },
   { id: 'F3', clef: 'bass', midi: 53, solfege: 'Fa',  staffPos: 6 },
+  { id: 'G3', clef: 'bass', midi: 55, solfege: 'Sol', staffPos: 7 },
+  { id: 'A3', clef: 'bass', midi: 57, solfege: 'La',  staffPos: 8 },
+  { id: 'B3', clef: 'bass', midi: 59, solfege: 'Ti',  staffPos: 9 },
 ];
 
 export const SOLFEGE = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Ti'];

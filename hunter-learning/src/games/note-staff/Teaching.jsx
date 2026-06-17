@@ -123,7 +123,7 @@ function HowToPlaySlide({ answerMode }) {
         border: '1px solid rgba(129,140,248,0.25)',
         borderRadius: 14, padding: '12px 8px',
       }}>
-        <Staff clef="treble" note={{ id: 'C5', staffPos: 5, clef: 'treble' }} accent={ACCENT} />
+        <Staff clef="treble" note={{ id: 'C4', staffPos: -2, clef: 'treble' }} accent={ACCENT} />
       </div>
       {answerMode === 'name' ? (
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -145,14 +145,14 @@ function HowToPlaySlide({ answerMode }) {
           <Piano
             whites={keyboardForClef('treble').whites}
             blacks={keyboardForClef('treble').blacks}
-            answerMidi={72}
+            answerMidi={60}
             revealCorrect={true}
             showLabels="all"
           />
         </div>
       )}
       <div style={{ fontSize: 12, color: 'rgba(139,163,190,0.6)', textAlign: 'center' }}>
-        ↑ 譜上是 <b style={{ color: ACCENT }}>C5（Do）</b>，所以正確答案是 Do 喔！
+        ↑ 譜上是 <b style={{ color: ACCENT }}>中央 C（Do）</b>，所以正確答案是 Do 喔！
       </div>
     </div>
   );
