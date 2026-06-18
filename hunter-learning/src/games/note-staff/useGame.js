@@ -46,8 +46,9 @@ export function useGame({ clefMode = 'treble', answerMode = 'name', count = 10 }
     if (!isCorrect) setWrongValue(value);
 
     if (isCorrect) {
-      sound.correct();
-      sound.playNote(cur.midi, 0.45);
+      // The note itself is the reward — no extra "ding" so it doesn't drown
+      // out the pitch the child is supposed to hear.
+      sound.playNote(cur.midi, 0.55);
     } else {
       sound.wrong();
     }
