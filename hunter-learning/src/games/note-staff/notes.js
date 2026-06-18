@@ -95,9 +95,9 @@ export function buildKeyboard(startC, octaves) {
   return { whites, blacks };
 }
 
-// Keyboard chosen per clef of the current question (so the relevant white keys
-// are always visible). Both keyboards span 2 octaves.
+// Keyboard chosen per clef of the current question. One octave is enough
+// because every answer key lives within a single C-to-C span.
 export function keyboardForClef(clef) {
-  if (clef === 'bass') return buildKeyboard(36, 2); // C2 → C4
-  return buildKeyboard(60, 2);                       // C4 → C6 (treble)
+  if (clef === 'bass') return buildKeyboard(48, 1); // C3 → C4
+  return buildKeyboard(60, 1);                       // C4 → C5 (treble)
 }

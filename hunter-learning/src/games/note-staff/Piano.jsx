@@ -38,7 +38,7 @@ export default function Piano({
     <svg
       viewBox={`0 0 ${width} ${height}`}
       width="100%"
-      style={{ maxWidth: width, display: 'block' }}
+      style={{ maxWidth: width, display: 'block', margin: '0 auto' }}
     >
       {/* White keys */}
       {whites.map((w, i) => {
