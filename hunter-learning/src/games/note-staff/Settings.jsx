@@ -6,6 +6,7 @@ export default function NoteStaffSettings() {
   const navigate = useNavigate();
   const [clefMode,   setClefMode]   = useState('treble');
   const [answerMode, setAnswerMode] = useState('name');
+  const [noteCount,  setNoteCount]  = useState(1);
 
   const settings = [
     {
@@ -27,6 +28,15 @@ export default function NoteStaffSettings() {
       selected: answerMode,
       onChange: setAnswerMode,
     },
+    {
+      label: '一題幾個音符',
+      options: [
+        { value: 1, icon: '🎵', text: '1 個',  sub: '單音' },
+        { value: 3, icon: '🎶', text: '3 個',  sub: '挑戰' },
+      ],
+      selected: noteCount,
+      onChange: setNoteCount,
+    },
   ];
 
   return (
@@ -34,7 +44,7 @@ export default function NoteStaffSettings() {
       title="音符星球"
       icon="🎼"
       settings={settings}
-      onStart={() => navigate('/note-staff/play', { state: { clefMode, answerMode } })}
+      onStart={() => navigate('/note-staff/play', { state: { clefMode, answerMode, noteCount } })}
     />
   );
 }

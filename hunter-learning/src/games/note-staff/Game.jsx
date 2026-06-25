@@ -103,30 +103,37 @@ export default function NoteStaffGame() {
 function NoteStaffGameInner() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { clefMode = 'treble', answerMode = 'name', skipTeach } = location.state || {};
+  const {
+    clefMode   = 'treble',
+    answerMode = 'name',
+    noteCount  = 1,
+    skipTeach,
+  } = location.state || {};
 
   const [teaching, setTeaching] = useState(!skipTeach);
 
   const {
-    phase, stats, currentQ, note, feedback, wrongValue,
+    phase, stats, currentQ, notes, noteIdx, statuses, note,
+    feedback, wrongValue,
     handleAnswer, stars, title, elapsedSec,
-  } = useGame({ clefMode, answerMode, count: COUNT });
+  } = useGame({ clefMode, answerMode, noteCount, count: COUNT });
 
   if (teaching) {
     return <Teaching clefMode={clefMode} answerMode={answerMode} onDone={() => setTeaching(false)} />;
   }
 
   if (phase === 'result') {
+    const unit = noteCount > 1 ? '音' : '題';
     return (
       <ResultScreen
         title={title}
         stars={stars}
         stats={[
-          { icon: '✅', label: '答對', value: `${stats.correct} 題` },
-          { icon: '❌', label: '答錯', value: `${stats.wrong} 題` },
+          { icon: '✅', label: '答對', value: `${stats.correct} ${unit}` },
+          { icon: '❌', label: '答錯', value: `${stats.wrong} ${unit}` },
           { icon: '⏱️', label: '時間', value: `${elapsedSec} 秒` },
         ]}
-        onRetry={() => navigate('/note-staff/play', { state: { clefMode, answerMode, skipTeach: true } })}
+        onRetry={() => navigate('/note-staff/play', { state: { clefMode, answerMode, noteCount, skipTeach: true } })}
         onMenu={() => navigate('/note-staff')}
         onLobby={() => navigate('/')}
       />
@@ -235,7 +242,7 @@ function NoteStaffGameInner() {
           {/* Staff */}
           <AnimatePresence mode="wait">
             <motion.div
-              key={`${note.clef}-${note.id}-${currentQ}`}
+              key={currentQ}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
@@ -248,12 +255,25 @@ function NoteStaffGameInner() {
                 marginBottom: 14,
               }}
             >
-              <Staff clef={note.clef} note={note} accent={ACCENT} />
+              <Staff
+                clef={note.clef}
+                notes={notes}
+                statuses={statuses.map((s, i) =>
+                  s === 'pending' && i === noteIdx ? 'current' : s
+                )}
+                showPulse={noteCount > 1}
+                accent={ACCENT}
+              />
               <div style={{
                 textAlign: 'center', fontSize: 12, fontWeight: 700,
                 color: 'rgba(139,163,190,0.55)', marginTop: 4,
               }}>
                 {note.clef === 'treble' ? '高音譜 𝄞' : '低音譜 𝄢'}
+                {noteCount > 1 && (
+                  <span style={{ marginLeft: 8 }}>
+                    · 第 {noteIdx + 1} / {noteCount} 音
+                  </span>
+                )}
               </div>
             </motion.div>
           </AnimatePresence>
