@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SettingsPage from '../../components/SettingsPage';
+import { TIMED_SETTING } from '../../utils/timedSetting';
 
 export default function MathBattleSettings() {
   const navigate = useNavigate();
   const [difficulty, setDifficulty] = useState('easy');
   const [count, setCount]           = useState(10);
+  const [timed, setTimed]           = useState(false);
 
   const settings = [
     {
@@ -17,6 +19,7 @@ export default function MathBattleSettings() {
       selected: difficulty,
       onChange: setDifficulty,
     },
+    { ...TIMED_SETTING, selected: timed, onChange: setTimed },
     {
       label: '題數',
       options: [
@@ -34,7 +37,7 @@ export default function MathBattleSettings() {
       title="算數大戰"
       icon="⚔️"
       settings={settings}
-      onStart={() => navigate('/math-battle/play', { state: { difficulty, count } })}
+      onStart={() => navigate('/math-battle/play', { state: { difficulty, count, timed } })}
     />
   );
 }
