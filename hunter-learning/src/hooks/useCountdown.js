@@ -11,12 +11,15 @@ export function useCountdown({ seconds, enabled, paused = false, resetKey, onExp
   const remainingRef  = useRef(totalMs);
   const firedRef      = useRef(false);
   const onExpireRef   = useRef(onExpire);
-  onExpireRef.current = onExpire;
+  useEffect(() => {
+    onExpireRef.current = onExpire;
+  }, [onExpire]);
 
   // New answer unit → refill and re-arm
   useEffect(() => {
     firedRef.current = false;
     remainingRef.current = totalMs;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRemainingMs(totalMs);
   }, [resetKey, totalMs]);
 
