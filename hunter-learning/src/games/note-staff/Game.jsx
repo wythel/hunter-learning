@@ -8,6 +8,8 @@ import Staff from './Staff';
 import Piano from './Piano';
 import { useGame } from './useGame';
 import { SOLFEGE, SOLFEGE_COLOR, keyboardForClef } from './notes';
+import TimeBar from '../../components/TimeBar';
+import { useCountdown, TIMED_SECONDS } from '../../hooks/useCountdown';
 
 const ACCENT = '#818cf8';
 const COUNT  = 10;
@@ -108,6 +110,7 @@ function NoteStaffGameInner() {
     answerMode = 'name',
     noteCount  = 1,
     skipTeach,
+    timed      = false,
   } = location.state || {};
 
   const [teaching, setTeaching] = useState(!skipTeach);
@@ -115,8 +118,16 @@ function NoteStaffGameInner() {
   const {
     phase, stats, currentQ, notes, noteIdx, statuses, note,
     feedback, wrongValue,
-    handleAnswer, stars, title, elapsedSec,
+    handleAnswer, handleTimeout, stars, title, elapsedSec,
   } = useGame({ clefMode, answerMode, noteCount, count: COUNT });
+
+  const { fraction } = useCountdown({
+    seconds: TIMED_SECONDS,
+    enabled: timed && !teaching && phase === 'playing',
+    paused: feedback !== null,
+    resetKey: `${currentQ}-${noteIdx}`,
+    onExpire: handleTimeout,
+  });
 
   if (teaching) {
     return <Teaching clefMode={clefMode} answerMode={answerMode} onDone={() => setTeaching(false)} />;
@@ -133,7 +144,7 @@ function NoteStaffGameInner() {
           { icon: '❌', label: '答錯', value: `${stats.wrong} ${unit}` },
           { icon: '⏱️', label: '時間', value: `${elapsedSec} 秒` },
         ]}
-        onRetry={() => navigate('/note-staff/play', { state: { clefMode, answerMode, noteCount, skipTeach: true } })}
+        onRetry={() => navigate('/note-staff/play', { state: { clefMode, answerMode, noteCount, skipTeach: true, timed } })}
         onMenu={() => navigate('/note-staff')}
         onLobby={() => navigate('/')}
       />
@@ -238,6 +249,12 @@ function NoteStaffGameInner() {
               />
             </div>
           </div>
+
+          {timed && (
+            <div style={{ marginBottom: 10 }}>
+              <TimeBar fraction={fraction} />
+            </div>
+          )}
 
           {/* Staff */}
           <AnimatePresence mode="wait">

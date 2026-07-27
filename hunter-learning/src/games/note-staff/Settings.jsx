@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SettingsPage from '../../components/SettingsPage';
+import { TIMED_SETTING } from '../../utils/timedSetting';
 
 export default function NoteStaffSettings() {
   const navigate = useNavigate();
   const [clefMode,   setClefMode]   = useState('treble');
   const [answerMode, setAnswerMode] = useState('name');
   const [noteCount,  setNoteCount]  = useState(1);
+  const [timed,      setTimed]      = useState(false);
 
   const settings = [
     {
@@ -37,6 +39,7 @@ export default function NoteStaffSettings() {
       selected: noteCount,
       onChange: setNoteCount,
     },
+    { ...TIMED_SETTING, selected: timed, onChange: setTimed },
   ];
 
   return (
@@ -44,7 +47,7 @@ export default function NoteStaffSettings() {
       title="音符星球"
       icon="🎼"
       settings={settings}
-      onStart={() => navigate('/note-staff/play', { state: { clefMode, answerMode, noteCount } })}
+      onStart={() => navigate('/note-staff/play', { state: { clefMode, answerMode, noteCount, timed } })}
     />
   );
 }

@@ -59,17 +59,13 @@ export function useGame({
 
   const currentNote = notes[noteIdx];
 
-  const handleAnswer = useCallback(async (value) => {
-    if (locked.current) return;
-    locked.current = true;
-
+  // 共用的判定流程:handleAnswer(手動作答)與 handleTimeout(逾時)都走這裡。
+  // value=null 表示逾時:不標示錯誤按鍵,只公布正確答案。
+  const resolve = useCallback(async (isCorrect, value) => {
     const cur = notesRef.current[noteIdxRef.current];
-    const isCorrect = answerMode === 'name'
-      ? value === cur.solfege
-      : value === cur.midi;
 
     setFeedback(isCorrect ? 'correct' : 'wrong');
-    if (!isCorrect) setWrongValue(value);
+    if (!isCorrect && value != null) setWrongValue(value);
 
     setStatuses(prev => {
       const next = [...prev];
@@ -124,7 +120,26 @@ export function useGame({
     noteIdxRef.current = 0;
 
     locked.current = false;
-  }, [answerMode, clefMode, count, noteCount, sound]);
+  }, [clefMode, count, noteCount, sound]);
+
+  const handleAnswer = useCallback((value) => {
+    if (locked.current) return;
+    locked.current = true;
+
+    const cur = notesRef.current[noteIdxRef.current];
+    const isCorrect = answerMode === 'name'
+      ? value === cur.solfege
+      : value === cur.midi;
+
+    return resolve(isCorrect, value);
+  }, [answerMode, resolve]);
+
+  // 限時模式:10 秒未作答 → 該音符算錯
+  const handleTimeout = useCallback(() => {
+    if (locked.current) return;
+    locked.current = true;
+    return resolve(false, null);
+  }, [resolve]);
 
   const stars      = calculateStars(stats.correct, stats.wrong);
   const title      = getResultTitle(stars, true);
@@ -133,7 +148,7 @@ export function useGame({
   return {
     phase, stats, currentQ, notes, noteIdx, statuses,
     note: currentNote,
-    feedback, wrongValue, handleAnswer,
+    feedback, wrongValue, handleAnswer, handleTimeout,
     stars, title, elapsedSec,
   };
 }
