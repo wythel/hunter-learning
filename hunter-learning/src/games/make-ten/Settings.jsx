@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SettingsPage from '../../components/SettingsPage';
+import { TIMED_SETTING } from '../../utils/timedSetting';
 
 export default function MakeTenSettings() {
   const navigate = useNavigate();
   const [mode,  setMode]  = useState('choose');
   const [count, setCount] = useState(8);
+  const [timed, setTimed] = useState(false);
 
   const countOptions = mode === 'choose'
     ? [
@@ -32,6 +34,10 @@ export default function MakeTenSettings() {
       selected: mode,
       onChange: handleModeChange,
     },
+    // 配對模式不支援限時,隱藏此列
+    ...(mode === 'choose'
+      ? [{ ...TIMED_SETTING, selected: timed, onChange: setTimed }]
+      : []),
     {
       label: mode === 'choose' ? '題數' : '對數',
       options: countOptions,
@@ -45,7 +51,9 @@ export default function MakeTenSettings() {
       title="湊十大師"
       icon="🔟"
       settings={settings}
-      onStart={() => navigate('/make-ten/play', { state: { mode, count } })}
+      onStart={() => navigate('/make-ten/play', {
+        state: { mode, count, timed: mode === 'choose' ? timed : false },
+      })}
     />
   );
 }

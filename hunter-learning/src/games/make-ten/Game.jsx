@@ -5,6 +5,8 @@ import StarField from '../../components/StarField';
 import ResultScreen from '../../components/ResultScreen';
 import Teaching from './Teaching';
 import { useGame } from './useGame';
+import { useCountdown, TIMED_SECONDS } from '../../hooks/useCountdown';
+import TimeBar from '../../components/TimeBar';
 
 // ── Ten-frame (2 rows × 5 cols) ───────────────────────────────────────────────
 
@@ -274,15 +276,24 @@ function MatchView({ tiles, selId, wrongPair, matchCount, count, onTap }) {
 export default function MakeTenGame() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { mode = 'choose', count = 8, skipTeach } = location.state || {};
+  const { mode = 'choose', count = 8, skipTeach, timed = false } = location.state || {};
+  const timedActive = timed && mode === 'choose';
 
   const [teaching, setTeaching] = useState(!skipTeach);
 
   const {
-    question, currentQ, feedback, handleAnswer,
+    question, currentQ, feedback, handleAnswer, handleTimeout,
     tiles, selId, wrongPair, matchCount, handleTap,
     phase, stats, stars, title, elapsedSec,
   } = useGame({ mode, count });
+
+  const { fraction } = useCountdown({
+    seconds: TIMED_SECONDS,
+    enabled: timedActive && !teaching && phase === 'playing',
+    paused: feedback !== null,
+    resetKey: currentQ,
+    onExpire: handleTimeout,
+  });
 
   if (teaching) {
     return <Teaching mode={mode} onDone={() => setTeaching(false)} />;
@@ -306,7 +317,7 @@ export default function MakeTenGame() {
         title={title}
         stars={stars}
         stats={resultStats}
-        onRetry={() => navigate('/make-ten/play', { state: { mode, count, skipTeach: true } })}
+        onRetry={() => navigate('/make-ten/play', { state: { mode, count, skipTeach: true, timed } })}
         onMenu={() => navigate('/make-ten')}
         onLobby={() => navigate('/')}
       />
@@ -353,6 +364,11 @@ export default function MakeTenGame() {
           backdropFilter: 'blur(18px)',
           boxShadow: '0 8px 48px rgba(0,0,0,0.45), 0 0 60px rgba(18,184,134,0.06), 0 1px 0 rgba(255,255,255,0.04) inset',
         }}>
+          {timedActive && (
+            <div style={{ marginBottom: 14 }}>
+              <TimeBar fraction={fraction} />
+            </div>
+          )}
           {mode === 'choose' ? (
             <ChooseView
               question={question}

@@ -93,6 +93,32 @@ export function useGame({ mode, count }) {
     locked.current = false;
   }, [mode, count, question, sound]);
 
+  // 限時模式(僅 choose 模式):10 秒未作答 → 視同答錯,
+  // feedback='wrong' 會讓 ChooseView 高亮正確選項
+  const handleTimeout = useCallback(async () => {
+    if (locked.current || mode !== 'choose') return;
+    locked.current = true;
+
+    setFeedback('wrong');
+    sound.wrong();
+    setStats(s => ({ ...s, wrong: s.wrong + 1 }));
+
+    await delay(1000);
+    setFeedback(null);
+
+    const newQ = currentQRef.current + 1;
+    setCurrentQ(newQ);
+
+    if (newQ >= count) {
+      await delay(200);
+      sound.victory();
+      setPhase('result');
+    } else {
+      setQuestion(genQuestion());
+    }
+    locked.current = false;
+  }, [mode, count, sound]);
+
   // ── Match mode handler ─────────────────────────────────────────────────────
   const handleTap = useCallback(async (tileId) => {
     if (locked.current || mode !== 'match') return;
@@ -170,7 +196,7 @@ export function useGame({ mode, count }) {
 
   return {
     // choose
-    question, currentQ, feedback, handleAnswer,
+    question, currentQ, feedback, handleAnswer, handleTimeout,
     // match
     tiles, selId, wrongPair, matchCount, handleTap,
     // shared
