@@ -41,6 +41,8 @@ export function useGame({ operation, difficulty, count }) {
   const [playerAttacking, setPlayerAttacking] = useState(false);
   const [monsterAttacking, setMonsterAttacking] = useState(false);
   const [completed, setCompleted]         = useState(true);
+  const [timeoutAnswer, setTimeoutAnswer]       = useState(null);
+  const [timerPaused, setTimerPaused]           = useState(false);
 
   const locked        = useRef(false);
   const answerRef     = useRef('');
@@ -78,6 +80,7 @@ export function useGame({ operation, difficulty, count }) {
     if (!a || isNaN(ans)) return;
 
     locked.current = true;
+    setTimerPaused(true);
     const isCorrect = ans === questionRef.current.answer;
     const newQ = currentQRef.current + 1;
 
@@ -119,6 +122,7 @@ export function useGame({ operation, difficulty, count }) {
         sound.gameOver();
         await delay(700);
         setPhase('result');
+        setTimerPaused(false);
         locked.current = false;
         return;
       }
@@ -136,6 +140,60 @@ export function useGame({ operation, difficulty, count }) {
       setQuestion(next);
     }
 
+    setTimerPaused(false);
+    locked.current = false;
+  }, [count, operation, difficulty, sound]);
+
+  // 限時模式:10 秒未作答 → 視同答錯並公布正確答案
+  const handleTimeout = useCallback(async () => {
+    if (locked.current) return;
+    locked.current = true;
+    setTimerPaused(true);
+
+    answerRef.current = '';
+    setAnswer('');
+    setTimeoutAnswer(questionRef.current.answer);
+
+    sound.wrong();
+    setMonsterAttacking(true);
+    await delay(350);
+    setMonsterAttacking(false);
+    setPlayerFlash(true);
+    await delay(400);
+    setPlayerFlash(false);
+
+    setStats(s => ({ ...s, wrong: s.wrong + 1 }));
+    const nextHP = playerHPRef.current - 1;
+    setPlayerHP(nextHP);
+
+    await delay(450);
+    setTimeoutAnswer(null);
+
+    if (nextHP <= 0) {
+      setCompleted(false);
+      await delay(500);
+      sound.gameOver();
+      await delay(700);
+      setPhase('result');
+      setTimerPaused(false);
+      locked.current = false;
+      return;
+    }
+
+    const newQ = currentQRef.current + 1;
+    setCurrentQ(newQ);
+
+    if (newQ >= count) {
+      await delay(400);
+      sound.victory();
+      setPhase('result');
+    } else {
+      const next = generateChainQuestion(operation, difficulty);
+      questionRef.current = next;
+      setQuestion(next);
+    }
+
+    setTimerPaused(false);
     locked.current = false;
   }, [count, operation, difficulty, sound]);
 
@@ -148,5 +206,6 @@ export function useGame({ operation, difficulty, count }) {
     monster: MONSTERS[monsterIdx], monsterHP, monsterMaxHP: 3, playerSvg: PLAYER_SVG,
     monsterFlash, playerFlash, playerAttacking, monsterAttacking,
     stars, title, elapsedSec, handleKey,
+    timeoutAnswer, timerPaused, handleTimeout,
   };
 }

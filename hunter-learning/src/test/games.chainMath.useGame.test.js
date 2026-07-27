@@ -106,4 +106,23 @@ describe('useGame (chain-math)', () => {
       expect(result.current.phase).toBe('result');
     });
   });
+
+  it('handleTimeout counts as wrong, decreases HP, advances question', async () => {
+    const { result } = renderHook(() => useGame({ operation: 'add', difficulty: 'easy', count: 10 }));
+    await act(async () => { await result.current.handleTimeout(); });
+    expect(result.current.stats.wrong).toBe(1);
+    expect(result.current.playerHP).toBe(2);
+    expect(result.current.currentQ).toBe(1);
+    expect(result.current.timeoutAnswer).toBe(null);
+  });
+
+  it('3 timeouts lead to game over', async () => {
+    const { result } = renderHook(() => useGame({ operation: 'add', difficulty: 'easy', count: 10 }));
+    for (let i = 0; i < 3; i++) {
+      await act(async () => { await result.current.handleTimeout(); });
+    }
+    await waitFor(() => {
+      expect(result.current.phase).toBe('result');
+    });
+  });
 });

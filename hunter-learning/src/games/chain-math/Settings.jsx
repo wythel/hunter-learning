@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SettingsPage from '../../components/SettingsPage';
+import { TIMED_SETTING } from '../../utils/timedSetting';
 
 export default function ChainMathSettings() {
   const navigate = useNavigate();
   const [operation, setOperation] = useState('add');
   const [difficulty, setDifficulty] = useState('easy');
   const [count, setCount] = useState(10);
+  const [timed, setTimed] = useState(false);
 
   const settings = [
     {
@@ -28,6 +30,7 @@ export default function ChainMathSettings() {
       selected: difficulty,
       onChange: setDifficulty,
     },
+    { ...TIMED_SETTING, selected: timed, onChange: setTimed },
     {
       label: '題數',
       options: [
@@ -45,7 +48,7 @@ export default function ChainMathSettings() {
       title="連鎖算數大戰"
       icon="➕"
       settings={settings}
-      onStart={() => navigate('/chain-math/play', { state: { operation, difficulty, count } })}
+      onStart={() => navigate('/chain-math/play', { state: { operation, difficulty, count, timed } })}
     />
   );
 }
