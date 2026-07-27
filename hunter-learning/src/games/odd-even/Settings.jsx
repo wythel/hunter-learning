@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SettingsPage from '../../components/SettingsPage';
+import { TIMED_SETTING } from '../../utils/timedSetting';
 
 export default function OddEvenSettings() {
   const navigate = useNavigate();
   const [mode,       setMode]       = useState('identify');
   const [difficulty, setDifficulty] = useState('easy');
   const [count,      setCount]      = useState(8);
+  const [timed,      setTimed]      = useState(false);
 
   const settings = [
     {
@@ -27,6 +29,7 @@ export default function OddEvenSettings() {
       selected: difficulty,
       onChange: setDifficulty,
     },
+    { ...TIMED_SETTING, selected: timed, onChange: setTimed },
     {
       label: '題數',
       options: [
@@ -43,7 +46,7 @@ export default function OddEvenSettings() {
       title="奇偶小偵探"
       icon="🔢"
       settings={settings}
-      onStart={() => navigate('/odd-even/play', { state: { mode, difficulty, count } })}
+      onStart={() => navigate('/odd-even/play', { state: { mode, difficulty, count, timed } })}
     />
   );
 }

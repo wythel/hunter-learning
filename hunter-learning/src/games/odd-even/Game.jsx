@@ -7,6 +7,8 @@ import ResultScreen from '../../components/ResultScreen';
 import { useGame } from './useGame';
 import { calculateStars, getResultTitle } from '../../utils/scoring';
 import OddEvenTeaching from './Teaching';
+import { useCountdown, TIMED_SECONDS } from '../../hooks/useCountdown';
+import TimeBar from '../../components/TimeBar';
 
 // ── Dot visualiser ────────────────────────────────────────────────────────────
 
@@ -224,11 +226,19 @@ function SortQuestion({ sortQ, selected, submitted, sortResult, onToggle, onSubm
 export default function OddEvenGame() {
   const location = useLocation();
   const navigate  = useNavigate();
-  const { mode = 'identify', difficulty = 'easy', count = 8, skipTeach = false } = location.state || {};
+  const { mode = 'identify', difficulty = 'easy', count = 8, skipTeach = false, timed = false } = location.state || {};
   const [teaching, setTeaching] = useState(!skipTeach);
 
   const game = useGame({ mode, difficulty, count });
-  const { currentQ, phase, stats, elapsedSec, number, feedback, handleAnswer, sortQ, selected, submitted, sortResult, handleToggle, handleSubmit } = game;
+  const { currentQ, phase, stats, elapsedSec, number, feedback, handleAnswer, sortQ, selected, submitted, sortResult, handleToggle, handleSubmit, handleTimeout } = game;
+
+  const { fraction } = useCountdown({
+    seconds: TIMED_SECONDS,
+    enabled: timed && !teaching && phase === 'playing',
+    paused: mode === 'identify' ? feedback !== null : submitted,
+    resetKey: currentQ,
+    onExpire: handleTimeout,
+  });
 
   if (teaching) {
     return <OddEvenTeaching mode={mode} onDone={() => setTeaching(false)} />;
@@ -245,7 +255,7 @@ export default function OddEvenGame() {
           { icon: '❌', label: '答錯', value: `${stats.wrong} 題` },
           { icon: '⏱️', label: '時間', value: `${elapsedSec} 秒` },
         ]}
-        onRetry={() => navigate('/odd-even/play', { state: { mode, difficulty, count, skipTeach: true } })}
+        onRetry={() => navigate('/odd-even/play', { state: { mode, difficulty, count, skipTeach: true, timed } })}
         onMenu={()  => navigate('/odd-even')}
         onLobby={() => navigate('/')}
       />
@@ -282,6 +292,8 @@ export default function OddEvenGame() {
                 style={{ height: '100%', background: 'linear-gradient(90deg, #12b886, #0dcfaa)', borderRadius: 6 }}
               />
             </div>
+
+            {timed && <TimeBar fraction={fraction} />}
 
             {/* Question */}
             <AnimatePresence mode="wait">

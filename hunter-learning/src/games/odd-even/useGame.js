@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { delay } from '../../utils/math';
 import { useSound } from '../../hooks/useSound';
 
 function rand(min, max) {
@@ -68,7 +69,7 @@ export function useGame({ mode, difficulty, count }) {
       setStats(s => ({ ...s, wrong: s.wrong + 1 }));
     }
 
-    await new Promise(r => setTimeout(r, isCorrect ? 750 : 1300));
+    await delay(isCorrect ? 750 : 1300);
 
     const nextQ = currentQ + 1;
     if (nextQ >= count) {
@@ -117,7 +118,7 @@ export function useGame({ mode, difficulty, count }) {
       setStats(s => ({ ...s, wrong: s.wrong + 1 }));
     }
 
-    await new Promise(r => setTimeout(r, 1400));
+    await delay(1400);
 
     const nextQ = currentQ + 1;
     if (nextQ >= count) {
@@ -133,6 +134,60 @@ export function useGame({ mode, difficulty, count }) {
     locked.current = false;
   }, [sortQ, selected, submitted, currentQ, count, maxNum, sound]);
 
+  // 限時模式:10 秒未作答 → 視同答錯。
+  // identify:feedback='wrong' 會顯示正確的奇/偶標籤。
+  // sort:視同送出且答錯,submitted 畫面會標出所有應選的卡片。
+  const handleTimeout = useCallback(async () => {
+    if (locked.current) return;
+
+    if (mode === 'identify') {
+      if (feedback !== null) return;
+      locked.current = true;
+
+      setFeedback('wrong');
+      sound.wrong();
+      setStats(s => ({ ...s, wrong: s.wrong + 1 }));
+
+      await delay(1300);
+
+      const nextQ = currentQ + 1;
+      if (nextQ >= count) {
+        sound.victory();
+        setPhase('result');
+      } else {
+        setCurrentQ(nextQ);
+        setNumber(rand(1, maxNum));
+        setFeedback(null);
+      }
+      locked.current = false;
+      return;
+    }
+
+    // sort mode
+    if (submitted) return;
+    locked.current = true;
+
+    setSubmitted(true);
+    setSortResult('wrong');
+    sound.wrong();
+    setStats(s => ({ ...s, wrong: s.wrong + 1 }));
+
+    await delay(1400);
+
+    const nextQ = currentQ + 1;
+    if (nextQ >= count) {
+      sound.victory();
+      setPhase('result');
+    } else {
+      setCurrentQ(nextQ);
+      setSortQ(generateSortQuestion(maxNum));
+      setSelected(new Set());
+      setSubmitted(false);
+      setSortResult(null);
+    }
+    locked.current = false;
+  }, [mode, feedback, submitted, currentQ, count, maxNum, sound]);
+
   const elapsedSec = Math.round((Date.now() - startTime.current) / 1000);
 
   return {
@@ -141,5 +196,6 @@ export function useGame({ mode, difficulty, count }) {
     number, feedback, handleAnswer,
     // mode 2
     sortQ, selected, submitted, sortResult, handleToggle, handleSubmit,
+    handleTimeout,
   };
 }
