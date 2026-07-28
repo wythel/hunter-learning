@@ -45,21 +45,25 @@ describe('Lobby page', () => {
     expect(screen.getByText('Hunter 學習遊戲')).toBeInTheDocument();
   });
 
-  it('renders all 6 game titles', () => {
+  it('renders all 10 game titles', () => {
     renderLobby();
     expect(screen.getByText('算數大戰')).toBeInTheDocument();
-    expect(screen.getByText('連鎖算數大戰')).toBeInTheDocument();
+    expect(screen.getByText('連鎖算數')).toBeInTheDocument();
     expect(screen.getByText('學看時鐘')).toBeInTheDocument();
-    expect(screen.getByText('英文單字配對')).toBeInTheDocument();
+    expect(screen.getByText('英文配對')).toBeInTheDocument();
     expect(screen.getByText('記憶翻牌')).toBeInTheDocument();
-    expect(screen.getByText('打地鼠算數')).toBeInTheDocument();
+    expect(screen.getByText('打地鼠')).toBeInTheDocument();
+    expect(screen.getByText('對稱遊戲')).toBeInTheDocument();
+    expect(screen.getByText('奇偶偵探')).toBeInTheDocument();
+    expect(screen.getByText('湊十大師')).toBeInTheDocument();
+    expect(screen.getByText('音符星球')).toBeInTheDocument();
   });
 
   it('renders game descriptions', () => {
     renderLobby();
-    expect(screen.getByText('答對題目，打敗怪物！')).toBeInTheDocument();
-    expect(screen.getByText('三個數字連續計算！')).toBeInTheDocument();
-    expect(screen.getByText('找出所有配對，考驗記憶力')).toBeInTheDocument();
+    expect(screen.getByText('打敗怪物！')).toBeInTheDocument();
+    expect(screen.getByText('連續計算！')).toBeInTheDocument();
+    expect(screen.getByText('考驗記憶力！')).toBeInTheDocument();
   });
 
   it('renders game icons', () => {
@@ -98,8 +102,8 @@ describe('Lobby page', () => {
     }
   });
 
-  it('renders 選一個遊戲開始吧 subtitle', () => {
+  it('renders 選一個遊戲，展開冒險 subtitle', () => {
     renderLobby();
-    expect(screen.getByText('選一個遊戲開始吧！')).toBeInTheDocument();
+    expect(screen.getByText('選一個遊戲，展開冒險！')).toBeInTheDocument();
   });
 });

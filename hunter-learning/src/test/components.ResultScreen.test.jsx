@@ -54,18 +54,21 @@ describe('ResultScreen', () => {
     expect(filled).toHaveLength(3);
   });
 
+  // 未達成的星星以 grayscale 濾鏡顯示（仍是 ⭐ 字元）
   it('renders mixed stars for stars=2', () => {
     renderWithMantine(<ResultScreen {...defaultProps} stars={2} />);
-    const filled = screen.getAllByText('⭐');
-    const empty = screen.getAllByText('☆');
-    expect(filled).toHaveLength(2);
-    expect(empty).toHaveLength(1);
+    const stars = screen.getAllByText('⭐');
+    expect(stars).toHaveLength(3);
+    const dimmed = stars.filter(s => s.style.filter.includes('grayscale'));
+    expect(dimmed).toHaveLength(1);
   });
 
   it('renders 0 filled stars for stars=0', () => {
     renderWithMantine(<ResultScreen {...defaultProps} stars={0} />);
-    const empty = screen.getAllByText('☆');
-    expect(empty).toHaveLength(3);
+    const stars = screen.getAllByText('⭐');
+    expect(stars).toHaveLength(3);
+    const dimmed = stars.filter(s => s.style.filter.includes('grayscale'));
+    expect(dimmed).toHaveLength(3);
   });
 
   it('renders all stat labels', () => {
@@ -82,24 +85,25 @@ describe('ResultScreen', () => {
     expect(screen.getByText('45 秒')).toBeInTheDocument();
   });
 
+  // 按鈕文字含 emoji 前綴（🔄 再玩一次 / ⚙️ 設定 / 🏠 大廳），用 regex 比對
   it('clicking retry calls onRetry', () => {
     const onRetry = vi.fn();
     renderWithMantine(<ResultScreen {...defaultProps} onRetry={onRetry} />);
-    fireEvent.click(screen.getByText('再玩一次'));
+    fireEvent.click(screen.getByText(/再玩一次/));
     expect(onRetry).toHaveBeenCalledOnce();
   });
 
   it('clicking 設定 calls onMenu', () => {
     const onMenu = vi.fn();
     renderWithMantine(<ResultScreen {...defaultProps} onMenu={onMenu} />);
-    fireEvent.click(screen.getByText('設定'));
+    fireEvent.click(screen.getByText(/設定/));
     expect(onMenu).toHaveBeenCalledOnce();
   });
 
   it('clicking 大廳 calls onLobby', () => {
     const onLobby = vi.fn();
     renderWithMantine(<ResultScreen {...defaultProps} onLobby={onLobby} />);
-    fireEvent.click(screen.getByText('大廳'));
+    fireEvent.click(screen.getByText(/大廳/));
     expect(onLobby).toHaveBeenCalledOnce();
   });
 });

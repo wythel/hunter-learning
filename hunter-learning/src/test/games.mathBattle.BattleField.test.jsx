@@ -58,7 +58,8 @@ describe('BattleField', () => {
     expect(hearts).toHaveLength(3);
   });
 
-  it('renders 1 filled + 2 dark hearts for HP=1', () => {
+  // 失去的愛心以 grayscale 濾鏡顯示（仍是 ❤️ 字元）
+  it('renders 1 filled + 2 dimmed hearts for HP=1', () => {
     renderWithMantine(
       <BattleField
         monsterSvg={monster.svg}
@@ -71,10 +72,10 @@ describe('BattleField', () => {
         monsterAttacking={false}
       />
     );
-    const redHearts = screen.getAllByText('❤️');
-    const darkHearts = screen.getAllByText('🖤');
-    expect(redHearts).toHaveLength(1);
-    expect(darkHearts).toHaveLength(2);
+    const hearts = screen.getAllByText('❤️');
+    expect(hearts).toHaveLength(3);
+    const dimmed = hearts.filter(h => h.style.filter.includes('grayscale'));
+    expect(dimmed).toHaveLength(2);
   });
 
   it('renders player SVG via dangerouslySetInnerHTML', () => {

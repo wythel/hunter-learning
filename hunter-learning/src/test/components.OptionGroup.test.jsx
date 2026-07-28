@@ -54,16 +54,13 @@ describe('OptionGroup', () => {
     expect(onChange).toHaveBeenCalledWith('hard');
   });
 
-  it('selected option has teal border (12b886)', () => {
+  // 選中邊框為 rgba(18,184,134,0.85)（teal 帶透明度）
+  it('selected option has teal border', () => {
     renderWithMantine(
       <OptionGroup label="難度" options={options} selected="easy" onChange={vi.fn()} />
     );
     const easyBtn = screen.getByText('簡單').closest('button');
-    // jsdom normalizes #12b886 → rgb(18, 184, 134)
-    expect(
-      easyBtn.style.border.includes('12b886') ||
-      easyBtn.style.border.includes('rgb(18, 184, 134)')
-    ).toBe(true);
+    expect(easyBtn.style.border).toMatch(/rgba?\(18, 184, 134/);
   });
 
   it('non-selected option does not have teal border', () => {
@@ -71,8 +68,7 @@ describe('OptionGroup', () => {
       <OptionGroup label="難度" options={options} selected="easy" onChange={vi.fn()} />
     );
     const hardBtn = screen.getByText('困難').closest('button');
-    expect(hardBtn.style.border).not.toContain('12b886');
-    expect(hardBtn.style.border).not.toContain('rgb(18, 184, 134)');
+    expect(hardBtn.style.border).not.toMatch(/rgba?\(18, 184, 134/);
   });
 
   it('works without icon and sub', () => {

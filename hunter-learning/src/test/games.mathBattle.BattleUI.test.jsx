@@ -11,28 +11,29 @@ function renderWithMantine(ui) {
 describe('BattleUI', () => {
   it('renders question text', () => {
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="" progress="第 1 / 10 題" onKey={vi.fn()} locked={false} />
+      <BattleUI question="3 + 4" answer="" currentQ={0} count={10} onKey={vi.fn()} locked={false} />
     );
     expect(screen.getByText(/3 \+ 4/)).toBeInTheDocument();
   });
 
-  it('shows _ when answer is empty', () => {
+  // 空答案顯示 ?（answer 與題目分屬不同 span）
+  it('shows ? when answer is empty', () => {
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="" progress="第 1 / 10 題" onKey={vi.fn()} locked={false} />
+      <BattleUI question="3 + 4" answer="" currentQ={0} count={10} onKey={vi.fn()} locked={false} />
     );
-    expect(screen.getByText(/=\s*_/)).toBeInTheDocument();
+    expect(screen.getByText('?')).toBeInTheDocument();
   });
 
   it('shows answer when not empty', () => {
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="7" progress="第 1 / 10 題" onKey={vi.fn()} locked={false} />
+      <BattleUI question="3 + 4" answer="57" currentQ={0} count={10} onKey={vi.fn()} locked={false} />
     );
-    expect(screen.getByText(/=\s*7/)).toBeInTheDocument();
+    expect(screen.getByText('57')).toBeInTheDocument();
   });
 
   it('renders all digit buttons 0-9', () => {
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="" progress="第 1 / 10 題" onKey={vi.fn()} locked={false} />
+      <BattleUI question="3 + 4" answer="" currentQ={0} count={10} onKey={vi.fn()} locked={false} />
     );
     for (let d = 0; d <= 9; d++) {
       expect(screen.getByText(String(d))).toBeInTheDocument();
@@ -41,14 +42,14 @@ describe('BattleUI', () => {
 
   it('renders ⌫ button', () => {
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="" progress="第 1 / 10 題" onKey={vi.fn()} locked={false} />
+      <BattleUI question="3 + 4" answer="" currentQ={0} count={10} onKey={vi.fn()} locked={false} />
     );
     expect(screen.getByText('⌫')).toBeInTheDocument();
   });
 
   it('renders 確定 button', () => {
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="" progress="第 1 / 10 題" onKey={vi.fn()} locked={false} />
+      <BattleUI question="3 + 4" answer="" currentQ={0} count={10} onKey={vi.fn()} locked={false} />
     );
     expect(screen.getByText('確定')).toBeInTheDocument();
   });
@@ -56,7 +57,7 @@ describe('BattleUI', () => {
   it('clicking digit calls onKey with correct value', () => {
     const onKey = vi.fn();
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="" progress="第 1 / 10 題" onKey={onKey} locked={false} />
+      <BattleUI question="3 + 4" answer="" currentQ={0} count={10} onKey={onKey} locked={false} />
     );
     fireEvent.click(screen.getByText('7'));
     expect(onKey).toHaveBeenCalledWith('7');
@@ -65,7 +66,7 @@ describe('BattleUI', () => {
   it('clicking ⌫ calls onKey("back")', () => {
     const onKey = vi.fn();
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="7" progress="第 1 / 10 題" onKey={onKey} locked={false} />
+      <BattleUI question="3 + 4" answer="7" currentQ={0} count={10} onKey={onKey} locked={false} />
     );
     fireEvent.click(screen.getByText('⌫'));
     expect(onKey).toHaveBeenCalledWith('back');
@@ -74,7 +75,7 @@ describe('BattleUI', () => {
   it('clicking 確定 calls onKey("ok")', () => {
     const onKey = vi.fn();
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="7" progress="第 1 / 10 題" onKey={onKey} locked={false} />
+      <BattleUI question="3 + 4" answer="7" currentQ={0} count={10} onKey={onKey} locked={false} />
     );
     fireEvent.click(screen.getByText('確定'));
     expect(onKey).toHaveBeenCalledWith('ok');
@@ -82,7 +83,7 @@ describe('BattleUI', () => {
 
   it('when locked=true, buttons are disabled', () => {
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="" progress="第 1 / 10 題" onKey={vi.fn()} locked={true} />
+      <BattleUI question="3 + 4" answer="" currentQ={0} count={10} onKey={vi.fn()} locked={true} />
     );
     const buttons = screen.getAllByRole('button');
     buttons.forEach(btn => {
@@ -92,7 +93,7 @@ describe('BattleUI', () => {
 
   it('renders progress text', () => {
     renderWithMantine(
-      <BattleUI question="3 + 4" answer="" progress="第 3 / 10 題" onKey={vi.fn()} locked={false} />
+      <BattleUI question="3 + 4" answer="" currentQ={2} count={10} onKey={vi.fn()} locked={false} />
     );
     expect(screen.getByText('第 3 / 10 題')).toBeInTheDocument();
   });
