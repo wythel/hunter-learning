@@ -45,7 +45,7 @@ describe('Lobby page', () => {
     expect(screen.getByText('Hunter 學習遊戲')).toBeInTheDocument();
   });
 
-  it('renders all 10 game titles', () => {
+  it('renders all 11 game titles', () => {
     renderLobby();
     expect(screen.getByText('算數大戰')).toBeInTheDocument();
     expect(screen.getByText('連鎖算數')).toBeInTheDocument();
@@ -57,6 +57,7 @@ describe('Lobby page', () => {
     expect(screen.getByText('奇偶偵探')).toBeInTheDocument();
     expect(screen.getByText('湊十大師')).toBeInTheDocument();
     expect(screen.getByText('音符星球')).toBeInTheDocument();
+    expect(screen.getByText('看圖認字')).toBeInTheDocument();
   });
 
   it('renders game descriptions', () => {
