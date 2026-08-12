@@ -11,6 +11,7 @@ vi.mock('../../src/hooks/useSound', () => ({
 }));
 
 import { useGame } from '../games/english-match/useGame';
+import { EN_CONFUSABLES } from '../utils/data/confusables';
 
 describe('useGame (english-match)', () => {
   it('initial: phase=playing, currentQ=0', () => {
@@ -35,6 +36,18 @@ describe('useGame (english-match)', () => {
     const { result } = renderHook(() => useGame({ topic: 'animals', count: 5 }));
     const { choices, correctIdx, question } = result.current;
     expect(choices[correctIdx].en).toBe(question.en);
+  });
+
+  it('hard mode: 4 choices, correct answer present, distractors from confusable bank', () => {
+    const { result } = renderHook(() => useGame({ topic: 'animals', count: 5, difficulty: 'hard' }));
+    const { choices, correctIdx, question } = result.current;
+    expect(choices).toHaveLength(4);
+    expect(choices[correctIdx].en).toBe(question.en);
+    const bank = EN_CONFUSABLES[question.en];
+    const distractors = choices.filter((_, i) => i !== correctIdx);
+    for (const c of distractors) {
+      expect(bank, `distractor "${c.en}" not in bank for "${question.en}"`).toContain(c.en);
+    }
   });
 
   it('handleChoice(correctIdx) → stats.correct increases', async () => {

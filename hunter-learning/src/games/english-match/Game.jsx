@@ -21,13 +21,13 @@ const TITLES = ['再試一次！', '多練習！', '繼續努力！', '全部答
 export default function EnglishGame() {
   const location = useLocation();
   const navigate  = useNavigate();
-  const { topic = 'animals', count = 10 } = location.state || {};
+  const { topic = 'animals', count = 10, difficulty = 'easy' } = location.state || {};
 
   const {
     question, choices, selected, feedback, correctIdx,
     currentQ, stats, phase, elapsedSec,
     handleChoice,
-  } = useGame({ topic, count });
+  } = useGame({ topic, count, difficulty });
 
   if (phase === 'result') {
     const total = stats.correct + stats.wrong;
@@ -41,7 +41,7 @@ export default function EnglishGame() {
           { icon: '❌', label: '答錯', value: `${stats.wrong} 題` },
           { icon: '⏱️', label: '時間', value: `${elapsedSec} 秒` },
         ]}
-        onRetry={() => navigate('/english-match/play', { state: { topic, count } })}
+        onRetry={() => navigate('/english-match/play', { state: { topic, count, difficulty } })}
         onMenu={() => navigate('/english-match')}
         onLobby={() => navigate('/')}
       />

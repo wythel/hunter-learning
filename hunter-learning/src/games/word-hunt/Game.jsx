@@ -19,13 +19,13 @@ export default function WordHuntGame() {
 function WordHuntGameInner() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { mode = 'en', count = 10, timed = false } = location.state || {};
+  const { mode = 'en', count = 10, timed = false, difficulty = 'easy' } = location.state || {};
 
   const {
     question, choices, selected, feedback, correctIdx,
     currentQ, stats, phase, elapsedSec, stars, title,
     handleChoice, handleTimeout,
-  } = useGame({ mode, count });
+  } = useGame({ mode, count, difficulty });
 
   const { fraction } = useCountdown({
     seconds: TIMED_SECONDS,
@@ -45,7 +45,7 @@ function WordHuntGameInner() {
           { icon: '❌', label: '答錯', value: `${stats.wrong} 題` },
           { icon: '⏱️', label: '時間', value: `${elapsedSec} 秒` },
         ]}
-        onRetry={() => navigate('/word-hunt/play', { state: { mode, count, timed } })}
+        onRetry={() => navigate('/word-hunt/play', { state: { mode, count, timed, difficulty } })}
         onMenu={() => navigate('/word-hunt')}
         onLobby={() => navigate('/')}
       />

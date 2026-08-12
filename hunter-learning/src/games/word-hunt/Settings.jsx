@@ -5,9 +5,10 @@ import { TIMED_SETTING } from '../../utils/timedSetting';
 
 export default function WordHuntSettings() {
   const navigate = useNavigate();
-  const [mode, setMode]   = useState('en');
-  const [count, setCount] = useState(10);
-  const [timed, setTimed] = useState(false);
+  const [mode, setMode]             = useState('en');
+  const [count, setCount]           = useState(10);
+  const [timed, setTimed]           = useState(false);
+  const [difficulty, setDifficulty] = useState('easy');
 
   const settings = [
     {
@@ -18,6 +19,15 @@ export default function WordHuntSettings() {
       ],
       selected: mode,
       onChange: setMode,
+    },
+    {
+      label: '難度',
+      options: [
+        { value: 'easy', icon: '🌱', text: '簡單', sub: '選項差異大' },
+        { value: 'hard', icon: '🔥', text: '困難', sub: '拼字相近' },
+      ],
+      selected: difficulty,
+      onChange: setDifficulty,
     },
     {
       label: '題數',
@@ -37,7 +47,7 @@ export default function WordHuntSettings() {
       title="看圖認字"
       icon="🔡"
       settings={settings}
-      onStart={() => navigate('/word-hunt/play', { state: { mode, count, timed } })}
+      onStart={() => navigate('/word-hunt/play', { state: { mode, count, timed, difficulty } })}
     />
   );
 }

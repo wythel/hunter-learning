@@ -24,6 +24,7 @@ vi.mock('../utils/math', async () => {
 });
 
 import { useGame } from '../games/word-hunt/useGame';
+import { EN_CONFUSABLES } from '../utils/data/confusables';
 
 describe('useGame (word-hunt)', () => {
   it('initial: phase=playing, currentQ=0, 4 choices', () => {
@@ -86,6 +87,18 @@ describe('useGame (word-hunt)', () => {
       expect(result.current.stats.correct).toBe(1);
     });
     expect(speakSpy).toHaveBeenCalledWith(question.label, 'zh-TW');
+  });
+
+  it('hard mode (en): 4 choices, correct answer present, distractors from confusable bank', () => {
+    const { result } = renderHook(() => useGame({ mode: 'en', count: 5, difficulty: 'hard' }));
+    const { choices, correctIdx, question } = result.current;
+    expect(choices).toHaveLength(4);
+    expect(choices[correctIdx].id).toBe(question.id);
+    const bank = EN_CONFUSABLES[question.label];
+    const distractors = choices.filter((_, i) => i !== correctIdx);
+    for (const c of distractors) {
+      expect(bank, `distractor "${c.label}" not in bank for "${question.label}"`).toContain(c.label);
+    }
   });
 
   it('handleTimeout counts as wrong and advances', async () => {

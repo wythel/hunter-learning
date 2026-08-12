@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { shuffle } from '../../utils/math';
 import { useSound } from '../../hooks/useSound';
+import { pickHardDistractors } from '../../utils/data/confusables';
 import { WORDS } from '../../utils/data/words';
 
 function buildPool(topic) {
@@ -8,18 +9,29 @@ function buildPool(topic) {
   return WORDS[topic] || WORDS.animals;
 }
 
-function buildChoices(question, pool) {
+function buildChoices(question, pool, difficulty) {
+  if (difficulty === 'hard') {
+    const hard = pickHardDistractors(question.en, 3)
+      .map(w => ({ en: w, zh: '', emoji: null }));
+    if (hard.length < 3) {
+      const extra = shuffle(pool.filter(w => w.en !== question.en))
+        .filter(w => !hard.some(h => h.en === w.en))
+        .slice(0, 3 - hard.length);
+      hard.push(...extra);
+    }
+    return shuffle([question, ...hard.slice(0, 3)]);
+  }
   const others = pool.filter(w => w.en !== question.en);
   const wrong3 = shuffle(others).slice(0, 3);
   return shuffle([question, ...wrong3]);
 }
 
-export function useGame({ topic, count }) {
+export function useGame({ topic, count, difficulty = 'easy' }) {
   const pool      = useRef(buildPool(topic));
   const questions = useRef(shuffle(pool.current).slice(0, count));
 
   const [currentQ, setCurrentQ]   = useState(0);
-  const [choices, setChoices]     = useState(() => buildChoices(questions.current[0], pool.current));
+  const [choices, setChoices]     = useState(() => buildChoices(questions.current[0], pool.current, difficulty));
   const [selected, setSelected]   = useState(null); // index
   const [feedback, setFeedback]   = useState(null); // 'correct' | 'wrong'
   const [phase, setPhase]         = useState('playing');
@@ -54,13 +66,13 @@ export function useGame({ topic, count }) {
       setPhase('result');
     } else {
       setCurrentQ(nextQ);
-      setChoices(buildChoices(questions.current[nextQ], pool.current));
+      setChoices(buildChoices(questions.current[nextQ], pool.current, difficulty));
       setSelected(null);
       setFeedback(null);
     }
 
     locked.current = false;
-  }, [choices, question, currentQ, count, feedback, sound]);
+  }, [choices, question, currentQ, count, difficulty, feedback, sound]);
 
   const correctIdx = choices.findIndex(c => c.en === question.en);
   const elapsedSec = Math.round((Date.now() - startTime.current) / 1000);

@@ -4,8 +4,9 @@ import SettingsPage from '../../components/SettingsPage';
 
 export default function EnglishSettings() {
   const navigate = useNavigate();
-  const [topic, setTopic] = useState('animals');
-  const [count, setCount] = useState(10);
+  const [topic, setTopic]           = useState('animals');
+  const [count, setCount]           = useState(10);
+  const [difficulty, setDifficulty] = useState('easy');
 
   const settings = [
     {
@@ -19,6 +20,15 @@ export default function EnglishSettings() {
       ],
       selected: topic,
       onChange: setTopic,
+    },
+    {
+      label: '難度',
+      options: [
+        { value: 'easy', icon: '🌱', text: '簡單', sub: '選項差異大' },
+        { value: 'hard', icon: '🔥', text: '困難', sub: '拼字相近' },
+      ],
+      selected: difficulty,
+      onChange: setDifficulty,
     },
     {
       label: '題數',
@@ -37,7 +47,7 @@ export default function EnglishSettings() {
       title="英文單字配對"
       icon="🔤"
       settings={settings}
-      onStart={() => navigate('/english-match/play', { state: { topic, count } })}
+      onStart={() => navigate('/english-match/play', { state: { topic, count, difficulty } })}
     />
   );
 }
