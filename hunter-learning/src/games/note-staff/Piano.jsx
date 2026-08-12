@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 
 const WHITE_W = 28;
-const WHITE_H = 110;
+const WHITE_H = 148;
 const BLACK_W = 18;
-const BLACK_H = 68;
+const BLACK_H = 92;
 
 /**
  * Piano renders a tappable keyboard.
@@ -38,7 +38,7 @@ export default function Piano({
     <svg
       viewBox={`0 0 ${width} ${height}`}
       width="100%"
-      style={{ maxWidth: width, display: 'block', margin: '0 auto' }}
+      style={{ display: 'block', margin: '0 auto' }}
     >
       {/* White keys */}
       {whites.map((w, i) => {
