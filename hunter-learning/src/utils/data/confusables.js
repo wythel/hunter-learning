@@ -93,6 +93,20 @@ export const EN_CONFUSABLES = {
   tooth:  ['booth', 'truth', 'teeth', 'tools'],
   tongue: ['tongs', 'tone', 'tango'],
   finger: ['singer', 'ginger', 'linger', 'finder', 'fringe'],
+
+  // 動作（動詞）
+  run:   ['ran', 'rug', 'sun', 'bun', 'gun'],
+  walk:  ['talk', 'wall', 'chalk', 'stalk'],
+  swim:  ['slim', 'swam', 'skim', 'swum'],
+  sleep: ['sheep', 'sweep', 'sleet', 'steep', 'sleek'],
+  cry:   ['dry', 'fry', 'pry', 'try'],
+  dance: ['dunce', 'lance', 'prance', 'chance'],
+  sing:  ['sting', 'king', 'ring', 'wing'],
+  cook:  ['cool', 'cork', 'hook', 'rook'],
+  clap:  ['clip', 'flap', 'clam', 'slap'],
+  wave:  ['cave', 'wove', 'wade', 'wage'],
+  write: ['white', 'wrote', 'wrist', 'rite'],
+  climb: ['clime', 'chimp', 'crimp', 'clamp'],
 };
 
 // 挑 n 個與 word 相近的干擾字：小寫查表、排除答案本身、去重、洗牌後取前 n 個。
