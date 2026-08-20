@@ -38,3 +38,30 @@ describe('useGame (make-ten) timed mode', () => {
     expect(result.current.phase).toBe('playing');
   });
 });
+
+describe('useGame (make-ten) 訂正 recording', () => {
+  it('choose mode: wrong answer records the question', async () => {
+    const { result } = renderHook(() => useGame({ mode: 'choose', count: 8 }));
+    const q = result.current.question;
+    const wrongChoice = q.choices.find(c => c !== q.correct);
+    await act(async () => { await result.current.handleAnswer(wrongChoice); });
+    expect(result.current.stats.wrong).toBe(1);
+    expect(result.current.wrong).toHaveLength(1);
+    expect(result.current.wrong[0].given).toBe(q.given);
+    expect(result.current.wrong[0].correct).toBe(q.correct);
+  });
+
+  it('choose mode: timeout records the question', async () => {
+    const { result } = renderHook(() => useGame({ mode: 'choose', count: 8 }));
+    const q = result.current.question;
+    await act(async () => { await result.current.handleTimeout(); });
+    expect(result.current.wrong).toHaveLength(1);
+    expect(result.current.wrong[0].correct).toBe(q.correct);
+  });
+
+  it('match mode: records no wrong questions', async () => {
+    const { result } = renderHook(() => useGame({ mode: 'match', count: 4 }));
+    await act(async () => { await result.current.handleTimeout(); });
+    expect(result.current.wrong).toHaveLength(0);
+  });
+});

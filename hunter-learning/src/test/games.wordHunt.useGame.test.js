@@ -131,3 +131,41 @@ describe('useGame (word-hunt)', () => {
     });
   });
 });
+
+describe('useGame (word-hunt) 訂正 recording', () => {
+  it('wrong answer records the question + choices for 訂正', async () => {
+    const { result } = renderHook(() => useGame({ mode: 'en', count: 5 }));
+    const { correctIdx, question } = result.current;
+    const wrongIdx = correctIdx === 0 ? 1 : 0;
+    await act(async () => {
+      result.current.handleChoice(wrongIdx);
+    });
+    await waitFor(() => expect(result.current.stats.wrong).toBe(1));
+    expect(result.current.wrong).toHaveLength(1);
+    expect(result.current.wrong[0].question.id).toBe(question.id);
+    expect(result.current.wrong[0].choices).toHaveLength(4);
+    const item = result.current.wrong[0];
+    expect(item.choices[item.correctIdx].id).toBe(question.id);
+  });
+
+  it('correct answer records nothing', async () => {
+    const { result } = renderHook(() => useGame({ mode: 'en', count: 5 }));
+    const { correctIdx } = result.current;
+    await act(async () => {
+      result.current.handleChoice(correctIdx);
+    });
+    await waitFor(() => expect(result.current.stats.correct).toBe(1));
+    expect(result.current.wrong).toHaveLength(0);
+  });
+
+  it('timeout also records the question', async () => {
+    const { result } = renderHook(() => useGame({ mode: 'en', count: 5 }));
+    const { question } = result.current;
+    await act(async () => {
+      result.current.handleTimeout();
+    });
+    await waitFor(() => expect(result.current.stats.wrong).toBe(1));
+    expect(result.current.wrong).toHaveLength(1);
+    expect(result.current.wrong[0].question.id).toBe(question.id);
+  });
+});

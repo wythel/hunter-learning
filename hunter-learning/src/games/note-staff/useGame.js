@@ -56,6 +56,7 @@ export function useGame({
   const currentQRef = useRef(0);  currentQRef.current = currentQ;
   const notesRef    = useRef(notes); notesRef.current = notes;
   const noteIdxRef  = useRef(0);  noteIdxRef.current = noteIdx;
+  const wrongRef    = useRef([]); // 答錯的音符(供結算頁訂正)
 
   const currentNote = notes[noteIdx];
 
@@ -77,6 +78,7 @@ export function useGame({
       sound.playNote(cur.midi, 0.55);
     } else {
       sound.wrong();
+      wrongRef.current.push({ note: cur });
     }
 
     setStats(s => ({
@@ -150,5 +152,6 @@ export function useGame({
     note: currentNote,
     feedback, wrongValue, handleAnswer, handleTimeout,
     stars, title, elapsedSec,
+    wrong: wrongRef.current,
   };
 }

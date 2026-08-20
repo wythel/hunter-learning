@@ -47,3 +47,30 @@ describe('useGame (odd-even) timed mode', () => {
     expect(result.current.stats.correct).toBe(1);
   });
 });
+
+describe('useGame (odd-even) 訂正 recording', () => {
+  it('identify mode: wrong answer records the number', async () => {
+    const { result } = renderHook(() => useGame({ mode: 'identify', difficulty: 'easy', count: 8 }));
+    const n = result.current.number;
+    const isOdd = n % 2 === 1;
+    await act(async () => { await result.current.handleAnswer(isOdd ? 'even' : 'odd'); });
+    expect(result.current.stats.wrong).toBe(1);
+    expect(result.current.wrong).toHaveLength(1);
+    expect(result.current.wrong[0].number).toBe(n);
+  });
+
+  it('identify mode: correct answer records nothing', async () => {
+    const { result } = renderHook(() => useGame({ mode: 'identify', difficulty: 'easy', count: 8 }));
+    const n = result.current.number;
+    const isOdd = n % 2 === 1;
+    await act(async () => { await result.current.handleAnswer(isOdd ? 'odd' : 'even'); });
+    expect(result.current.wrong).toHaveLength(0);
+  });
+
+  it('sort mode: records no wrong questions', async () => {
+    const { result } = renderHook(() => useGame({ mode: 'sort', difficulty: 'easy', count: 8 }));
+    await act(async () => { await result.current.handleTimeout(); });
+    expect(result.current.stats.wrong).toBe(1);
+    expect(result.current.wrong).toHaveLength(0);
+  });
+});

@@ -46,6 +46,9 @@ export function useGame({ mode, difficulty, count }) {
   // Mode 1 state
   const [number,   setNumber]   = useState(() => rand(1, maxNum));
   const [feedback, setFeedback] = useState(null); // null | 'correct' | 'wrong'
+  const numberRef = useRef(number);
+  numberRef.current = number;
+  const wrongRef = useRef([]); // 答錯的題目(供結算頁訂正,僅 identify 模式)
 
   // Mode 2 state
   const [sortQ,     setSortQ]     = useState(() => generateSortQuestion(maxNum));
@@ -67,6 +70,7 @@ export function useGame({ mode, difficulty, count }) {
     } else {
       sound.wrong();
       setStats(s => ({ ...s, wrong: s.wrong + 1 }));
+      wrongRef.current.push({ number: numberRef.current });
     }
 
     await delay(isCorrect ? 750 : 1300);
@@ -147,6 +151,7 @@ export function useGame({ mode, difficulty, count }) {
       setFeedback('wrong');
       sound.wrong();
       setStats(s => ({ ...s, wrong: s.wrong + 1 }));
+      wrongRef.current.push({ number: numberRef.current });
 
       await delay(1300);
 
@@ -197,5 +202,6 @@ export function useGame({ mode, difficulty, count }) {
     // mode 2
     sortQ, selected, submitted, sortResult, handleToggle, handleSubmit,
     handleTimeout,
+    wrong: wrongRef.current,
   };
 }

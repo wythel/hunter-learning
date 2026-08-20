@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import StarField from '../../components/StarField';
@@ -10,6 +10,9 @@ import { useGame } from './useGame';
 import { SOLFEGE, SOLFEGE_COLOR, keyboardForClef } from './notes';
 import TimeBar from '../../components/TimeBar';
 import { useCountdown, TIMED_SECONDS } from '../../hooks/useCountdown';
+import { useReviewQueue } from '../../hooks/useReview';
+import { useSound } from '../../hooks/useSound';
+import { delay } from '../../utils/math';
 
 const ACCENT = '#818cf8';
 const COUNT  = 10;
@@ -92,6 +95,171 @@ function PianoPad({ note, feedback, wrongValue, onAnswer }) {
   );
 }
 
+// ── 訂正錯題(逐個音符重做直到答對) ─────────────────────────────────────────
+
+// 單一音符的訂正卡。以 key={index} 重新掛載,免用 effect 重置狀態。
+function NoteReviewQuestion({ note, index, total, answerMode, onCorrect, onExit }) {
+  const sound = useSound();
+  const [feedback, setFeedback]     = useState(null); // null | 'correct' | 'wrong'
+  const [wrongValue, setWrongValue] = useState(null);
+  const locked = useRef(false);
+
+  const handleAnswer = useCallback(async (value) => {
+    if (locked.current || feedback) return;
+    const isCorrect = answerMode === 'name' ? value === note.solfege : value === note.midi;
+
+    if (isCorrect) {
+      locked.current = true;
+      setFeedback('correct');
+      sound.playNote(note.midi, 0.55);
+      await delay(650);
+      onCorrect();
+    } else {
+      setFeedback('wrong');
+      setWrongValue(value);
+      sound.wrong();
+      await delay(1100);
+      setFeedback(null);
+      setWrongValue(null);
+    }
+  }, [note, feedback, answerMode, onCorrect, sound]);
+
+  return (
+    <div style={{
+      background: 'rgba(10,22,38,0.93)',
+      border: '1px solid rgba(129,140,248,0.22)',
+      borderRadius: 26,
+      padding: '20px 18px',
+      backdropFilter: 'blur(18px)',
+      boxShadow: `0 8px 48px rgba(0,0,0,0.45), 0 0 60px ${ACCENT}1a, 0 1px 0 rgba(255,255,255,0.04) inset`,
+    }}>
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: 12 }}>
+        <div style={{ fontSize: 15, fontWeight: 900, color: '#ffa94d' }}>✏️ 訂正錯題</div>
+        <div style={{ fontSize: 12, color: 'rgba(139,163,190,0.7)', fontWeight: 700, marginTop: 4 }}>
+          第 {index + 1} / {total} 個音符
+        </div>
+      </div>
+
+      {/* Staff */}
+      <div style={{
+        background: 'rgba(8,16,28,0.6)',
+        border: '1px solid rgba(129,140,248,0.18)',
+        borderRadius: 18,
+        padding: '12px 10px',
+        marginBottom: 14,
+      }}>
+        <Staff
+          clef={note.clef}
+          notes={[note]}
+          statuses={[feedback === 'correct' ? 'correct' : feedback === 'wrong' ? 'wrong' : 'current']}
+          accent={ACCENT}
+        />
+        <div style={{
+          textAlign: 'center', fontSize: 12, fontWeight: 700,
+          color: 'rgba(139,163,190,0.55)', marginTop: 4,
+        }}>
+          {note.clef === 'treble' ? '高音譜 𝄞' : '低音譜 𝄢'}
+        </div>
+      </div>
+
+      {/* Answer pad */}
+      {answerMode === 'name' ? (
+        <NamePad
+          correctSolfege={note.solfege}
+          feedback={feedback}
+          wrongValue={wrongValue}
+          onAnswer={handleAnswer}
+        />
+      ) : (
+        <PianoPad
+          note={note}
+          feedback={feedback}
+          wrongValue={wrongValue}
+          onAnswer={handleAnswer}
+        />
+      )}
+
+      <button
+        onClick={onExit}
+        style={{
+          marginTop: 14, width: '100%',
+          background: 'none', border: 'none', cursor: 'pointer',
+          color: 'rgba(139,163,190,0.6)', fontSize: 13, fontWeight: 700,
+          padding: '4px 0', fontFamily: 'inherit',
+        }}
+      >
+        略過訂正，返回結算
+      </button>
+    </div>
+  );
+}
+
+function NoteReview({ items, answerMode, onExit }) {
+  const sound = useSound();
+  const { current, index, total, finished, advance } = useReviewQueue(items);
+
+  useEffect(() => {
+    if (finished) sound.victory();
+  }, [finished, sound]);
+
+  return (
+    <div style={{
+      minHeight: '100dvh',
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      padding: '20px 20px',
+      paddingTop: 'max(20px, env(safe-area-inset-top))',
+      paddingBottom: 'max(20px, env(safe-area-inset-bottom))',
+      position: 'relative',
+    }}>
+      <StarField />
+      <div style={{ width: '100%', maxWidth: 420, position: 'relative', zIndex: 1 }}>
+        {finished ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+            style={{ textAlign: 'center' }}
+          >
+            <div style={{ fontSize: 64, lineHeight: 1 }}>🎉</div>
+            <div style={{
+              fontSize: 24, fontWeight: 900, marginTop: 14,
+              background: 'linear-gradient(135deg,#ffd700,#ffaa00)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}>
+              全部訂正完成！
+            </div>
+            <button
+              onClick={onExit}
+              style={{
+                marginTop: 24, width: '100%', padding: '15px 0',
+                borderRadius: 16, border: 'none',
+                background: 'linear-gradient(135deg, #12b886, #0ca678)',
+                color: '#fff', fontSize: 17, fontWeight: 900,
+                cursor: 'pointer', fontFamily: 'inherit',
+                boxShadow: '0 4px 20px rgba(18,184,134,0.4)',
+              }}
+            >
+              ← 返回結算
+            </button>
+          </motion.div>
+        ) : (
+          <NoteReviewQuestion
+            key={index}
+            note={current.note}
+            index={index}
+            total={total}
+            answerMode={answerMode}
+            onCorrect={advance}
+            onExit={onExit}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Main Game ────────────────────────────────────────────────────────────────
 
 // Outer shell: forces the inner component to fully remount whenever the user
@@ -114,11 +282,12 @@ function NoteStaffGameInner() {
   } = location.state || {};
 
   const [teaching, setTeaching] = useState(!skipTeach);
+  const [reviewing, setReviewing] = useState(false);
 
   const {
     phase, stats, currentQ, notes, noteIdx, statuses, note,
     feedback, wrongValue,
-    handleAnswer, handleTimeout, stars, title, elapsedSec,
+    handleAnswer, handleTimeout, stars, title, elapsedSec, wrong,
   } = useGame({ clefMode, answerMode, noteCount, count: COUNT });
 
   const { fraction } = useCountdown({
@@ -134,6 +303,9 @@ function NoteStaffGameInner() {
   }
 
   if (phase === 'result') {
+    if (reviewing) {
+      return <NoteReview items={wrong} answerMode={answerMode} onExit={() => setReviewing(false)} />;
+    }
     const unit = noteCount > 1 ? '音' : '題';
     return (
       <ResultScreen
@@ -147,6 +319,7 @@ function NoteStaffGameInner() {
         onRetry={() => navigate('/note-staff/play', { state: { clefMode, answerMode, noteCount, skipTeach: true, timed } })}
         onMenu={() => navigate('/note-staff')}
         onLobby={() => navigate('/')}
+        onReview={wrong.length ? () => setReviewing(true) : undefined}
       />
     );
   }

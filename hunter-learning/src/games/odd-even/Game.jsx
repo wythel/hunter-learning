@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Stack, Text, Title, Group } from '@mantine/core';
 import StarField from '../../components/StarField';
 import ResultScreen from '../../components/ResultScreen';
+import ChoiceReview from '../../components/ChoiceReview';
 import { useGame } from './useGame';
 import { calculateStars, getResultTitle } from '../../utils/scoring';
 import OddEvenTeaching from './Teaching';
@@ -228,9 +229,10 @@ export default function OddEvenGame() {
   const navigate  = useNavigate();
   const { mode = 'identify', difficulty = 'easy', count = 8, skipTeach = false, timed = false } = location.state || {};
   const [teaching, setTeaching] = useState(!skipTeach);
+  const [reviewing, setReviewing] = useState(false);
 
   const game = useGame({ mode, difficulty, count });
-  const { currentQ, phase, stats, elapsedSec, number, feedback, handleAnswer, sortQ, selected, submitted, sortResult, handleToggle, handleSubmit, handleTimeout } = game;
+  const { currentQ, phase, stats, elapsedSec, number, feedback, handleAnswer, sortQ, selected, submitted, sortResult, handleToggle, handleSubmit, handleTimeout, wrong } = game;
 
   const { fraction } = useCountdown({
     seconds: TIMED_SECONDS,
@@ -246,6 +248,26 @@ export default function OddEvenGame() {
 
   if (phase === 'result') {
     const stars = calculateStars(stats.correct, stats.wrong);
+    if (reviewing) {
+      return (
+        <ChoiceReview
+          items={wrong}
+          onExit={() => setReviewing(false)}
+          renderPrompt={(item) => (
+            <Stack gap={12} align="center">
+              <Text fw={900} style={{ fontSize: 64, lineHeight: 1, color: '#e6edf3' }}>{item.number}</Text>
+              <div style={{ background: 'rgba(22,27,34,0.7)', border: '1px solid rgba(48,54,61,0.6)', borderRadius: 16, padding: '12px 20px' }}>
+                <DotVisual num={item.number} />
+              </div>
+            </Stack>
+          )}
+          getChoices={(item) => [
+            { key: 'odd',  label: '奇數', correct: item.number % 2 === 1 },
+            { key: 'even', label: '偶數', correct: item.number % 2 === 0 },
+          ]}
+        />
+      );
+    }
     return (
       <ResultScreen
         title={getResultTitle(stars)}
@@ -258,6 +280,7 @@ export default function OddEvenGame() {
         onRetry={() => navigate('/odd-even/play', { state: { mode, difficulty, count, skipTeach: true, timed } })}
         onMenu={()  => navigate('/odd-even')}
         onLobby={() => navigate('/')}
+        onReview={mode === 'identify' && wrong.length ? () => setReviewing(true) : undefined}
       />
     );
   }

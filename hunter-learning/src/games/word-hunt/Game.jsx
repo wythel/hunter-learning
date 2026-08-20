@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Stack, Text, Title } from '@mantine/core';
 import ResultScreen from '../../components/ResultScreen';
+import ChoiceReview from '../../components/ChoiceReview';
 import StarField from '../../components/StarField';
 import TimeBar from '../../components/TimeBar';
 import { useCountdown, TIMED_SECONDS } from '../../hooks/useCountdown';
@@ -21,10 +23,12 @@ function WordHuntGameInner() {
   const navigate = useNavigate();
   const { mode = 'en', count = 10, timed = false, difficulty = 'easy' } = location.state || {};
 
+  const [reviewing, setReviewing] = useState(false);
+
   const {
     question, choices, selected, feedback, correctIdx,
     currentQ, stats, phase, elapsedSec, stars, title,
-    handleChoice, handleTimeout,
+    handleChoice, handleTimeout, wrong,
   } = useGame({ mode, count, difficulty });
 
   const { fraction } = useCountdown({
@@ -36,6 +40,35 @@ function WordHuntGameInner() {
   });
 
   if (phase === 'result') {
+    if (reviewing) {
+      return (
+        <ChoiceReview
+          items={wrong}
+          onExit={() => setReviewing(false)}
+          renderPrompt={(item) => (
+            <>
+              {item.question.img ? (
+                <img
+                  src={item.question.img}
+                  alt=""
+                  style={{ width: 96, height: 96, objectFit: 'contain', margin: '0 auto', display: 'block' }}
+                />
+              ) : (
+                <Text style={{ fontSize: 72, lineHeight: 1 }}>{item.question.emoji}</Text>
+              )}
+              <Title order={3} mt={8} style={{ color: 'rgba(139,163,190,0.65)', fontSize: 14, fontWeight: 700 }}>
+                這是什麼？
+              </Title>
+            </>
+          )}
+          getChoices={(item) => item.choices.map((c, i) => ({
+            key: c.id,
+            label: c.label,
+            correct: i === item.correctIdx,
+          }))}
+        />
+      );
+    }
     return (
       <ResultScreen
         title={title}
@@ -48,6 +81,7 @@ function WordHuntGameInner() {
         onRetry={() => navigate('/word-hunt/play', { state: { mode, count, timed, difficulty } })}
         onMenu={() => navigate('/word-hunt')}
         onLobby={() => navigate('/')}
+        onReview={wrong.length ? () => setReviewing(true) : undefined}
       />
     );
   }

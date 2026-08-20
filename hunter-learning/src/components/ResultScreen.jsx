@@ -18,7 +18,7 @@ const starVariants = {
   }),
 };
 
-export default function ResultScreen({ title, stars, stats, onRetry, onMenu, onLobby }) {
+export default function ResultScreen({ title, stars, stats, onRetry, onMenu, onLobby, onReview }) {
   const tier = TIER[Math.min(stars, 3)] ?? TIER[0];
 
   return (
@@ -137,6 +137,24 @@ export default function ResultScreen({ title, stars, stats, onRetry, onMenu, onL
                 }} />
                 🔄 再玩一次
               </motion.button>
+
+              {/* 訂正錯題 — 只有真的有答錯時才顯示 */}
+              {onReview && (
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={onReview}
+                  style={{
+                    width: '100%', padding: '14px 0',
+                    borderRadius: 16,
+                    background: 'rgba(255,169,77,0.12)',
+                    border: '1.5px solid rgba(255,169,77,0.6)',
+                    color: '#ffa94d', fontSize: 16, fontWeight: 800,
+                    cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  ✏️ 訂正錯題
+                </motion.button>
+              )}
 
               {/* Secondary row */}
               <div style={{ display: 'flex', gap: 10 }}>

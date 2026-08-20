@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Stack, Text, Title } from '@mantine/core';
 import GameLayout from '../../components/GameLayout';
 import ResultScreen from '../../components/ResultScreen';
+import ChoiceReview from '../../components/ChoiceReview';
 import StarField from '../../components/StarField';
 import { useGame } from './useGame';
 
@@ -23,15 +25,38 @@ export default function EnglishGame() {
   const navigate  = useNavigate();
   const { topic = 'animals', count = 10, difficulty = 'easy' } = location.state || {};
 
+  const [reviewing, setReviewing] = useState(false);
+
   const {
     question, choices, selected, feedback, correctIdx,
     currentQ, stats, phase, elapsedSec,
-    handleChoice,
+    handleChoice, wrong,
   } = useGame({ topic, count, difficulty });
 
   if (phase === 'result') {
     const total = stats.correct + stats.wrong;
     const stars = starsFromStats(stats.wrong, total);
+    if (reviewing) {
+      return (
+        <ChoiceReview
+          items={wrong}
+          onExit={() => setReviewing(false)}
+          renderPrompt={(item) => (
+            <>
+              <Text style={{ fontSize: 64, lineHeight: 1 }}>{item.question.emoji}</Text>
+              <Title order={3} mt={8} style={{ color: '#e6edf3', fontSize: 24, fontWeight: 800 }}>
+                {item.question.zh}
+              </Title>
+            </>
+          )}
+          getChoices={(item) => item.choices.map((c, i) => ({
+            key: c.en,
+            label: c.en,
+            correct: i === item.correctIdx,
+          }))}
+        />
+      );
+    }
     return (
       <ResultScreen
         title={TITLES[stars]}
@@ -44,6 +69,7 @@ export default function EnglishGame() {
         onRetry={() => navigate('/english-match/play', { state: { topic, count, difficulty } })}
         onMenu={() => navigate('/english-match')}
         onLobby={() => navigate('/')}
+        onReview={wrong.length ? () => setReviewing(true) : undefined}
       />
     );
   }

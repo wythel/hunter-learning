@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import StarField from '../../components/StarField';
 import ResultScreen from '../../components/ResultScreen';
+import ChoiceReview from '../../components/ChoiceReview';
 import Teaching from './Teaching';
 import { useGame } from './useGame';
 import { useCountdown, TIMED_SECONDS } from '../../hooks/useCountdown';
@@ -280,11 +281,12 @@ export default function MakeTenGame() {
   const timedActive = timed && mode === 'choose';
 
   const [teaching, setTeaching] = useState(!skipTeach);
+  const [reviewing, setReviewing] = useState(false);
 
   const {
     question, currentQ, feedback, handleAnswer, handleTimeout,
     tiles, selId, wrongPair, matchCount, handleTap,
-    phase, stats, stars, title, elapsedSec,
+    phase, stats, stars, title, elapsedSec, wrong,
   } = useGame({ mode, count });
 
   const { fraction } = useCountdown({
@@ -300,6 +302,35 @@ export default function MakeTenGame() {
   }
 
   if (phase === 'result') {
+    if (reviewing) {
+      return (
+        <ChoiceReview
+          items={wrong}
+          onExit={() => setReviewing(false)}
+          renderPrompt={(item) => (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 44, fontWeight: 900, color: '#e6edf3', lineHeight: 1 }}>{item.given}</span>
+                <span style={{ fontSize: 32, fontWeight: 700, color: 'rgba(139,163,190,0.5)' }}>+</span>
+                <span style={{ fontSize: 44, fontWeight: 900, color: '#ff9f43', lineHeight: 1 }}>?</span>
+                <span style={{ fontSize: 32, fontWeight: 700, color: 'rgba(139,163,190,0.5)' }}>=</span>
+                <span style={{ fontSize: 44, fontWeight: 900, color: '#e6edf3', lineHeight: 1 }}>10</span>
+              </div>
+              <TenFrame given={item.given} size={30} />
+              <div style={{ fontSize: 12, color: 'rgba(139,163,190,0.45)', fontWeight: 700 }}>
+                還差幾個才能湊到10？
+              </div>
+            </div>
+          )}
+          getChoices={(item) => item.choices.map(v => ({
+            key: v,
+            label: v,
+            correct: v === item.correct,
+          }))}
+        />
+      );
+    }
+
     const resultStats = mode === 'choose'
       ? [
           { icon: '✅', label: '答對', value: `${stats.correct} 題` },
@@ -320,6 +351,7 @@ export default function MakeTenGame() {
         onRetry={() => navigate('/make-ten/play', { state: { mode, count, skipTeach: true, timed } })}
         onMenu={() => navigate('/make-ten')}
         onLobby={() => navigate('/')}
+        onReview={mode === 'choose' && wrong.length ? () => setReviewing(true) : undefined}
       />
     );
   }

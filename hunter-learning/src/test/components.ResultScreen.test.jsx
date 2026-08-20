@@ -106,4 +106,22 @@ describe('ResultScreen', () => {
     fireEvent.click(screen.getByText(/大廳/));
     expect(onLobby).toHaveBeenCalledOnce();
   });
+
+  // 訂正錯題按鈕:只有傳入 onReview 時才出現
+  it('does not render 訂正錯題 button when onReview is not provided', () => {
+    renderWithMantine(<ResultScreen {...defaultProps} />);
+    expect(screen.queryByText(/訂正錯題/)).not.toBeInTheDocument();
+  });
+
+  it('renders 訂正錯題 button when onReview is provided', () => {
+    renderWithMantine(<ResultScreen {...defaultProps} onReview={vi.fn()} />);
+    expect(screen.getByText(/訂正錯題/)).toBeInTheDocument();
+  });
+
+  it('clicking 訂正錯題 calls onReview', () => {
+    const onReview = vi.fn();
+    renderWithMantine(<ResultScreen {...defaultProps} onReview={onReview} />);
+    fireEvent.click(screen.getByText(/訂正錯題/));
+    expect(onReview).toHaveBeenCalledOnce();
+  });
 });

@@ -92,3 +92,30 @@ describe('useGame (english-match)', () => {
     }, { timeout: 2000 });
   });
 });
+
+describe('useGame (english-match) 訂正 recording', () => {
+  it('wrong answer records the question + choices', async () => {
+    const { result } = renderHook(() => useGame({ topic: 'animals', count: 5 }));
+    const { correctIdx, question } = result.current;
+    const wrongIdx = correctIdx === 0 ? 1 : 0;
+    await act(async () => {
+      result.current.handleChoice(wrongIdx);
+    });
+    await waitFor(() => expect(result.current.stats.wrong).toBe(1), { timeout: 2000 });
+    expect(result.current.wrong).toHaveLength(1);
+    expect(result.current.wrong[0].question.en).toBe(question.en);
+    expect(result.current.wrong[0].choices).toHaveLength(4);
+    const item = result.current.wrong[0];
+    expect(item.choices[item.correctIdx].en).toBe(question.en);
+  });
+
+  it('correct answer records nothing', async () => {
+    const { result } = renderHook(() => useGame({ topic: 'animals', count: 5 }));
+    const { correctIdx } = result.current;
+    await act(async () => {
+      result.current.handleChoice(correctIdx);
+    });
+    await waitFor(() => expect(result.current.stats.correct).toBe(1), { timeout: 2000 });
+    expect(result.current.wrong).toHaveLength(0);
+  });
+});

@@ -38,6 +38,7 @@ export function useGame({ topic, count, difficulty = 'easy' }) {
   const [stats, setStats]         = useState({ correct: 0, wrong: 0 });
   const locked                    = useRef(false);
   const startTime                 = useRef(Date.now());
+  const wrongRef                  = useRef([]); // 答錯的題目(供結算頁訂正)
   const sound                     = useSound();
 
   const question = questions.current[currentQ];
@@ -56,6 +57,11 @@ export function useGame({ topic, count, difficulty = 'easy' }) {
     } else {
       sound.wrong();
       setStats(s => ({ ...s, wrong: s.wrong + 1 }));
+      wrongRef.current.push({
+        question,
+        choices,
+        correctIdx: choices.findIndex(c => c.en === question.en),
+      });
     }
 
     await new Promise(r => setTimeout(r, isCorrect ? 700 : 1000));
@@ -81,5 +87,6 @@ export function useGame({ topic, count, difficulty = 'easy' }) {
     question, choices, selected, feedback, correctIdx,
     currentQ, count, stats, phase, elapsedSec,
     handleChoice,
+    wrong: wrongRef.current,
   };
 }

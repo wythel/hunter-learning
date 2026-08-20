@@ -28,6 +28,7 @@ export function useGame({ difficulty, count }) {
   const playerHPRef   = useRef(3);
   const monsterHPRef  = useRef(3);
   const startTime     = useRef(Date.now());
+  const wrongRef      = useRef([]); // 答錯的題目(供結算頁訂正)
   const sound         = useSound();
 
   // Keep refs in sync
@@ -95,6 +96,7 @@ export function useGame({ difficulty, count }) {
       setPlayerFlash(false);
 
       setStats(s => ({ ...s, wrong: s.wrong + 1 }));
+      wrongRef.current.push({ text: questionRef.current.text, answer: questionRef.current.answer });
       const nextHP = playerHPRef.current - 1;
       setPlayerHP(nextHP);
       if (nextHP <= 0) {
@@ -144,6 +146,7 @@ export function useGame({ difficulty, count }) {
     setPlayerFlash(false);
 
     setStats(s => ({ ...s, wrong: s.wrong + 1 }));
+    wrongRef.current.push({ text: questionRef.current.text, answer: questionRef.current.answer });
     const nextHP = playerHPRef.current - 1;
     setPlayerHP(nextHP);
 
@@ -189,5 +192,6 @@ export function useGame({ difficulty, count }) {
     monsterFlash, playerFlash, playerAttacking, monsterAttacking,
     stars, title, elapsedSec, handleKey,
     timeoutAnswer, timerPaused, handleTimeout,
+    wrong: wrongRef.current,
   };
 }

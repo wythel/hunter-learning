@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import GameLayout from '../../components/GameLayout';
 import ResultScreen from '../../components/ResultScreen';
+import KeypadReview from '../../components/KeypadReview';
 import BattleField from '../math-battle/BattleField';
 import BattleUI from '../math-battle/BattleUI';
 import { useGame } from './useGame';
@@ -13,12 +14,14 @@ export default function ChainMathGame() {
   const navigate  = useNavigate();
   const { operation = 'add', difficulty = 'easy', count = 10, timed = false } = location.state || {};
 
+  const [reviewing, setReviewing] = useState(false);
+
   const {
     question, answer, phase, currentQ, stats,
     playerHP, monster, monsterHP, monsterMaxHP, playerSvg,
     monsterFlash, playerFlash, playerAttacking, monsterAttacking,
     stars, title, elapsedSec, handleKey,
-    timeoutAnswer, timerPaused, handleTimeout,
+    timeoutAnswer, timerPaused, handleTimeout, wrong,
   } = useGame({ operation, difficulty, count });
 
   const { fraction } = useCountdown({
@@ -40,6 +43,9 @@ export default function ChainMathGame() {
   }, [handleKey]);
 
   if (phase === 'result') {
+    if (reviewing) {
+      return <KeypadReview items={wrong} onExit={() => setReviewing(false)} />;
+    }
     return (
       <ResultScreen
         title={title}
@@ -52,6 +58,7 @@ export default function ChainMathGame() {
         onRetry={() => navigate('/chain-math/play', { state: { operation, difficulty, count, timed } })}
         onMenu={() => navigate('/chain-math')}
         onLobby={() => navigate('/')}
+        onReview={wrong.length ? () => setReviewing(true) : undefined}
       />
     );
   }

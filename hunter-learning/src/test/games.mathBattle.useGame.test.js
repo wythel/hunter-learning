@@ -127,4 +127,25 @@ describe('useGame (math-battle)', () => {
       expect(result.current.phase).toBe('result');
     });
   });
+
+  it('訂正: wrong answer records { text, answer }', async () => {
+    const { result } = renderHook(() => useGame({ difficulty: 'easy', count: 10 }));
+    const q = result.current.question;
+    const wrongAnswer = String(q.answer + 100);
+    for (const digit of wrongAnswer) {
+      await act(async () => { result.current.handleKey(digit); });
+    }
+    await act(async () => { result.current.handleKey('ok'); });
+    await waitFor(() => expect(result.current.stats.wrong).toBe(1));
+    expect(result.current.wrong).toHaveLength(1);
+    expect(result.current.wrong[0]).toEqual({ text: q.text, answer: q.answer });
+  });
+
+  it('訂正: timeout records the question too', async () => {
+    const { result } = renderHook(() => useGame({ difficulty: 'easy', count: 10 }));
+    const q = result.current.question;
+    await act(async () => { await result.current.handleTimeout(); });
+    expect(result.current.wrong).toHaveLength(1);
+    expect(result.current.wrong[0]).toEqual({ text: q.text, answer: q.answer });
+  });
 });

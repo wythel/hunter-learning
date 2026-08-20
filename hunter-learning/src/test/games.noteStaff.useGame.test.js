@@ -41,3 +41,33 @@ describe('useGame (note-staff) timed mode', () => {
     expect(result.current.stats.correct).toBe(1);
   });
 });
+
+describe('useGame (note-staff) 訂正 recording', () => {
+  it('wrong answer records the note', async () => {
+    const { result } = renderHook(() =>
+      useGame({ clefMode: 'treble', answerMode: 'name', noteCount: 1, count: 10 }));
+    const note = result.current.note;
+    await act(async () => { await result.current.handleAnswer(note.solfege + '_wrong'); });
+    expect(result.current.stats.wrong).toBe(1);
+    expect(result.current.wrong).toHaveLength(1);
+    expect(result.current.wrong[0].note.solfege).toBe(note.solfege);
+    expect(result.current.wrong[0].note.midi).toBe(note.midi);
+  });
+
+  it('correct answer records nothing', async () => {
+    const { result } = renderHook(() =>
+      useGame({ clefMode: 'treble', answerMode: 'name', noteCount: 1, count: 10 }));
+    const note = result.current.note;
+    await act(async () => { await result.current.handleAnswer(note.solfege); });
+    expect(result.current.wrong).toHaveLength(0);
+  });
+
+  it('timeout records the note as wrong', async () => {
+    const { result } = renderHook(() =>
+      useGame({ clefMode: 'treble', answerMode: 'name', noteCount: 1, count: 10 }));
+    const note = result.current.note;
+    await act(async () => { await result.current.handleTimeout(); });
+    expect(result.current.wrong).toHaveLength(1);
+    expect(result.current.wrong[0].note.solfege).toBe(note.solfege);
+  });
+});

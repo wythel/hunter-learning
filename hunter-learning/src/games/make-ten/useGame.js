@@ -54,6 +54,9 @@ export function useGame({ mode, count }) {
   const [feedback, setFeedback] = useState(null); // null | 'correct' | 'wrong'
   const currentQRef = useRef(0);
   currentQRef.current = currentQ;
+  const questionRef = useRef(question);
+  questionRef.current = question;
+  const wrongRef = useRef([]); // 答錯的題目(供結算頁訂正,僅 choose 模式)
 
   // Match mode
   const [tiles, setTiles]         = useState(() => mode === 'match' ? genTiles() : []);
@@ -76,6 +79,7 @@ export function useGame({ mode, count }) {
     setFeedback(isCorrect ? 'correct' : 'wrong');
     isCorrect ? sound.correct() : sound.wrong();
     setStats(s => ({ ...s, ...(isCorrect ? { correct: s.correct + 1 } : { wrong: s.wrong + 1 }) }));
+    if (!isCorrect) wrongRef.current.push(question);
 
     await delay(isCorrect ? 380 : 700);
     setFeedback(null);
@@ -102,6 +106,7 @@ export function useGame({ mode, count }) {
     setFeedback('wrong');
     sound.wrong();
     setStats(s => ({ ...s, wrong: s.wrong + 1 }));
+    wrongRef.current.push(questionRef.current);
 
     await delay(1000);
     setFeedback(null);
@@ -201,5 +206,6 @@ export function useGame({ mode, count }) {
     tiles, selId, wrongPair, matchCount, handleTap,
     // shared
     phase, stats, stars, title, elapsedSec,
+    wrong: wrongRef.current,
   };
 }
