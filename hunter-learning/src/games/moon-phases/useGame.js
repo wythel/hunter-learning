@@ -106,7 +106,5 @@ export function useGame({ difficulty = 'easy', count = 8 }) {
     stars, title: TITLES[stars], elapsedSec, difficulty,
     setAngle, startChallenge, submitPlacement, handleIdentify,
     targetName: challenge ? nameOf(challenge.targetKey) : '',
-    // 測試用：直接設定當前題目
-    _debugSetChallenge: (c) => { setChallenge(c); setFeedback(null); },
   };
 }
