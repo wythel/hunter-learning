@@ -38,7 +38,8 @@ export function useGame({ difficulty = 'easy', count = 8 }) {
     setFeedback(null);
     // place 題把月亮放回新月起點讓 Hunter 自己拖；identify 題擺在目標 canonical 角度
     if (c.kind === 'place') {
-      setAngle(0);
+      const target = PHASES.find(p => p.key === c.targetKey);
+      setAngle((target.angles[0] + 120) % 360);
     } else {
       const target = PHASES.find(p => p.key === c.targetKey);
       setAngle(target.angles[0]);
