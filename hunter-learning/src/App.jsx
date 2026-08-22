@@ -22,6 +22,8 @@ import NoteStaffSettings from './games/note-staff/Settings';
 import NoteStaffGame     from './games/note-staff/Game';
 import WordHuntSettings  from './games/word-hunt/Settings';
 import WordHuntGame      from './games/word-hunt/Game';
+import MoonPhasesSettings from './games/moon-phases/Settings';
+import MoonPhasesGame     from './games/moon-phases/Game';
 
 export default function App() {
   return (
@@ -50,6 +52,8 @@ export default function App() {
         <Route path="/note-staff/play"    element={<NoteStaffGame />} />
         <Route path="/word-hunt"          element={<WordHuntSettings />} />
         <Route path="/word-hunt/play"     element={<WordHuntGame />} />
+        <Route path="/moon-phases"        element={<MoonPhasesSettings />} />
+        <Route path="/moon-phases/play"   element={<MoonPhasesGame />} />
       </Routes>
     </HashRouter>
   );

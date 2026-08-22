@@ -16,6 +16,7 @@ const GAMES = [
   { path: '/make-ten',      icon: '🔟',  title: '湊十大師',   desc: '湊成10！',     color: '#ff9f43', glow: 'rgba(255,159,67,0.32)'  },
   { path: '/note-staff',    icon: '🎼',  title: '音符星球',   desc: '認識五線譜！', color: '#818cf8', glow: 'rgba(129,140,248,0.32)' },
   { path: '/word-hunt',     icon: '🔡',  title: '看圖認字',   desc: '中英雙語認字！', color: '#f59f00', glow: 'rgba(245,159,0,0.32)'   },
+  { path: '/moon-phases',   icon: '🌙',  title: '月相星球',   desc: '認識月亮！',   color: '#c0c8e0', glow: 'rgba(192,200,224,0.32)' },
 ];
 
 function hexToRgb(hex) {
