@@ -64,7 +64,7 @@ export default function MoonPhasesGame() {
           angle={g.angle}
           onAngleChange={g.challenge?.kind === 'identify' ? null : g.setAngle}
           difficulty={difficulty}
-          showLabel={isSandbox || g.challenge?.kind === 'place'}
+          showLabel={isSandbox}
         />
 
         {/* 回饋 */}
