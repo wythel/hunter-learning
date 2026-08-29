@@ -11,7 +11,7 @@ vi.mock('../utils/math', async () => {
 });
 
 import { useGame, buildChallenge } from '../games/solar-system/useGame';
-import { PLANETS } from '../games/solar-system/data';
+import { PLANETS, orderIsCorrect } from '../games/solar-system/data';
 
 const wrongKey = key => PLANETS.find(p => p.key !== key).key;
 
@@ -61,12 +61,15 @@ describe('buildChallenge', () => {
     expect(easy.mode).toBe('gap');
     expect(easy.initial).toHaveLength(8);
     expect(easy.initial.filter(x => x === null)).toHaveLength(1);
-    expect(easy.tray).toContain(PLANETS[easy.gapIndex].key);
+    expect(easy.tray).toEqual([PLANETS[easy.gapIndex].key]);
 
     const hard = buildChallenge('hard', 1);
     expect(hard.mode).toBe('full');
     expect(hard.initial).toHaveLength(8);
     expect(new Set(hard.initial).size).toBe(8);
+  });
+  it('hard order never spawns already-solved', () => {
+    expect(orderIsCorrect(buildChallenge('hard', 1).initial)).toBe(false);
   });
 });
 

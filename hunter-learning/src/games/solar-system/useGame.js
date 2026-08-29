@@ -23,12 +23,14 @@ export function buildChallenge(difficulty, idx) {
   }
   // order
   if (difficulty === 'hard') {
-    return { kind, mode: 'full', initial: shuffle(PLANETS.map(p => p.key)) };
+    const solved = PLANETS.map(p => p.key);
+    let initial = shuffle(solved);
+    while (orderIsCorrect(initial)) initial = shuffle(solved); // 極小機率洗出已排好 → 重洗
+    return { kind, mode: 'full', initial };
   }
   const gapIndex = idx % PLANETS.length;
   const gapKey = PLANETS[gapIndex].key;
-  const others = shuffle(PLANETS.filter(p => p.key !== gapKey).map(p => p.key)).slice(0, 2);
-  const tray = shuffle([gapKey, ...others]);
+  const tray = [gapKey]; // 只放正解，避免與盤面上已排好的行星重複
   const initial = PLANETS.map((p, i) => (i === gapIndex ? null : p.key));
   return { kind, mode: 'gap', gapIndex, tray, initial };
 }
