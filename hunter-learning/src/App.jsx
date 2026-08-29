@@ -24,6 +24,8 @@ import WordHuntSettings  from './games/word-hunt/Settings';
 import WordHuntGame      from './games/word-hunt/Game';
 import MoonPhasesSettings from './games/moon-phases/Settings';
 import MoonPhasesGame     from './games/moon-phases/Game';
+import SolarSystemSettings from './games/solar-system/Settings';
+import SolarSystemGame      from './games/solar-system/Game';
 
 export default function App() {
   return (
@@ -54,6 +56,8 @@ export default function App() {
         <Route path="/word-hunt/play"     element={<WordHuntGame />} />
         <Route path="/moon-phases"        element={<MoonPhasesSettings />} />
         <Route path="/moon-phases/play"   element={<MoonPhasesGame />} />
+        <Route path="/solar-system"       element={<SolarSystemSettings />} />
+        <Route path="/solar-system/play"  element={<SolarSystemGame />} />
       </Routes>
     </HashRouter>
   );
