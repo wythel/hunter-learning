@@ -9,6 +9,14 @@ import { useGame } from './useGame';
 import { PLANETS, planetByKey } from './data';
 import { useSpeech } from '../../hooks/useSpeech';
 
+// framer-motion's PanInfo.point is page-space (includes scroll); getBoundingClientRect is viewport-space.
+// Reconcile by shifting the page point back into viewport space before the hit-test.
+export function dropHitsRect(point, rect, scroll = { x: window.scrollX, y: window.scrollY }) {
+  const x = point.x - scroll.x;
+  const y = point.y - scroll.y;
+  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+}
+
 function ChoiceButton({ planetKey, disabled, onClick }) {
   const p = planetByKey(planetKey);
   return (
@@ -85,8 +93,7 @@ function OrderChallenge({ challenge, disabled, onSubmit }) {
     const el = slotRefs.current[challenge.gapIndex];
     if (!el) return;
     const r = el.getBoundingClientRect();
-    const { x, y } = info.point;
-    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
+    if (dropHitsRect(info.point, r)) {
       const filled = arr.map((k, i) => (i === challenge.gapIndex ? key : k));
       setArr(filled);
       onSubmit(filled);
