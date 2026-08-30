@@ -18,6 +18,7 @@ const GAMES = [
   { path: '/word-hunt',     icon: '🔡',  title: '看圖認字',   desc: '中英雙語認字！', color: '#f59f00', glow: 'rgba(245,159,0,0.32)'   },
   { path: '/moon-phases',   icon: '🌙',  title: '月相星球',   desc: '認識月亮！',   color: '#c0c8e0', glow: 'rgba(192,200,224,0.32)' },
   { path: '/polar-day',     icon: '🌍',  title: '永晝永夜',   desc: '太陽不下山？', color: '#63e6be', glow: 'rgba(99,230,190,0.32)'  },
+  { path: '/solar-system',  icon: '🪐',  title: '太陽系',     desc: '認識八大行星！', color: '#ffa94d', glow: 'rgba(255,169,77,0.32)' },
 ];
 
 function hexToRgb(hex) {
