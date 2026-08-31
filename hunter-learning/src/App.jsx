@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Lobby from './pages/Lobby';
 import MathBattleSettings from './games/math-battle/Settings';
@@ -24,7 +25,8 @@ import WordHuntSettings  from './games/word-hunt/Settings';
 import WordHuntGame      from './games/word-hunt/Game';
 import MoonPhasesSettings from './games/moon-phases/Settings';
 import MoonPhasesGame     from './games/moon-phases/Game';
-import PolarDay          from './games/polar-day/PolarDay';
+// 3D 場景（three.js）較大，lazy 載入讓其他遊戲的 bundle 不受影響
+const PolarDay = lazy(() => import('./games/polar-day/PolarDay'));
 import SolarSystemSettings from './games/solar-system/Settings';
 import SolarSystemGame      from './games/solar-system/Game';
 
@@ -57,7 +59,14 @@ export default function App() {
         <Route path="/word-hunt/play"     element={<WordHuntGame />} />
         <Route path="/moon-phases"        element={<MoonPhasesSettings />} />
         <Route path="/moon-phases/play"   element={<MoonPhasesGame />} />
-        <Route path="/polar-day"          element={<PolarDay />} />
+        <Route path="/polar-day"          element={
+          <Suspense fallback={
+            <div style={{ minHeight: '100dvh', display: 'grid', placeItems: 'center',
+              color: '#8ba3be', fontSize: 18, fontWeight: 800 }}>🌍 準備出發…</div>
+          }>
+            <PolarDay />
+          </Suspense>
+        } />
         <Route path="/solar-system"       element={<SolarSystemSettings />} />
         <Route path="/solar-system/play"  element={<SolarSystemGame />} />
       </Routes>

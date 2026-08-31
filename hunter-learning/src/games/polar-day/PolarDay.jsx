@@ -1,15 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Slider, Text } from '@mantine/core';
 import { AnimatePresence, motion } from 'framer-motion';
 import StarField from '../../components/StarField';
-import OrbitView from './OrbitView';
-import EarthSystem from './EarthSystem';
+import Scene3D from './Scene3D';
 import SkyView from './SkyView';
-import { declinationForSeason, seasonForOrbit, dayInfo } from './geometry';
+import { declinationForSeason, seasonForOrbit, nearestSeasonKey, dayInfo } from './geometry';
 
-const DAY_MS = 7000;    // 自轉一圈（一天）
-const YEAR_MS = 14000;  // 公轉一圈（一年）
+const DAY_MS = 8000;    // 自轉一圈（一天）
+const YEAR_MS = 18000;  // 公轉一圈（一年）
+
+const SEASONS = [
+  { key: 'spring', th: 0,   icon: '🌱', name: '春' },
+  { key: 'summer', th: 90,  icon: '☀️', name: '夏' },
+  { key: 'autumn', th: 180, icon: '🍂', name: '秋' },
+  { key: 'winter', th: 270, icon: '❄️', name: '冬' },
+];
+
+function timeWord(h) {
+  const hh = Math.round(h) % 24;
+  const word = hh < 5 ? '半夜' : hh < 8 ? '清晨' : hh < 11 ? '早上'
+    : hh < 14 ? '中午' : hh < 17 ? '下午' : hh < 20 ? '傍晚' : '晚上';
+  return `${word} ${hh} 點`;
+}
 
 function whereLabel(lat) {
   if (lat >= 89) return '北極';
@@ -30,18 +43,51 @@ function explain(lat, info) {
   return `你住在「${place}」。地球轉一圈就是一天，你會經過亮的地方（白天）和暗的地方（晚上）。${extra}（白天大約 ${h} 小時）`;
 }
 
-const caption = { color: 'rgba(139,163,190,0.75)', fontWeight: 700, textAlign: 'center', marginBottom: 2 };
+// 兩顆一組的切換膠囊
+function Segmented({ options, value, onChange, accent }) {
+  return (
+    <div style={{
+      display: 'flex', borderRadius: 14, overflow: 'hidden',
+      border: '1.5px solid rgba(139,163,190,0.25)', background: 'rgba(10,22,38,0.85)',
+    }}>
+      {options.map(o => {
+        const active = o.value === value;
+        return (
+          <button key={o.value} onClick={() => onChange(o.value)} style={{
+            flex: 1, padding: '10px 0', border: 'none', cursor: 'pointer',
+            fontFamily: 'inherit', fontSize: 14, fontWeight: 900,
+            background: active ? accent : 'transparent',
+            color: active ? '#0b1526' : 'rgba(180,195,215,0.8)',
+            transition: 'background .25s, color .25s',
+          }}>
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function PolarDay() {
   const navigate = useNavigate();
   const [latitude, setLatitude] = useState(72);
-  const [orbitAngle, setOrbitAngle] = useState(90);  // 90 = 夏至（開場就是永晝）
-  const [revolving, setRevolving] = useState(false); // 公轉
+  const [orbitAngle, setOrbitAngle] = useState(90);  // 夏至開場 → 永晝
+  const [revolving, setRevolving] = useState(false);
   const [spin, setSpin] = useState(0);
-  const [spinning, setSpinning] = useState(true);    // 自轉
+  const [spinning, setSpinning] = useState(true);
+  const [mode, setMode] = useState('wide');          // 開場總覽，隨後自動飛近
+
+  // 開場運鏡：2.4 秒後自動飛到「一半一半」經典視角（使用者先動手就取消）
+  const touched = useRef(false);
+  useEffect(() => {
+    const t = setTimeout(() => { if (!touched.current) setMode('half'); }, 2400);
+    return () => clearTimeout(t);
+  }, []);
+  const pickMode = m => { touched.current = true; setMode(m); };
 
   const season = seasonForOrbit(orbitAngle);
   const info = dayInfo(latitude, declinationForSeason(season));
+  const activeSeason = nearestSeasonKey(orbitAngle);
 
   // 自轉（過一天）
   useEffect(() => {
@@ -69,10 +115,17 @@ export default function PolarDay() {
     return () => cancelAnimationFrame(raf);
   }, [revolving]);
 
-  const pickSeason = th => { setRevolving(false); setOrbitAngle(th); };
+  const pickSeason = th => { touched.current = true; setRevolving(false); setOrbitAngle(th); };
 
   const special = info.kind !== 'normal';
   const dayH = Math.round(info.fraction * 24);
+
+  // 「白天怎麼一直是 12 小時？」——兩個物理上就是不變的情境，直接說破
+  const hint = latitude <= 5
+    ? '🌍 住在赤道（最中間），一年到頭白天晚上都一樣長喔！'
+    : Math.abs(season) < 0.2 && info.kind === 'normal'
+      ? '🌱 春天和秋天：不管住哪裡，全世界的白天晚上都差不多一樣長！'
+      : null;
 
   return (
     <div style={{
@@ -82,7 +135,7 @@ export default function PolarDay() {
     }}>
       <StarField />
 
-      <div style={{ width: '100%', maxWidth: 460, position: 'relative', zIndex: 1 }}>
+      <div style={{ width: '100%', maxWidth: 480, position: 'relative', zIndex: 1 }}>
         {/* Back */}
         <button onClick={() => navigate('/')} style={{
           background: 'none', border: 'none', cursor: 'pointer',
@@ -91,45 +144,111 @@ export default function PolarDay() {
         }}>← 大廳</button>
 
         {/* Title */}
-        <div style={{ textAlign: 'center', marginBottom: 8 }}>
+        <div style={{ textAlign: 'center', marginBottom: 10 }}>
           <div style={{
-            fontSize: 24, fontWeight: 900, letterSpacing: '-0.02em',
+            fontSize: 26, fontWeight: 900, letterSpacing: '-0.02em',
             background: 'linear-gradient(120deg,#63e6be,#4dabf7,#b197fc)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-          }}>🌍 永晝永夜</div>
+          }}>永晝永夜</div>
           <Text size="sm" style={{ color: 'rgba(139,163,190,0.8)', fontWeight: 600 }}>
             為什麼北極的太陽不下山？
           </Text>
         </div>
 
-        {/* ① 公轉：地球繞太陽 → 現在是哪個季節 */}
-        <Text size="xs" style={caption}>🌞 地球繞太陽轉一圈就是一年（點四季看看）</Text>
-        <OrbitView orbitAngle={orbitAngle} onPickSeason={pickSeason} />
-        <button onClick={() => setRevolving(r => !r)} style={{
-          width: '100%', padding: '10px 0', borderRadius: 12, marginTop: 4,
+        {/* ── 3D 宇宙 ── */}
+        <div style={{
+          height: 'min(46vh, 420px)', minHeight: 300,
+          borderRadius: 20, overflow: 'hidden',
+          border: '1px solid rgba(99,230,190,0.22)',
+          boxShadow: '0 10px 48px rgba(10,40,80,0.55), 0 0 0 1px rgba(255,255,255,0.03) inset',
+        }}>
+          <Scene3D orbitAngle={orbitAngle} spin={spin} latitude={latitude} mode={mode} />
+        </div>
+
+        {/* 鏡頭切換 */}
+        <div style={{ marginTop: 10 }}>
+          <Segmented
+            value={mode} onChange={pickMode} accent="#63e6be"
+            options={[
+              { value: 'wide',  label: '🌌 太空總覽' },
+              { value: 'half',  label: '🌗 一半一半' },
+              { value: 'close', label: '🌍 靠近地球' },
+            ]}
+          />
+        </div>
+
+        {/* 四季 + 公轉 */}
+        <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+          {SEASONS.map(s => {
+            const active = s.key === activeSeason && !revolving;
+            return (
+              <button key={s.key} onClick={() => pickSeason(s.th)} style={{
+                flex: 1, padding: '9px 0', borderRadius: 13, cursor: 'pointer',
+                fontFamily: 'inherit', fontSize: 14, fontWeight: 900,
+                border: `1.5px solid ${active ? 'rgba(255,212,59,0.75)' : 'rgba(139,163,190,0.25)'}`,
+                background: active ? 'rgba(255,212,59,0.16)' : 'rgba(10,22,38,0.85)',
+                color: active ? '#ffd43b' : 'rgba(180,195,215,0.85)',
+                transition: 'all .25s',
+              }}>
+                {s.icon} {s.name}
+              </button>
+            );
+          })}
+        </div>
+        <button onClick={() => { touched.current = true; setRevolving(r => !r); }} style={{
+          width: '100%', padding: '11px 0', borderRadius: 13, marginTop: 8,
           border: '1.5px solid rgba(255,212,59,0.4)', background: 'rgba(42,38,20,0.9)',
           color: '#ffd43b', fontSize: 15, fontWeight: 900, cursor: 'pointer', fontFamily: 'inherit',
         }}>
-          {revolving ? '⏸️ 停在這個季節' : '▶️ 讓地球繞太陽（過一年）'}
+          {revolving ? '⏸️ 停在這個季節' : '▶️ 繞太陽（過一年）'}
         </button>
 
-        {/* ② 放大看這顆地球（側視：左亮右暗） */}
-        <Text size="xs" style={{ ...caption, marginTop: 12 }}>🌍 放大看這顆地球：一半白天、一半晚上</Text>
-        <EarthSystem latitude={latitude} season={season} spin={spin} />
-
-        {/* ③ 小人抬頭看天空 */}
-        <Text size="xs" style={{ ...caption, marginTop: 2 }}>🧍 你抬頭看到的天空</Text>
-        <SkyView latitude={latitude} season={season} spin={spin} />
-
-        {/* 白天／晚上長條 */}
-        <div style={{ margin: '12px 0 4px' }}>
-          <div style={{ display: 'flex', height: 26, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)' }}>
-            <div style={{ width: `${info.fraction * 100}%`, background: 'linear-gradient(90deg,#ffe08a,#ffd23f)', transition: 'width 0.25s' }} />
-            <div style={{ width: `${(1 - info.fraction) * 100}%`, background: '#1a2540', transition: 'width 0.25s' }} />
+        {/* ── 地面視角面板：天空 + 時間拖桿 + 白天長條 ── */}
+        <div style={{
+          marginTop: 14, borderRadius: 20, overflow: 'hidden',
+          border: '1px solid rgba(99,230,190,0.22)', background: 'rgba(8,16,30,0.8)',
+          boxShadow: '0 8px 36px rgba(10,40,80,0.45)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px 8px' }}>
+            <Text size="sm" style={{ color: '#e9edf7', fontWeight: 800 }}>🧍 你抬頭看到的天空</Text>
+            <Text size="sm" style={{ color: '#ffd43b', fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>
+              🕐 {timeWord(spin / 15)}
+            </Text>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginTop: 3 }}>
-            <span style={{ color: '#ffd43b' }}>☀️ 白天 {dayH} 小時</span>
-            <span style={{ color: '#8ba3be' }}>🌙 晚上 {24 - dayH} 小時</span>
+
+          <SkyView latitude={latitude} season={season} spin={spin} seasonKey={activeSeason} />
+
+          <div style={{ padding: '10px 16px 14px' }}>
+            {/* 現在幾點：拖著玩，跟自轉同步 */}
+            <Slider
+              value={spin / 15} min={0} max={24} step={0.25}
+              onChange={h => { setSpinning(false); setSpin((h * 15) % 360); }}
+              label={v => timeWord(v)}
+              marks={[
+                { value: 0, label: '🌙' }, { value: 6, label: '🌅' },
+                { value: 12, label: '🌞' }, { value: 18, label: '🌇' }, { value: 24, label: '🌙' },
+              ]}
+              color="yellow" size="sm"
+            />
+
+            {/* 白天／晚上長條 */}
+            <div style={{ marginTop: 22 }}>
+              <div style={{ display: 'flex', height: 24, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)' }}>
+                <div style={{ width: `${info.fraction * 100}%`, background: 'linear-gradient(90deg,#ffe08a,#ffd23f)', transition: 'width 0.25s' }} />
+                <div style={{ width: `${(1 - info.fraction) * 100}%`, background: '#1a2540', transition: 'width 0.25s' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginTop: 3 }}>
+                <span style={{ color: '#ffd43b' }}>☀️ 白天 {dayH} 小時</span>
+                <span style={{ color: '#8ba3be' }}>🌙 晚上 {24 - dayH} 小時</span>
+              </div>
+            </div>
+
+            {/* 「怎麼都 12 小時？」的即時解惑 */}
+            {hint && (
+              <Text size="xs" style={{ color: '#63e6be', fontWeight: 700, marginTop: 6, textAlign: 'center' }}>
+                {hint}
+              </Text>
+            )}
           </div>
         </div>
 
@@ -162,7 +281,7 @@ export default function PolarDay() {
           </Text>
         </div>
 
-        {/* 控制：緯度滑桿 + 自轉 */}
+        {/* 緯度 + 自轉 */}
         <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <Text size="sm" style={{ color: '#e9edf7', fontWeight: 800, marginBottom: 4 }}>
