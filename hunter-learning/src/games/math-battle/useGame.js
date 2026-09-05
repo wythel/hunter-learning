@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { generateArith, delay } from '../../utils/math';
 import { calculateStars, getResultTitle } from '../../utils/scoring';
 import { useSound } from '../../hooks/useSound';
-import { MONSTERS, PLAYER_SVG } from './sprites';
+import { MONSTERS, PLAYER } from './sprites';
 
 export function useGame({ difficulty, count }) {
   const [question, setQuestion]           = useState(() => generateArith(difficulty));
@@ -188,7 +188,7 @@ export function useGame({ difficulty, count }) {
 
   return {
     question, answer, phase, currentQ, stats, playerHP,
-    monster, monsterHP, monsterMaxHP: 3, playerSvg: PLAYER_SVG,
+    monster, monsterHP, monsterMaxHP: 3, playerImg: PLAYER.img,
     monsterFlash, playerFlash, playerAttacking, monsterAttacking,
     stars, title, elapsedSec, handleKey,
     timeoutAnswer, timerPaused, handleTimeout,

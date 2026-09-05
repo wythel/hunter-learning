@@ -18,7 +18,7 @@ export default function MathBattleGame() {
 
   const {
     question, answer, phase, currentQ, stats,
-    playerHP, monster, monsterHP, monsterMaxHP, playerSvg,
+    playerHP, monster, monsterHP, monsterMaxHP, playerImg,
     monsterFlash, playerFlash, playerAttacking, monsterAttacking,
     stars, title, elapsedSec, handleKey,
     timeoutAnswer, timerPaused, handleTimeout, wrong,
@@ -82,11 +82,11 @@ export default function MathBattleGame() {
         </div>
       )}
       <BattleField
-        monsterSvg={monster.svg}
+        monsterImg={monster.img}
         monsterName={monster.name}
         monsterHP={monsterHP}
         monsterMaxHP={monsterMaxHP}
-        playerSvg={playerSvg}
+        playerImg={playerImg}
         playerHP={playerHP}
         monsterFlash={monsterFlash}
         playerFlash={playerFlash}

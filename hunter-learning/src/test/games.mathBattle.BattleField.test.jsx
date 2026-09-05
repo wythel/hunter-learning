@@ -16,7 +16,7 @@ vi.mock('framer-motion', async () => {
 });
 
 import BattleField from '../games/math-battle/BattleField';
-import { MONSTERS, PLAYER_SVG } from '../games/math-battle/sprites';
+import { MONSTERS, PLAYER } from '../games/math-battle/sprites';
 
 function renderWithMantine(ui) {
   return render(<MantineProvider>{ui}</MantineProvider>);
@@ -24,92 +24,68 @@ function renderWithMantine(ui) {
 
 const monster = MONSTERS[0];
 
+function renderField(overrides = {}) {
+  return renderWithMantine(
+    <BattleField
+      monsterImg={monster.img}
+      monsterName={monster.name}
+      playerImg={PLAYER.img}
+      playerHP={3}
+      monsterFlash={false}
+      playerFlash={false}
+      playerAttacking={false}
+      monsterAttacking={false}
+      {...overrides}
+    />
+  );
+}
+
+describe('sprites', () => {
+  it('every monster has a name and a PokeAPI artwork URL', () => {
+    expect(MONSTERS.length).toBeGreaterThan(0);
+    for (const m of MONSTERS) {
+      expect(m.name).toBeTruthy();
+      expect(m.img).toMatch(/^https:\/\/raw\.githubusercontent\.com\/PokeAPI\/sprites\/.+\/\d+\.png$/);
+    }
+  });
+
+  it('player is 皮卡丘 with a PokeAPI artwork URL', () => {
+    expect(PLAYER.name).toBe('皮卡丘');
+    expect(PLAYER.img).toMatch(/\/25\.png$/);
+  });
+});
+
 describe('BattleField', () => {
   it('renders monster name', () => {
-    renderWithMantine(
-      <BattleField
-        monsterSvg={monster.svg}
-        monsterName={monster.name}
-        playerSvg={PLAYER_SVG}
-        playerHP={3}
-        monsterFlash={false}
-        playerFlash={false}
-        playerAttacking={false}
-        monsterAttacking={false}
-      />
-    );
+    renderField();
     expect(screen.getByText(monster.name)).toBeInTheDocument();
   });
 
   it('renders 3 heart emojis for HP=3', () => {
-    renderWithMantine(
-      <BattleField
-        monsterSvg={monster.svg}
-        monsterName={monster.name}
-        playerSvg={PLAYER_SVG}
-        playerHP={3}
-        monsterFlash={false}
-        playerFlash={false}
-        playerAttacking={false}
-        monsterAttacking={false}
-      />
-    );
+    renderField();
     const hearts = screen.getAllByText('❤️');
     expect(hearts).toHaveLength(3);
   });
 
   // 失去的愛心以 grayscale 濾鏡顯示（仍是 ❤️ 字元）
   it('renders 1 filled + 2 dimmed hearts for HP=1', () => {
-    renderWithMantine(
-      <BattleField
-        monsterSvg={monster.svg}
-        monsterName={monster.name}
-        playerSvg={PLAYER_SVG}
-        playerHP={1}
-        monsterFlash={false}
-        playerFlash={false}
-        playerAttacking={false}
-        monsterAttacking={false}
-      />
-    );
+    renderField({ playerHP: 1 });
     const hearts = screen.getAllByText('❤️');
     expect(hearts).toHaveLength(3);
     const dimmed = hearts.filter(h => h.style.filter.includes('grayscale'));
     expect(dimmed).toHaveLength(2);
   });
 
-  it('renders player SVG via dangerouslySetInnerHTML', () => {
-    const { container } = renderWithMantine(
-      <BattleField
-        monsterSvg={monster.svg}
-        monsterName={monster.name}
-        playerSvg={PLAYER_SVG}
-        playerHP={3}
-        monsterFlash={false}
-        playerFlash={false}
-        playerAttacking={false}
-        monsterAttacking={false}
-      />
-    );
-    // PLAYER_SVG contains an SVG element
-    const svgs = container.querySelectorAll('svg');
-    expect(svgs.length).toBeGreaterThanOrEqual(1);
+  it('renders player Pokemon image facing right', () => {
+    renderField();
+    const img = screen.getByAltText(PLAYER.name);
+    expect(img).toHaveAttribute('src', PLAYER.img);
+    expect(img.style.transform).toContain('scaleX(-1)');
   });
 
-  it('renders monster SVG via dangerouslySetInnerHTML', () => {
-    const { container } = renderWithMantine(
-      <BattleField
-        monsterSvg={monster.svg}
-        monsterName={monster.name}
-        playerSvg={PLAYER_SVG}
-        playerHP={3}
-        monsterFlash={false}
-        playerFlash={false}
-        playerAttacking={false}
-        monsterAttacking={false}
-      />
-    );
-    const svgs = container.querySelectorAll('svg');
-    expect(svgs.length).toBeGreaterThanOrEqual(2);
+  it('renders monster Pokemon image', () => {
+    renderField();
+    const img = screen.getByAltText(monster.name);
+    expect(img).toHaveAttribute('src', monster.img);
   });
 });

@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MONSTERS, PLAYER } from './sprites';
 
 const STARS = Array.from({ length: 38 }, (_, i) => ({
   x: (i * 37 + 11) % 100,
@@ -8,12 +10,19 @@ const STARS = Array.from({ length: 38 }, (_, i) => ({
 }));
 
 export default function BattleField({
-  monsterSvg, monsterName, monsterHP, monsterMaxHP,
-  playerSvg, playerHP,
+  monsterImg, monsterName, monsterHP, monsterMaxHP,
+  playerImg, playerHP,
   monsterFlash, playerFlash,
   playerAttacking, monsterAttacking,
 }) {
   const maxHP = monsterMaxHP ?? 3;
+
+  // 預載下一隻寶可夢的圖,換怪時不會空窗
+  useEffect(() => {
+    const idx = MONSTERS.findIndex(m => m.img === monsterImg);
+    const next = MONSTERS[(idx + 1) % MONSTERS.length];
+    if (next) new Image().src = next.img;
+  }, [monsterImg]);
 
   return (
     <div style={{
@@ -96,8 +105,19 @@ export default function BattleField({
                 ? 'drop-shadow(0 0 10px rgba(255,60,60,0.95)) brightness(1.2)'
                 : 'drop-shadow(0 2px 8px rgba(0,200,170,0.45))',
             }}
-            dangerouslySetInnerHTML={{ __html: playerSvg }}
-          />
+          >
+            <img
+              src={playerImg}
+              alt={PLAYER.name}
+              style={{
+                width: 100,
+                height: 100,
+                objectFit: 'contain',
+                display: 'block',
+                transform: 'scaleX(-1)',
+              }}
+            />
+          </motion.div>
         </div>
 
         {/* ── Monster side (right) ── */}
@@ -162,8 +182,18 @@ export default function BattleField({
                 ? 'drop-shadow(0 0 14px rgba(255,60,60,1)) brightness(1.6) saturate(0.3)'
                 : 'drop-shadow(0 2px 10px rgba(0,0,0,0.6))',
             }}
-            dangerouslySetInnerHTML={{ __html: monsterSvg }}
-          />
+          >
+            <img
+              src={monsterImg}
+              alt={monsterName}
+              style={{
+                width: 110,
+                height: 110,
+                objectFit: 'contain',
+                display: 'block',
+              }}
+            />
+          </motion.div>
         </div>
 
         {/* ── Attack energy streaks ── */}
