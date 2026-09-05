@@ -45,9 +45,10 @@ describe('Lobby page', () => {
     expect(screen.getByText('Hunter 學習遊戲')).toBeInTheDocument();
   });
 
-  it('renders all 11 game titles', () => {
+  it('renders all game titles', () => {
     renderLobby();
     expect(screen.getByText('算數大戰')).toBeInTheDocument();
+    expect(screen.getByText('直式計算')).toBeInTheDocument();
     expect(screen.getByText('連鎖算數')).toBeInTheDocument();
     expect(screen.getByText('學看時鐘')).toBeInTheDocument();
     expect(screen.getByText('英文配對')).toBeInTheDocument();

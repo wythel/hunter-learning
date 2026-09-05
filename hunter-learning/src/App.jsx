@@ -23,6 +23,8 @@ import NoteStaffSettings from './games/note-staff/Settings';
 import NoteStaffGame     from './games/note-staff/Game';
 import WordHuntSettings  from './games/word-hunt/Settings';
 import WordHuntGame      from './games/word-hunt/Game';
+import ColumnMathSettings from './games/column-math/Settings';
+import ColumnMathGame     from './games/column-math/Game';
 import MoonPhasesSettings from './games/moon-phases/Settings';
 import MoonPhasesGame     from './games/moon-phases/Game';
 // 3D 場景（three.js）較大，lazy 載入讓其他遊戲的 bundle 不受影響
@@ -57,6 +59,8 @@ export default function App() {
         <Route path="/note-staff/play"    element={<NoteStaffGame />} />
         <Route path="/word-hunt"          element={<WordHuntSettings />} />
         <Route path="/word-hunt/play"     element={<WordHuntGame />} />
+        <Route path="/column-math"        element={<ColumnMathSettings />} />
+        <Route path="/column-math/play"   element={<ColumnMathGame />} />
         <Route path="/moon-phases"        element={<MoonPhasesSettings />} />
         <Route path="/moon-phases/play"   element={<MoonPhasesGame />} />
         <Route path="/polar-day"          element={
