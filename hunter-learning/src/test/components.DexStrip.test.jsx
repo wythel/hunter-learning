@@ -32,4 +32,12 @@ describe('DexStrip', () => {
     const { container } = render(<DexStrip onBack={vi.fn()} />);
     expect(container.firstChild.style.height).toBe('26px');
   });
+
+  // 高度必須與內容無關 —— 遊戲畫面是 100dvh/overflow:hidden,頂條長高就會把遊戲擠出畫面
+  it('keeps the same fixed height when progress and right are both populated', () => {
+    const { container } = render(
+      <DexStrip onBack={vi.fn()} progress="3 / 10" right={<span>計時</span>} />
+    );
+    expect(container.firstChild.style.height).toBe('26px');
+  });
 });

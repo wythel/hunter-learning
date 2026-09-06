@@ -50,7 +50,10 @@ export default function DexFrame({ children, dexNo }) {
         border: '1px solid var(--dex-bezel)',
         borderRadius: 16,
         boxShadow: 'inset 0 3px 12px rgba(0,0,0,0.5), 0 -2px 0 rgba(255,255,255,0.18)',
-        overflow: 'hidden',
+        // 'auto' 不是 'hidden':這是 flex item,overflow:hidden 會把它的自動最小高度歸零,
+        // 讓螢幕卡在 100dvh-上蓋-下方按鈕列的高度、內容過長時被無聲裁切且沒有捲軸。
+        // 用 auto 仍保留圓角裁切,但內容過長時可以捲動——不要「整理」回 hidden。
+        overflow: 'auto',
         position: 'relative',
       }}>
         {children}
