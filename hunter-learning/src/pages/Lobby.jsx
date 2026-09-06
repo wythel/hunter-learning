@@ -113,8 +113,8 @@ export default function Lobby() {
         flexDirection: 'column',
         alignItems: 'center',
         padding: '0 16px',
-        paddingTop: 'max(28px, env(safe-area-inset-top))',
-        paddingBottom: 'max(28px, env(safe-area-inset-bottom))',
+        paddingTop: 28,
+        paddingBottom: 28,
         position: 'relative',
       }}>
         <StarField />

@@ -5,6 +5,7 @@ export default function TimeBar({ fraction }) {
 
   return (
     <div style={{
+      width: '100%',
       height: 8, borderRadius: 6,
       background: 'rgba(139,163,190,0.15)',
       overflow: 'hidden',

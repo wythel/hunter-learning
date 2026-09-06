@@ -122,6 +122,6 @@ export default function StarField() {
   }, []);
 
   return (
-    <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }} />
+    <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }} />
   );
 }

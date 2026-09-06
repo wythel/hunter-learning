@@ -30,9 +30,9 @@ export default function BattleUI({ question, answer, currentQ, count, onKey, loc
           transition={{ duration: 0.4, ease: 'easeOut' }}
           style={{
             height: '100%',
-            background: 'linear-gradient(90deg, #12b886, #4dabf7)',
+            background: 'linear-gradient(90deg, #FFD400, #FFAA00)',
             borderRadius: 2,
-            boxShadow: '0 0 6px rgba(18,184,134,0.5)',
+            boxShadow: '0 0 6px rgba(255,212,0,0.5)',
           }}
         />
       </div>

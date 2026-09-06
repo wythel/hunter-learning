@@ -16,10 +16,14 @@ export default function DexStrip({ onBack, progress, right }) {
         aria-label="返回"
         style={{
           display: 'flex', alignItems: 'center', gap: 6,
-          background: 'none', border: 'none', padding: 0,
+          alignSelf: 'stretch',
+          background: 'none', border: 'none', padding: '0 10px 0 0',
           cursor: 'pointer', fontFamily: 'inherit',
         }}
       >
+        <span aria-hidden="true" style={{ fontSize: 15, fontWeight: 900, color: '#fff', lineHeight: 1 }}>
+          ←
+        </span>
         <span
           data-dex="lens"
           style={{
@@ -42,11 +46,18 @@ export default function DexStrip({ onBack, progress, right }) {
 
       <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
         {progress && (
-          <span style={{ fontSize: 11, fontWeight: 900, color: 'rgba(255,255,255,0.9)' }}>
+          <span style={{ flex: 'none', fontSize: 11, fontWeight: 900, color: 'rgba(255,255,255,0.9)' }}>
             {progress}
           </span>
         )}
-        {right}
+        {right && (
+          // 給 right 一個定寬 flex-basis:right 目前只放 TimeBar,它靠子元素的 width:百分比
+          // 撐開自己,放進 flex row 若沒有 definite width 可依附,百分比會算成 0
+          // (0px 寬的計時條)。flex:'none' + width 讓它有真正的寬度,又不會擠壓 progress 文字。
+          <div style={{ flex: 'none', width: 72 }}>
+            {right}
+          </div>
+        )}
       </div>
     </div>
   );

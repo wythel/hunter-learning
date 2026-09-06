@@ -352,10 +352,10 @@ export default function Teaching({ mode, onDone }) {
           style={{
             width: '100%', padding: '16px 0', marginTop: 16,
             borderRadius: 18, border: 'none',
-            background: 'linear-gradient(135deg, #12b886 0%, #0ca678 60%, #099268 100%)',
-            color: '#fff', fontSize: 17, fontWeight: 900,
+            background: 'linear-gradient(135deg, #FFD400 0%, #FFAA00 60%, #FF8C00 100%)',
+            color: '#3A2A00', fontSize: 17, fontWeight: 900,
             cursor: 'pointer', fontFamily: 'inherit',
-            boxShadow: '0 4px 24px rgba(18,184,134,0.45)',
+            boxShadow: '0 4px 24px rgba(255,212,0,0.45)',
             position: 'relative', overflow: 'hidden',
           }}
         >

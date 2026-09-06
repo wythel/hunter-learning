@@ -29,8 +29,6 @@ export default function ResultScreen({ title, stars, stats, onRetry, onMenu, onL
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
         padding: '24px 20px',
-        paddingTop: 'max(24px, env(safe-area-inset-top))',
-        paddingBottom: 'max(24px, env(safe-area-inset-bottom))',
         position: 'relative',
       }}>
         <StarField />

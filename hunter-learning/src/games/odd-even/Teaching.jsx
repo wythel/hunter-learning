@@ -247,10 +247,10 @@ export default function OddEvenTeaching({ mode, onDone }) {
               fontSize: 15, fontFamily: 'inherit',
             }}>← 上一步</button>
             <button onClick={goNext} style={{
-              background: 'linear-gradient(135deg, #12b886, #0dcfaa)',
+              background: 'linear-gradient(135deg, #FFD400, #FFAA00)',
               border: 'none', borderRadius: 12, padding: '10px 28px',
-              cursor: 'pointer', color: '#fff', fontSize: 15, fontWeight: 700,
-              fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(18,184,134,0.3)',
+              cursor: 'pointer', color: '#3A2A00', fontSize: 15, fontWeight: 700,
+              fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(255,212,0,0.3)',
             }}>{isLast ? '🚀 開始遊戲！' : '下一步 →'}</button>
           </Group>
         </div>
