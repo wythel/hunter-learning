@@ -6,6 +6,7 @@ import ResultScreen from '../../components/ResultScreen';
 import Teaching from './Teaching';
 import Staff from './Staff';
 import Piano from './Piano';
+import Mascot from './Mascot';
 import { useGame } from './useGame';
 import { SOLFEGE, SOLFEGE_COLOR, keyboardForClef } from './notes';
 import TimeBar from '../../components/TimeBar';
@@ -126,6 +127,7 @@ function NoteReviewQuestion({ note, index, total, answerMode, onCorrect, onExit 
 
   return (
     <div style={{
+      position: 'relative',
       background: 'rgba(10,22,38,0.93)',
       border: '1px solid rgba(129,140,248,0.22)',
       borderRadius: 26,
@@ -133,6 +135,11 @@ function NoteReviewQuestion({ note, index, total, answerMode, onCorrect, onExit 
       backdropFilter: 'blur(18px)',
       boxShadow: `0 8px 48px rgba(0,0,0,0.45), 0 0 60px ${ACCENT}1a, 0 1px 0 rgba(255,255,255,0.04) inset`,
     }}>
+      {/* 胖丁小老師 */}
+      <div style={{ position: 'absolute', top: -30, right: 8, zIndex: 11 }}>
+        <Mascot feedback={feedback} solfege={note.solfege} size={64} />
+      </div>
+
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
         <div style={{ fontSize: 15, fontWeight: 900, color: '#ffa94d' }}>✏️ 訂正錯題</div>
@@ -365,6 +372,11 @@ function NoteStaffGameInner() {
           backdropFilter: 'blur(18px)',
           boxShadow: `0 8px 48px rgba(0,0,0,0.45), 0 0 60px ${ACCENT}1a, 0 1px 0 rgba(255,255,255,0.04) inset`,
         }}>
+          {/* 胖丁小老師:答對跟著唱,答錯提示正確音名 */}
+          <div style={{ position: 'absolute', top: -30, right: 8, zIndex: 11 }}>
+            <Mascot feedback={feedback} solfege={note.solfege} />
+          </div>
+
           {/* Feedback overlay */}
           <AnimatePresence>
             {feedback && (

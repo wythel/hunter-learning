@@ -1,6 +1,4 @@
-// 圖片來自 PokeAPI 官方 artwork(sprites repo 靜態 CDN,與 API JSON 回傳的網址相同)
-const artwork = (id) =>
-  `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+import { pokemonArtwork as artwork } from '../../utils/pokemon';
 
 export const PLAYER = { name: '皮卡丘', img: artwork(25) };
 
