@@ -1,9 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- 寶貝球。刻意只用四個形狀:紅上半、白下半、黑腰帶、白按鈕,
-       讓它在 16x16 的分頁上仍然認得出來——細節在那個尺寸只會糊掉。 -->
-  <circle cx="32" cy="32" r="30" fill="#F5F5F5" stroke="#1A1A1A" stroke-width="4"/>
-  <path d="M2 32a30 30 0 0 1 60 0z" fill="#DC0A2D"/>
-  <path d="M2 32h60" stroke="#1A1A1A" stroke-width="7"/>
-  <circle cx="32" cy="32" r="10" fill="#F5F5F5" stroke="#1A1A1A" stroke-width="5"/>
-  <circle cx="32" cy="32" r="4" fill="#F5F5F5" stroke="#1A1A1A" stroke-width="2"/>
+  <!-- 皮卡丘臉。分頁圖示實際只有 16px,在那個尺寸辨識度幾乎完全由「剪影」決定,
+       不是顏色也不是細節——所以這裡選了唯一非圓形的輪廓:兩隻黑尖耳朵。
+       五官在 16px 下會糊掉是預期的,「黃色 + 兩個黑尖角」本身就足以認出來。
+       比較過寶貝球、圖鑑機鏡頭、球+星星、球+H 四個方案,它們的外框都是同一個圓,
+       在一排分頁裡分不出彼此。 -->
+  <path d="M18 22L8 4c6 0 13 4 17 11z" fill="#F8D030" stroke="#4A3B00" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M11.5 10.5L8 4c4 0 7.5 1.8 10 4.5z" fill="#2B2B2B"/>
+  <path d="M46 22L56 4c-6 0-13 4-17 11z" fill="#F8D030" stroke="#4A3B00" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M52.5 10.5L56 4c-4 0-7.5 1.8-10 4.5z" fill="#2B2B2B"/>
+  <circle cx="32" cy="38" r="22" fill="#F8D030" stroke="#4A3B00" stroke-width="2.5"/>
+  <circle cx="23" cy="34" r="3.6" fill="#2B2B2B"/>
+  <circle cx="41" cy="34" r="3.6" fill="#2B2B2B"/>
+  <circle cx="16" cy="44" r="4.6" fill="#E8404A"/>
+  <circle cx="48" cy="44" r="4.6" fill="#E8404A"/>
+  <path d="M28 44q4 4 8 0" stroke="#2B2B2B" stroke-width="2.6" fill="none" stroke-linecap="round"/>
 </svg>
