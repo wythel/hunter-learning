@@ -339,7 +339,10 @@ export default function DexFrame({ children, dexNo }) {
         border: '1px solid var(--dex-bezel)',
         borderRadius: 16,
         boxShadow: 'inset 0 3px 12px rgba(0,0,0,0.5), 0 -2px 0 rgba(255,255,255,0.18)',
-        overflow: 'hidden',
+        // auto,不是 hidden:仍然裁切到圓角,但內容超出時可捲動。
+        // flex:1 的項目若設 overflow:hidden,其自動最小尺寸會歸零,
+        // 螢幕會被釘死在 (100dvh - 上蓋 - 按鈕列),過長的內容直接消失且沒有捲軸。
+        overflow: 'auto',
         position: 'relative',
       }}>
         {children}
@@ -612,7 +615,7 @@ export default function Lobby() {
   const navigate = useNavigate();
   return (
     <DexFrame dexNo="No.015">
-      <div style={{ /* …原本的外層 div style,但 minHeight 改成 height:'100%'、overflowY:'auto' … */ }}>
+      <div style={{ /* …原本的外層 div style,只把 minHeight:'100dvh' 改成 minHeight:'100%' … */ }}>
         {/* …原本內容不變… */}
       </div>
     </DexFrame>
@@ -704,7 +707,11 @@ Expected: PASS
 import DexFrame from '../components/DexFrame';
 ```
 
-把最外層 `<div>` 包進 `<DexFrame>`（外層 div 的 `minHeight:'100dvh'` 改為 `height:'100%'`、加 `overflowY:'auto'`）。
+把最外層 `<div>` 包進 `<DexFrame>`，該 div 的 `minHeight:'100dvh'` 改為 `minHeight:'100%'`。
+
+⚠️ **不要另外加 `overflowY:'auto'`** —— 捲動由 `DexFrame` 的螢幕區負責（它是 `overflow:'auto'`），
+這裡再加一層會變成巢狀捲動、出現兩條捲軸。用 `minHeight` 而非 `height`，
+短內容才會維持置中，長內容則交給外層螢幕捲動。
 
 標題漸層與開始按鈕的 teal 換成圖鑑金：
 
@@ -758,7 +765,9 @@ Expected: PASS（作為改動前的基準）
 import DexFrame from '../components/DexFrame';
 ```
 
-最外層 `<div>` 包進 `<DexFrame>`，該 div 的 `minHeight:'100dvh'` 改為 `height:'100%'`、加 `overflowY:'auto'`。
+最外層 `<div>` 包進 `<DexFrame>`，該 div 的 `minHeight:'100dvh'` 改為 `minHeight:'100%'`。
+
+⚠️ **不要另外加 `overflowY:'auto'`** —— 捲動由 `DexFrame` 的螢幕區負責，再加一層會出現兩條捲軸。
 
 內層卡片的 `background: 'rgba(10,22,38,0.95)'` 改為 `rgba(22,29,37,0.95)`，`border` 改為 `1px solid var(--dex-bezel)`，讓它坐在圖鑑螢幕上時層次分明。
 
