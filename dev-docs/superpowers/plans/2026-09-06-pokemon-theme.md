@@ -1134,7 +1134,12 @@ Expected: 全綠。**逐一確認所有 `games.*.useGame.test.js` 都是綠的**
 - [ ] **Step 2: Lint**
 
 Run: `npm run lint`
-Expected: 無錯誤。特別注意刪除題號後可能留下的未使用變數（`currentQ`、`count`）。
+
+⚠️ **這個專案本來就有 275 個 lint problems（272 errors、3 warnings）**，散在 40 個既有遊戲檔裡。
+驗收標準是「**沒有比 baseline 增加**」，不是「零錯誤」——不要去清理既有的 272 個，那不在本案範圍。
+
+Expected: 總數維持 275。若變多，逐一檢查新增的那幾筆，特別注意刪除題號後留下的未使用變數
+（`currentQ`、`count`）。
 
 - [ ] **Step 3: 逐一走訪 15 個遊戲**
 
