@@ -14,6 +14,8 @@ import { useCountdown, TIMED_SECONDS } from '../../hooks/useCountdown';
 import { useReviewQueue } from '../../hooks/useReview';
 import { useSound } from '../../hooks/useSound';
 import { delay } from '../../utils/math';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 
 const ACCENT = '#818cf8';
 const COUNT  = 10;
@@ -332,172 +334,161 @@ function NoteStaffGameInner() {
   }
 
   return (
-    <div style={{
-      minHeight: '100dvh',
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      padding: '20px 20px',
-      paddingTop: 'max(20px, env(safe-area-inset-top))',
-      paddingBottom: 'max(20px, env(safe-area-inset-bottom))',
-      position: 'relative',
-    }}>
+    <GameLayout>
+      <DexStrip onBack={() => navigate('/note-staff')} />
       <StarField />
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 16 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.4, type: 'spring', stiffness: 260, damping: 22 }}
-        style={{ width: '100%', maxWidth: 420, position: 'relative', zIndex: 1 }}
-      >
-        {/* Back button */}
-        <button
-          onClick={() => navigate('/note-staff')}
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: 'rgba(139,163,190,0.6)', fontSize: 13, fontWeight: 700,
-            padding: '0 0 14px', fontFamily: 'inherit',
-            display: 'flex', alignItems: 'center', gap: 5,
-          }}
+      <div style={{
+        flex: 1,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        padding: '20px 20px',
+        position: 'relative',
+        overflowY: 'auto',
+      }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.4, type: 'spring', stiffness: 260, damping: 22 }}
+          style={{ width: '100%', maxWidth: 420, position: 'relative', zIndex: 1 }}
         >
-          ← 設定
-        </button>
+          {/* Game card */}
+          <div style={{
+            position: 'relative',
+            background: 'rgba(10,22,38,0.93)',
+            border: '1px solid rgba(129,140,248,0.22)',
+            borderRadius: 26,
+            padding: '20px 18px',
+            backdropFilter: 'blur(18px)',
+            boxShadow: `0 8px 48px rgba(0,0,0,0.45), 0 0 60px ${ACCENT}1a, 0 1px 0 rgba(255,255,255,0.04) inset`,
+          }}>
+            {/* 胖丁小老師:答對跟著唱,答錯提示正確音名 */}
+            <div style={{ position: 'absolute', top: -30, right: 8, zIndex: 11 }}>
+              <Mascot feedback={feedback} solfege={note.solfege} />
+            </div>
 
-        {/* Game card */}
-        <div style={{
-          position: 'relative',
-          background: 'rgba(10,22,38,0.93)',
-          border: '1px solid rgba(129,140,248,0.22)',
-          borderRadius: 26,
-          padding: '20px 18px',
-          backdropFilter: 'blur(18px)',
-          boxShadow: `0 8px 48px rgba(0,0,0,0.45), 0 0 60px ${ACCENT}1a, 0 1px 0 rgba(255,255,255,0.04) inset`,
-        }}>
-          {/* 胖丁小老師:答對跟著唱,答錯提示正確音名 */}
-          <div style={{ position: 'absolute', top: -30, right: 8, zIndex: 11 }}>
-            <Mascot feedback={feedback} solfege={note.solfege} />
-          </div>
+            {/* Feedback overlay */}
+            <AnimatePresence>
+              {feedback && (
+                <motion.div
+                  key={feedback}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                  style={{
+                    position: 'absolute', inset: 0, borderRadius: 26, zIndex: 10,
+                    background: feedback === 'correct'
+                      ? 'rgba(18,184,134,0.10)'
+                      : 'rgba(248,81,73,0.08)',
+                    border: `2px solid ${feedback === 'correct' ? 'rgba(18,184,134,0.45)' : 'rgba(248,81,73,0.35)'}`,
+                    pointerEvents: 'none',
+                    display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+                    paddingTop: 18,
+                  }}
+                >
+                  <motion.div
+                    initial={{ scale: 0.4 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 14 }}
+                    style={{ fontSize: 44, lineHeight: 1 }}
+                  >
+                    {feedback === 'correct' ? '✅' : '❌'}
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-          {/* Feedback overlay */}
-          <AnimatePresence>
-            {feedback && (
+            {/* Header */}
+            <div style={{ textAlign: 'center', marginBottom: 10 }}>
+              <div style={{
+                fontSize: 11, fontWeight: 800, color: 'rgba(139,163,190,0.55)',
+                letterSpacing: '0.07em', marginBottom: 6,
+              }}>
+                第 {currentQ + 1} / {COUNT} 題
+              </div>
+              {/* Progress bar */}
+              <div style={{
+                height: 6, borderRadius: 6,
+                background: 'rgba(139,163,190,0.15)',
+                overflow: 'hidden',
+              }}>
+                <motion.div
+                  animate={{ width: `${((currentQ) / COUNT) * 100}%` }}
+                  transition={{ duration: 0.4 }}
+                  style={{
+                    height: '100%',
+                    background: `linear-gradient(90deg, ${ACCENT}, #a78bfa)`,
+                    borderRadius: 6,
+                  }}
+                />
+              </div>
+            </div>
+
+            {timed && (
+              <div style={{ marginBottom: 10 }}>
+                <TimeBar fraction={fraction} />
+              </div>
+            )}
+
+            {/* Staff */}
+            <AnimatePresence mode="wait">
               <motion.div
-                key={feedback}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.18 }}
+                key={currentQ}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
                 style={{
-                  position: 'absolute', inset: 0, borderRadius: 26, zIndex: 10,
-                  background: feedback === 'correct'
-                    ? 'rgba(18,184,134,0.10)'
-                    : 'rgba(248,81,73,0.08)',
-                  border: `2px solid ${feedback === 'correct' ? 'rgba(18,184,134,0.45)' : 'rgba(248,81,73,0.35)'}`,
-                  pointerEvents: 'none',
-                  display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-                  paddingTop: 18,
+                  background: 'rgba(8,16,28,0.6)',
+                  border: '1px solid rgba(129,140,248,0.18)',
+                  borderRadius: 18,
+                  padding: '12px 10px',
+                  marginBottom: 14,
                 }}
               >
-                <motion.div
-                  initial={{ scale: 0.4 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 14 }}
-                  style={{ fontSize: 44, lineHeight: 1 }}
-                >
-                  {feedback === 'correct' ? '✅' : '❌'}
-                </motion.div>
+                <Staff
+                  clef={note.clef}
+                  notes={notes}
+                  statuses={statuses.map((s, i) =>
+                    s === 'pending' && i === noteIdx ? 'current' : s
+                  )}
+                  showPulse={noteCount > 1}
+                  accent={ACCENT}
+                />
+                <div style={{
+                  textAlign: 'center', fontSize: 12, fontWeight: 700,
+                  color: 'rgba(139,163,190,0.55)', marginTop: 4,
+                }}>
+                  {note.clef === 'treble' ? '高音譜 𝄞' : '低音譜 𝄢'}
+                  {noteCount > 1 && (
+                    <span style={{ marginLeft: 8 }}>
+                      · 第 {noteIdx + 1} / {noteCount} 音
+                    </span>
+                  )}
+                </div>
               </motion.div>
+            </AnimatePresence>
+
+            {/* Answer pad */}
+            {answerMode === 'name' ? (
+              <NamePad
+                correctSolfege={note.solfege}
+                feedback={feedback}
+                wrongValue={wrongValue}
+                onAnswer={handleAnswer}
+              />
+            ) : (
+              <PianoPad
+                note={note}
+                feedback={feedback}
+                wrongValue={wrongValue}
+                onAnswer={handleAnswer}
+              />
             )}
-          </AnimatePresence>
-
-          {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: 10 }}>
-            <div style={{
-              fontSize: 11, fontWeight: 800, color: 'rgba(139,163,190,0.55)',
-              letterSpacing: '0.07em', marginBottom: 6,
-            }}>
-              第 {currentQ + 1} / {COUNT} 題
-            </div>
-            {/* Progress bar */}
-            <div style={{
-              height: 6, borderRadius: 6,
-              background: 'rgba(139,163,190,0.15)',
-              overflow: 'hidden',
-            }}>
-              <motion.div
-                animate={{ width: `${((currentQ) / COUNT) * 100}%` }}
-                transition={{ duration: 0.4 }}
-                style={{
-                  height: '100%',
-                  background: `linear-gradient(90deg, ${ACCENT}, #a78bfa)`,
-                  borderRadius: 6,
-                }}
-              />
-            </div>
           </div>
-
-          {timed && (
-            <div style={{ marginBottom: 10 }}>
-              <TimeBar fraction={fraction} />
-            </div>
-          )}
-
-          {/* Staff */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentQ}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-              style={{
-                background: 'rgba(8,16,28,0.6)',
-                border: '1px solid rgba(129,140,248,0.18)',
-                borderRadius: 18,
-                padding: '12px 10px',
-                marginBottom: 14,
-              }}
-            >
-              <Staff
-                clef={note.clef}
-                notes={notes}
-                statuses={statuses.map((s, i) =>
-                  s === 'pending' && i === noteIdx ? 'current' : s
-                )}
-                showPulse={noteCount > 1}
-                accent={ACCENT}
-              />
-              <div style={{
-                textAlign: 'center', fontSize: 12, fontWeight: 700,
-                color: 'rgba(139,163,190,0.55)', marginTop: 4,
-              }}>
-                {note.clef === 'treble' ? '高音譜 𝄞' : '低音譜 𝄢'}
-                {noteCount > 1 && (
-                  <span style={{ marginLeft: 8 }}>
-                    · 第 {noteIdx + 1} / {noteCount} 音
-                  </span>
-                )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Answer pad */}
-          {answerMode === 'name' ? (
-            <NamePad
-              correctSolfege={note.solfege}
-              feedback={feedback}
-              wrongValue={wrongValue}
-              onAnswer={handleAnswer}
-            />
-          ) : (
-            <PianoPad
-              note={note}
-              feedback={feedback}
-              wrongValue={wrongValue}
-              onAnswer={handleAnswer}
-            />
-          )}
-        </div>
-      </motion.div>
-    </div>
+        </motion.div>
+      </div>
+    </GameLayout>
   );
 }

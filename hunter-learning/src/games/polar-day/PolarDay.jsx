@@ -6,6 +6,8 @@ import StarField from '../../components/StarField';
 import Scene3D from './Scene3D';
 import SkyView from './SkyView';
 import { declinationForSeason, seasonForOrbit, nearestSeasonKey, dayInfo } from './geometry';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 
 const DAY_MS = 8000;    // 自轉一圈（一天）
 const YEAR_MS = 18000;  // 公轉一圈（一年）
@@ -128,182 +130,177 @@ export default function PolarDay() {
       : null;
 
   return (
-    <div style={{
-      minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center',
-      padding: '0 16px', paddingTop: 'max(16px, env(safe-area-inset-top))',
-      paddingBottom: 'max(20px, env(safe-area-inset-bottom))', position: 'relative',
-    }}>
+    <GameLayout>
+      <DexStrip onBack={() => navigate('/')} />
       <StarField />
 
-      <div style={{ width: '100%', maxWidth: 480, position: 'relative', zIndex: 1 }}>
-        {/* Back */}
-        <button onClick={() => navigate('/')} style={{
-          background: 'none', border: 'none', cursor: 'pointer',
-          color: 'rgba(139,163,190,0.7)', fontSize: 14, fontWeight: 700,
-          padding: '4px 0 8px', fontFamily: 'inherit',
-        }}>← 大廳</button>
-
-        {/* Title */}
-        <div style={{ textAlign: 'center', marginBottom: 10 }}>
-          <div style={{
-            fontSize: 26, fontWeight: 900, letterSpacing: '-0.02em',
-            background: 'linear-gradient(120deg,#63e6be,#4dabf7,#b197fc)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-          }}>永晝永夜</div>
-          <Text size="sm" style={{ color: 'rgba(139,163,190,0.8)', fontWeight: 600 }}>
-            為什麼北極的太陽不下山？
-          </Text>
-        </div>
-
-        {/* ── 3D 宇宙 ── */}
-        <div style={{
-          height: 'min(46vh, 420px)', minHeight: 300,
-          borderRadius: 20, overflow: 'hidden',
-          border: '1px solid rgba(99,230,190,0.22)',
-          boxShadow: '0 10px 48px rgba(10,40,80,0.55), 0 0 0 1px rgba(255,255,255,0.03) inset',
-        }}>
-          <Scene3D orbitAngle={orbitAngle} spin={spin} latitude={latitude} mode={mode} />
-        </div>
-
-        {/* 鏡頭切換 */}
-        <div style={{ marginTop: 10 }}>
-          <Segmented
-            value={mode} onChange={pickMode} accent="#63e6be"
-            options={[
-              { value: 'wide',  label: '🌌 太空總覽' },
-              { value: 'half',  label: '🌗 一半一半' },
-              { value: 'close', label: '🌍 靠近地球' },
-            ]}
-          />
-        </div>
-
-        {/* 四季 + 公轉 */}
-        <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
-          {SEASONS.map(s => {
-            const active = s.key === activeSeason && !revolving;
-            return (
-              <button key={s.key} onClick={() => pickSeason(s.th)} style={{
-                flex: 1, padding: '9px 0', borderRadius: 13, cursor: 'pointer',
-                fontFamily: 'inherit', fontSize: 14, fontWeight: 900,
-                border: `1.5px solid ${active ? 'rgba(255,212,59,0.75)' : 'rgba(139,163,190,0.25)'}`,
-                background: active ? 'rgba(255,212,59,0.16)' : 'rgba(10,22,38,0.85)',
-                color: active ? '#ffd43b' : 'rgba(180,195,215,0.85)',
-                transition: 'all .25s',
-              }}>
-                {s.icon} {s.name}
-              </button>
-            );
-          })}
-        </div>
-        <button onClick={() => { touched.current = true; setRevolving(r => !r); }} style={{
-          width: '100%', padding: '11px 0', borderRadius: 13, marginTop: 8,
-          border: '1.5px solid rgba(255,212,59,0.4)', background: 'rgba(42,38,20,0.9)',
-          color: '#ffd43b', fontSize: 15, fontWeight: 900, cursor: 'pointer', fontFamily: 'inherit',
-        }}>
-          {revolving ? '⏸️ 停在這個季節' : '▶️ 繞太陽（過一年）'}
-        </button>
-
-        {/* ── 地面視角面板：天空 + 時間拖桿 + 白天長條 ── */}
-        <div style={{
-          marginTop: 14, borderRadius: 20, overflow: 'hidden',
-          border: '1px solid rgba(99,230,190,0.22)', background: 'rgba(8,16,30,0.8)',
-          boxShadow: '0 8px 36px rgba(10,40,80,0.45)',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px 8px' }}>
-            <Text size="sm" style={{ color: '#e9edf7', fontWeight: 800 }}>🧍 你抬頭看到的天空</Text>
-            <Text size="sm" style={{ color: '#ffd43b', fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>
-              🕐 {timeWord(spin / 15)}
+      <div style={{
+        flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
+        padding: '16px 16px 20px', position: 'relative', overflowY: 'auto',
+      }}>
+        <div style={{ width: '100%', maxWidth: 480, position: 'relative', zIndex: 1 }}>
+          {/* Title */}
+          <div style={{ textAlign: 'center', marginBottom: 10 }}>
+            <div style={{
+              fontSize: 26, fontWeight: 900, letterSpacing: '-0.02em',
+              background: 'linear-gradient(120deg,#63e6be,#4dabf7,#b197fc)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}>永晝永夜</div>
+            <Text size="sm" style={{ color: 'rgba(139,163,190,0.8)', fontWeight: 600 }}>
+              為什麼北極的太陽不下山？
             </Text>
           </div>
 
-          <SkyView latitude={latitude} season={season} spin={spin} seasonKey={activeSeason} />
+          {/* ── 3D 宇宙 ── */}
+          <div style={{
+            height: 'min(46vh, 420px)', minHeight: 300,
+            borderRadius: 20, overflow: 'hidden',
+            border: '1px solid rgba(99,230,190,0.22)',
+            boxShadow: '0 10px 48px rgba(10,40,80,0.55), 0 0 0 1px rgba(255,255,255,0.03) inset',
+          }}>
+            <Scene3D orbitAngle={orbitAngle} spin={spin} latitude={latitude} mode={mode} />
+          </div>
 
-          <div style={{ padding: '10px 16px 14px' }}>
-            {/* 現在幾點：拖著玩，跟自轉同步 */}
-            <Slider
-              value={spin / 15} min={0} max={24} step={0.25}
-              onChange={h => { setSpinning(false); setSpin((h * 15) % 360); }}
-              label={v => timeWord(v)}
-              marks={[
-                { value: 0, label: '🌙' }, { value: 6, label: '🌅' },
-                { value: 12, label: '🌞' }, { value: 18, label: '🌇' }, { value: 24, label: '🌙' },
+          {/* 鏡頭切換 */}
+          <div style={{ marginTop: 10 }}>
+            <Segmented
+              value={mode} onChange={pickMode} accent="#63e6be"
+              options={[
+                { value: 'wide',  label: '🌌 太空總覽' },
+                { value: 'half',  label: '🌗 一半一半' },
+                { value: 'close', label: '🌍 靠近地球' },
               ]}
-              color="yellow" size="sm"
             />
+          </div>
 
-            {/* 白天／晚上長條 */}
-            <div style={{ marginTop: 22 }}>
-              <div style={{ display: 'flex', height: 24, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)' }}>
-                <div style={{ width: `${info.fraction * 100}%`, background: 'linear-gradient(90deg,#ffe08a,#ffd23f)', transition: 'width 0.25s' }} />
-                <div style={{ width: `${(1 - info.fraction) * 100}%`, background: '#1a2540', transition: 'width 0.25s' }} />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginTop: 3 }}>
-                <span style={{ color: '#ffd43b' }}>☀️ 白天 {dayH} 小時</span>
-                <span style={{ color: '#8ba3be' }}>🌙 晚上 {24 - dayH} 小時</span>
-              </div>
+          {/* 四季 + 公轉 */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+            {SEASONS.map(s => {
+              const active = s.key === activeSeason && !revolving;
+              return (
+                <button key={s.key} onClick={() => pickSeason(s.th)} style={{
+                  flex: 1, padding: '9px 0', borderRadius: 13, cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: 14, fontWeight: 900,
+                  border: `1.5px solid ${active ? 'rgba(255,212,59,0.75)' : 'rgba(139,163,190,0.25)'}`,
+                  background: active ? 'rgba(255,212,59,0.16)' : 'rgba(10,22,38,0.85)',
+                  color: active ? '#ffd43b' : 'rgba(180,195,215,0.85)',
+                  transition: 'all .25s',
+                }}>
+                  {s.icon} {s.name}
+                </button>
+              );
+            })}
+          </div>
+          <button onClick={() => { touched.current = true; setRevolving(r => !r); }} style={{
+            width: '100%', padding: '11px 0', borderRadius: 13, marginTop: 8,
+            border: '1.5px solid rgba(255,212,59,0.4)', background: 'rgba(42,38,20,0.9)',
+            color: '#ffd43b', fontSize: 15, fontWeight: 900, cursor: 'pointer', fontFamily: 'inherit',
+          }}>
+            {revolving ? '⏸️ 停在這個季節' : '▶️ 繞太陽（過一年）'}
+          </button>
+
+          {/* ── 地面視角面板：天空 + 時間拖桿 + 白天長條 ── */}
+          <div style={{
+            marginTop: 14, borderRadius: 20, overflow: 'hidden',
+            border: '1px solid rgba(99,230,190,0.22)', background: 'rgba(8,16,30,0.8)',
+            boxShadow: '0 8px 36px rgba(10,40,80,0.45)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px 8px' }}>
+              <Text size="sm" style={{ color: '#e9edf7', fontWeight: 800 }}>🧍 你抬頭看到的天空</Text>
+              <Text size="sm" style={{ color: '#ffd43b', fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>
+                🕐 {timeWord(spin / 15)}
+              </Text>
             </div>
 
-            {/* 「怎麼都 12 小時？」的即時解惑 */}
-            {hint && (
-              <Text size="xs" style={{ color: '#63e6be', fontWeight: 700, marginTop: 6, textAlign: 'center' }}>
-                {hint}
-              </Text>
+            <SkyView latitude={latitude} season={season} spin={spin} seasonKey={activeSeason} />
+
+            <div style={{ padding: '10px 16px 14px' }}>
+              {/* 現在幾點：拖著玩，跟自轉同步 */}
+              <Slider
+                value={spin / 15} min={0} max={24} step={0.25}
+                onChange={h => { setSpinning(false); setSpin((h * 15) % 360); }}
+                label={v => timeWord(v)}
+                marks={[
+                  { value: 0, label: '🌙' }, { value: 6, label: '🌅' },
+                  { value: 12, label: '🌞' }, { value: 18, label: '🌇' }, { value: 24, label: '🌙' },
+                ]}
+                color="yellow" size="sm"
+              />
+
+              {/* 白天／晚上長條 */}
+              <div style={{ marginTop: 22 }}>
+                <div style={{ display: 'flex', height: 24, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)' }}>
+                  <div style={{ width: `${info.fraction * 100}%`, background: 'linear-gradient(90deg,#ffe08a,#ffd23f)', transition: 'width 0.25s' }} />
+                  <div style={{ width: `${(1 - info.fraction) * 100}%`, background: '#1a2540', transition: 'width 0.25s' }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginTop: 3 }}>
+                  <span style={{ color: '#ffd43b' }}>☀️ 白天 {dayH} 小時</span>
+                  <span style={{ color: '#8ba3be' }}>🌙 晚上 {24 - dayH} 小時</span>
+                </div>
+              </div>
+
+              {/* 「怎麼都 12 小時？」的即時解惑 */}
+              {hint && (
+                <Text size="xs" style={{ color: '#63e6be', fontWeight: 700, marginTop: 6, textAlign: 'center' }}>
+                  {hint}
+                </Text>
+              )}
+            </div>
+          </div>
+
+          {/* 慶祝橫幅 */}
+          <AnimatePresence>
+            {special && (
+              <motion.div
+                key={info.kind}
+                initial={{ opacity: 0, scale: 0.8, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+                style={{
+                  textAlign: 'center', fontSize: 18, fontWeight: 900, padding: '8px 0',
+                  color: info.kind === 'polar-day' ? '#ffd43b' : '#b8c6ff',
+                }}
+              >
+                {info.kind === 'polar-day' ? '☀️ 永晝！太陽整天不下山' : '🌙 永夜！太陽整天不出來'}
+              </motion.div>
             )}
-          </div>
-        </div>
+          </AnimatePresence>
 
-        {/* 慶祝橫幅 */}
-        <AnimatePresence>
-          {special && (
-            <motion.div
-              key={info.kind}
-              initial={{ opacity: 0, scale: 0.8, y: 8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-              style={{
-                textAlign: 'center', fontSize: 18, fontWeight: 900, padding: '8px 0',
-                color: info.kind === 'polar-day' ? '#ffd43b' : '#b8c6ff',
-              }}
-            >
-              {info.kind === 'polar-day' ? '☀️ 永晝！太陽整天不下山' : '🌙 永夜！太陽整天不出來'}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* 白話解說 */}
-        <div style={{
-          background: 'rgba(10,22,38,0.9)', border: '1px solid rgba(26,44,61,0.95)',
-          borderRadius: 16, padding: '12px 14px', marginTop: 4,
-        }}>
-          <Text style={{ fontSize: 14.5, lineHeight: 1.6, color: '#dbe4f2' }}>
-            {explain(latitude, info)}
-          </Text>
-        </div>
-
-        {/* 緯度 + 自轉 */}
-        <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div>
-            <Text size="sm" style={{ color: '#e9edf7', fontWeight: 800, marginBottom: 4 }}>
-              🏠 你住在哪裡？
-            </Text>
-            <Slider
-              value={latitude} onChange={setLatitude} min={0} max={90} step={1}
-              label={v => whereLabel(v)}
-              marks={[{ value: 0, label: '赤道' }, { value: 66.5, label: '北極圈' }, { value: 90, label: '北極' }]}
-              color="teal"
-            />
-          </div>
-
-          <button onClick={() => setSpinning(p => !p)} style={{
-            padding: '12px 0', borderRadius: 14, border: '1.5px solid rgba(99,230,190,0.4)',
-            background: 'rgba(20,42,38,0.9)', color: '#63e6be', fontSize: 16, fontWeight: 900,
-            cursor: 'pointer', fontFamily: 'inherit', marginTop: 4,
+          {/* 白話解說 */}
+          <div style={{
+            background: 'rgba(10,22,38,0.9)', border: '1px solid rgba(26,44,61,0.95)',
+            borderRadius: 16, padding: '12px 14px', marginTop: 4,
           }}>
-            {spinning ? '⏸️ 停住這一天' : '▶️ 轉一天（白天→黑夜）'}
-          </button>
+            <Text style={{ fontSize: 14.5, lineHeight: 1.6, color: '#dbe4f2' }}>
+              {explain(latitude, info)}
+            </Text>
+          </div>
+
+          {/* 緯度 + 自轉 */}
+          <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div>
+              <Text size="sm" style={{ color: '#e9edf7', fontWeight: 800, marginBottom: 4 }}>
+                🏠 你住在哪裡？
+              </Text>
+              <Slider
+                value={latitude} onChange={setLatitude} min={0} max={90} step={1}
+                label={v => whereLabel(v)}
+                marks={[{ value: 0, label: '赤道' }, { value: 66.5, label: '北極圈' }, { value: 90, label: '北極' }]}
+                color="teal"
+              />
+            </div>
+
+            <button onClick={() => setSpinning(p => !p)} style={{
+              padding: '12px 0', borderRadius: 14, border: '1.5px solid rgba(99,230,190,0.4)',
+              background: 'rgba(20,42,38,0.9)', color: '#63e6be', fontSize: 16, fontWeight: 900,
+              cursor: 'pointer', fontFamily: 'inherit', marginTop: 4,
+            }}>
+              {spinning ? '⏸️ 停住這一天' : '▶️ 轉一天（白天→黑夜）'}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </GameLayout>
   );
 }
