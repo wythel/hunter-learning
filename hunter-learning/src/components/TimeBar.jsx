@@ -12,9 +12,9 @@ export default function TimeBar({ fraction }) {
       <div style={{
         height: '100%',
         width: `${clamped * 100}%`,
-        background: low ? '#f85149' : 'linear-gradient(90deg, #12b886, #0dcfaa)',
+        background: low ? '#f85149' : 'linear-gradient(90deg, #FFD400, #FFAA00)',
         borderRadius: 6,
-        boxShadow: low ? '0 0 8px rgba(248,81,73,0.6)' : '0 0 6px rgba(18,184,134,0.4)',
+        boxShadow: low ? '0 0 8px rgba(248,81,73,0.6)' : '0 0 6px rgba(255,212,0,0.4)',
         transition: 'width 0.1s linear',
         animation: low ? 'timebar-pulse 0.5s ease-in-out infinite alternate' : 'none',
       }} />

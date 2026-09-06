@@ -109,7 +109,7 @@ export default function ResultScreen({ title, stars, stats, onRetry, onMenu, onL
                       <Text style={{ fontSize: 18 }}>{s.icon}</Text>
                       <Text size="sm" style={{ color: 'rgba(139,163,190,0.8)', fontWeight: 600 }}>{s.label}</Text>
                     </div>
-                    <Text style={{ fontWeight: 800, fontSize: 15, color: '#12b886' }}>{s.value}</Text>
+                    <Text style={{ fontWeight: 800, fontSize: 15, color: 'var(--dex-gold)' }}>{s.value}</Text>
                   </div>
                 ))}
               </div>
@@ -123,10 +123,10 @@ export default function ResultScreen({ title, stars, stats, onRetry, onMenu, onL
                   style={{
                     width: '100%', padding: '15px 0',
                     borderRadius: 16, border: 'none',
-                    background: 'linear-gradient(135deg, #12b886, #0ca678)',
-                    color: '#fff', fontSize: 17, fontWeight: 900,
+                    background: 'linear-gradient(135deg, #FFD400, #FFAA00)',
+                    color: '#3A2A00', fontSize: 17, fontWeight: 900,
                     cursor: 'pointer', fontFamily: 'inherit',
-                    boxShadow: '0 4px 20px rgba(18,184,134,0.4)',
+                    boxShadow: '0 4px 20px rgba(255,212,0,0.4)',
                     position: 'relative', overflow: 'hidden',
                   }}
                 >

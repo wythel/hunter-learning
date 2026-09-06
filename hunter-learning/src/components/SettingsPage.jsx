@@ -1,12 +1,16 @@
 import { Stack, Text } from '@mantine/core';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import StarField from './StarField';
 import OptionGroup from './OptionGroup';
 import DexFrame from '../components/DexFrame';
+import { rosterByPath } from '../utils/pokemonRoster';
+import { pokemonArtwork } from '../utils/pokemon';
 
 export default function SettingsPage({ title, icon, settings, onStart }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const entry = rosterByPath[location.pathname];
 
   return (
     <DexFrame>
@@ -48,7 +52,16 @@ export default function SettingsPage({ title, icon, settings, onStart }) {
                 transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
                 style={{ fontSize: 62, lineHeight: 1, marginBottom: 12 }}
               >
-                {icon}
+                {entry ? (
+                  <img
+                    src={pokemonArtwork(entry.id)}
+                    alt=""
+                    width={72}
+                    height={72}
+                    onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
+                    style={{ display: 'inline-block' }}
+                  />
+                ) : icon}
               </motion.div>
               <div style={{
                 fontSize: 28, fontWeight: 900,
