@@ -31,6 +31,32 @@ describe('pokemonRoster', () => {
     expect(rosterByPath['/math-battle'].id).toBe(25);
     expect(rosterByPath['/note-staff'].id).toBe(39);
   });
+
+  // These 15 game-to-Pokémon mappings are a documented design decision (spec).
+  // Any change here must be intentional; hardcoded expectations catch accidental changes.
+  it('all 15 game-to-Pokémon mappings are correct', () => {
+    const expectedMapping = {
+      '/math-battle': 25,
+      '/chain-math': 82,
+      '/clock-reading': 97,
+      '/english-match': 1,
+      '/memory-flip': 132,
+      '/math-mole': 50,
+      '/symmetry': 12,
+      '/odd-even': 137,
+      '/make-ten': 102,
+      '/column-math': 95,
+      '/note-staff': 39,
+      '/word-hunt': 52,
+      '/moon-phases': 35,
+      '/polar-day': 338,
+      '/solar-system': 120,
+    };
+
+    for (const [path, expectedId] of Object.entries(expectedMapping)) {
+      expect(rosterByPath[path].id).toBe(expectedId);
+    }
+  });
 });
 
 describe('pokemon image helpers', () => {
