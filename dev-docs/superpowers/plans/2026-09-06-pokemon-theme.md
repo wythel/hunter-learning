@@ -58,10 +58,16 @@
 |---|---|---|---|
 | **A** | `make-ten`、`odd-even`、`symmetry` | 有返回鍵 + 有題號 | 兩者都移除，改由頂條提供 |
 | **B** | `note-staff`、`polar-day` | 只有返回鍵 | 移除返回鍵；不給 `progress` |
-| **C** | `clock-reading`、`column-math`、`english-match`、`math-battle`、`word-hunt` | 只有題號 | 移除題號；首次獲得返回鍵 |
-| **D** | `chain-math`、`math-mole`、`memory-flip`、`moon-phases`、`solar-system` | 兩者皆無 | 純新增頂條 |
+| **C** | `clock-reading`、`column-math`、`english-match`、`word-hunt`、`math-battle`、`chain-math`、`moon-phases`、`solar-system` | 只有題號 | 移除題號；首次獲得返回鍵 |
+| **D** | `math-mole`、`memory-flip` | 兩者皆無 | 純新增頂條 |
+
+3 + 2 + 8 + 2 = 15，無重複無遺漏。
 
 ⚠️ `math-battle` 的題號在 `src/games/math-battle/BattleUI.jsx`，不在 `Game.jsx`。
+⚠️ **`BattleUI.jsx` 是 `math-battle` 與 `chain-math` 共用的**（`chain-math/Game.jsx:7`
+`import BattleUI from '../math-battle/BattleUI'`）。改它會同時影響兩個遊戲，所以兩者都在 Task 9。
+⚠️ `moon-phases/Game.jsx:56` 與 `solar-system/Game.jsx:178` 的題號寫成 `{g.currentQ + 1}`，
+用字面字串搜尋會漏掉。
 ⚠️ `polar-day` 的畫面檔是 `src/games/polar-day/PolarDay.jsx`，不叫 `Game.jsx`。
 
 ---
@@ -558,8 +564,10 @@ Expected: FAIL — `expected 0 to be 15`（還沒有 `img[data-pokemon]`）
 ```jsx
 import DexFrame from '../components/DexFrame';
 import { rosterByPath } from '../utils/pokemonRoster';
-import { pokemonSprite } from '../utils/pokemon';
+import { pokemonSprite, pokemonArtwork } from '../utils/pokemon';
 ```
+
+`pokemonArtwork` 是給下面標題列的皮卡丘用的（大尺寸），`pokemonSprite` 給 15 張卡片（小尺寸）。
 
 `GAMES` 陣列**保留 path／title／desc，刪掉 icon／color／glow**，顏色改從 roster 取。
 在 `GameCard` 內把顏色來源換掉，並用 sprite 取代 emoji：
@@ -794,12 +802,24 @@ import DexStrip from '../../components/DexStrip';
 ```jsx
 <DexStrip
   onBack={() => navigate('/make-ten')}
-  progress={`第 ${currentQ + 1} / ${count} 題`}
-  right={timed ? <TimeBar fraction={fraction} /> : undefined}
+  progress={mode === 'match'
+    ? `${matchCount} / ${count} 對`
+    : `第 ${currentQ + 1} / ${count} 題`}
+  right={timedActive ? <TimeBar fraction={fraction} /> : undefined}
 />
 ```
 
-然後**刪掉**第 387 行附近的 `← 設定` 按鈕整塊，以及第 86 行的 `第 {currentQ + 1} / {count} 題`。
+⚠️ 這個遊戲有**兩種模式**，兩件事因此不能照抄其他遊戲：
+
+1. **進度字串依模式而異** — `choose` 模式是「第 N / M 題」（第 86 行），
+   `match` 模式是「{matchCount} / {count} 對」（第 198 行）。用單一字串會讓其中一種模式顯示錯誤數字。
+2. **時間條要用 `timedActive` 而非 `timed`** — 第 281 行
+   `const timedActive = timed && mode === 'choose'`，倒數計時只在 choose 模式啟用。
+   用 `timed` 會在 match 模式顯示一條永遠不動的時間條。
+
+`mode`、`matchCount`、`currentQ`、`count`、`timedActive`、`fraction` 都已在主元件作用域內（第 280–298 行）。
+
+然後**刪掉**第 387 行附近的 `← 設定` 按鈕整塊，以及第 86 行與第 198 行兩處進度顯示。
 若 `TimeBar` 原本另外渲染在別處，一併刪掉那塊，避免出現兩條時間條。
 
 - [ ] **Step 2: 跑 make-ten 測試**
@@ -930,7 +950,10 @@ git commit -m "Add DexStrip to note-staff and polar-day"
 - Modify: `src/games/english-match/Game.jsx:96`
 - Modify: `src/games/word-hunt/Game.jsx`
 - Modify: `src/games/math-battle/Game.jsx`
-- Modify: `src/games/math-battle/BattleUI.jsx`
+- Modify: `src/games/math-battle/BattleUI.jsx`（**math-battle 與 chain-math 共用**）
+- Modify: `src/games/chain-math/Game.jsx`
+- Modify: `src/games/moon-phases/Game.jsx`
+- Modify: `src/games/solar-system/Game.jsx`
 
 **Interfaces:**
 - Consumes: `DexStrip`（Task 3）
@@ -976,21 +999,60 @@ Expected: 全綠
 
 同時刪掉 `Game.jsx` 中原本 `{timed && (<div style={{ padding: '0 16px 6px' }}><TimeBar fraction={fraction} /></div>)}` 那塊——時間條移進頂條了，留著會有兩條。
 
-⚠️ 題號在 `src/games/math-battle/BattleUI.jsx`，不在 `Game.jsx`。到 `BattleUI.jsx` 刪掉題號顯示。`BattleUI` 的 `currentQ`／`count` props 若刪除題號後無其他用途，一併從 props 移除，並同步更新 `Game.jsx` 的傳入處。
+⚠️ 題號在 `src/games/math-battle/BattleUI.jsx` 第 43 行，不在 `Game.jsx`。
 
-- [ ] **Step 4: 跑 math-battle 測試**
+⚠️ **只刪第 43 行的文字題號，`currentQ` 與 `count` 兩個 prop 必須保留。**
+`BattleUI.jsx:11` 用它們算進度*條*（`const progress = count > 0 ? currentQ / count : 0`），
+移除 props 會讓兩個遊戲的進度條卡在 0。
 
-Run: `npm run test:run -- games.mathBattle`
-Expected: PASS。注意 `test/games.mathBattle.BattleUI.test.jsx` 可能斷言了題號——若變紅，該測試斷言的是被刻意移除的 UI，更新測試是正確的；但 `games.mathBattle.useGame.test.js` 變紅就代表動到邏輯，必須回頭修。
+- [ ] **Step 4: 改 chain-math（與 BattleUI 同一個 commit）**
 
-- [ ] **Step 5: 目視確認**
+`chain-math/Game.jsx:7` 是 `import BattleUI from '../math-battle/BattleUI'` ——
+**這個元件是兩個遊戲共用的**，所以上一步刪掉題號也同時影響 chain-math。
+兩者必須在同一個 commit 內改完，否則會有一段時間 chain-math 沒有題號。
 
-`npm run dev`，五個遊戲各玩一題。確認只有一組題號、math-battle 只有一條時間條。
+`src/games/chain-math/Game.jsx` 加 import，並在 `<GameLayout>` 內最前面插入：
 
-- [ ] **Step 6: Commit**
+```jsx
+<DexStrip
+  onBack={() => navigate('/chain-math')}
+  progress={`第 ${currentQ + 1} / ${count} 題`}
+  right={timed ? <TimeBar fraction={fraction} /> : undefined}
+/>
+```
+
+同時刪掉 `Game.jsx` 中原本獨立渲染 `<TimeBar>` 的那塊，避免兩條時間條。
+
+- [ ] **Step 5: 改 moon-phases 與 solar-system**
+
+兩者的題號寫成 `{g.currentQ + 1}`（`moon-phases/Game.jsx:56`、`solar-system/Game.jsx:178`），
+用字面字串搜尋會漏掉。各自加 import 並插入頂條，路徑分別為 `/moon-phases`、`/solar-system`：
+
+```jsx
+<DexStrip
+  onBack={() => navigate('/moon-phases')}
+  progress={`第 ${g.currentQ + 1} / ${count} 題`}
+/>
+```
+
+然後刪掉原本那行題號。
+
+⚠️ 這兩個都是 three.js 3D 場景，插入頂條後確認 canvas 沒有溢出——
+若 canvas 高度硬寫 `100dvh`，改成父層 flex column + `flex:1` 填滿剩餘空間。
+
+- [ ] **Step 6: 跑全部八個遊戲的測試**
+
+Run: `npm run test:run -- games.clockReading games.columnMath games.englishMatch games.wordHunt games.mathBattle games.chainMath games.moon-phases games.solar-system`
+Expected: 全綠。注意 `test/games.mathBattle.BattleUI.test.jsx` 可能斷言了題號——若變紅，該測試斷言的是被刻意移除的 UI，更新測試是正確的；但任何 `useGame` 測試變紅就代表動到邏輯，必須回頭修實作。
+
+- [ ] **Step 7: 目視確認**
+
+`npm run dev`，八個遊戲各玩一題。確認只有一組題號、math-battle 與 chain-math 各只有一條時間條、兩個 3D 場景沒有捲軸或被裁切。
+
+- [ ] **Step 8: Commit**
 
 ```bash
-git add src/games/clock-reading/Game.jsx src/games/column-math/Game.jsx src/games/english-match/Game.jsx src/games/word-hunt/Game.jsx src/games/math-battle/Game.jsx src/games/math-battle/BattleUI.jsx
+git add src/games/clock-reading/Game.jsx src/games/column-math/Game.jsx src/games/english-match/Game.jsx src/games/word-hunt/Game.jsx src/games/math-battle/Game.jsx src/games/math-battle/BattleUI.jsx src/games/chain-math/Game.jsx src/games/moon-phases/Game.jsx src/games/solar-system/Game.jsx
 git commit -m "Add DexStrip to games that only had a question counter"
 ```
 
@@ -999,19 +1061,17 @@ git commit -m "Add DexStrip to games that only had a question counter"
 ### Task 10: 導入 DexStrip — D 組（純新增）
 
 **Files:**
-- Modify: `src/games/chain-math/Game.jsx`
 - Modify: `src/games/math-mole/Game.jsx`
 - Modify: `src/games/memory-flip/Game.jsx`
-- Modify: `src/games/moon-phases/Game.jsx`
-- Modify: `src/games/solar-system/Game.jsx`
 
 **Interfaces:**
 - Consumes: `DexStrip`（Task 3）
 - Produces: 無
 
-這五個遊戲既無返回鍵也無題號，**沒有東西要刪**，只是純新增頂條。
+這兩個遊戲既無返回鍵也無題號，**沒有東西要刪**，只是純新增頂條。
+（原本這組還有 `chain-math`、`moon-phases`、`solar-system`，但它們其實都有題號，已移到 Task 9。）
 
-- [ ] **Step 1: 五個檔案各加頂條**
+- [ ] **Step 1: 兩個檔案各加頂條**
 
 各自加 import：
 
@@ -1019,38 +1079,30 @@ git commit -m "Add DexStrip to games that only had a question counter"
 import DexStrip from '../../components/DexStrip';
 ```
 
-在 `<GameLayout>`（或最外層容器）內最前面插入，路徑逐檔替換：
+在 `<GameLayout>` 內最前面插入，路徑逐檔替換：
 
 ```jsx
-<DexStrip onBack={() => navigate('/chain-math')} />
+<DexStrip onBack={() => navigate('/math-mole')} />
 ```
 
-路徑：`/chain-math`、`/math-mole`、`/memory-flip`、`/moon-phases`、`/solar-system`。
+路徑：`/math-mole`、`/memory-flip`。
 
-`chain-math` 與 `math-battle` 一樣有 `currentQ`／`count`，可順便給 `progress`：
+這兩個遊戲都沒有逐題的題號概念（打地鼠是限時打擊、記憶翻牌是配對），
+**不要硬湊 `progress`**——留白即可，Task 3 的測試已保證這不會撐高頂條。
 
-```jsx
-<DexStrip
-  onBack={() => navigate('/chain-math')}
-  progress={`第 ${currentQ + 1} / ${count} 題`}
-/>
-```
+- [ ] **Step 2: 跑這兩個遊戲的測試**
 
-⚠️ `moon-phases` 與 `solar-system` 是 three.js 3D 場景，與 Task 8 的 polar-day 同樣要確認 canvas 高度沒有溢出。
-
-- [ ] **Step 2: 跑這五個遊戲的測試**
-
-Run: `npm run test:run -- games.chainMath games.mathMole games.memoryFlip games.moon-phases games.solar-system`
+Run: `npm run test:run -- games.mathMole games.memoryFlip`
 Expected: 全綠
 
 - [ ] **Step 3: 目視確認**
 
-`npm run dev`，五個遊戲各進去一次。兩個 3D 場景特別確認沒有捲軸或被裁切。
+`npm run dev`，兩個遊戲各進去一次，確認頂條沒有壓到遊戲區。
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add src/games/chain-math/Game.jsx src/games/math-mole/Game.jsx src/games/memory-flip/Game.jsx src/games/moon-phases/Game.jsx src/games/solar-system/Game.jsx
+git add src/games/math-mole/Game.jsx src/games/memory-flip/Game.jsx
 git commit -m "Add DexStrip to remaining games"
 ```
 
@@ -1127,7 +1179,7 @@ git push
 | 顏色撞色微調 | Task 4 Step 5（對著真實格線調） |
 | 圖片策略（小圖／大圖） | Task 1 Step 4、Task 4 Step 3 |
 | 錯誤處理（固定尺寸、lazy、onError） | Task 4 Step 1 測試 + Step 3 實作 |
-| 15 個遊戲導入頂條 | Task 7–10（3 + 2 + 5 + 5 = 15 ✓） |
+| 15 個遊戲導入頂條 | Task 7–10（3 + 2 + 8 + 2 = 15 ✓） |
 | 測試更新 | Task 4 Step 1、Task 5 Step 1 |
 | 不動 `useGame` | Global Constraints + Task 11 Step 1 |
 
