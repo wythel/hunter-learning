@@ -17,6 +17,16 @@
   --c-mole:        #ff922b;
   --c-symmetry:    #4dabf7;
   --c-oddeven:     #f783ac;
+
+  /* ── Pokédex 圖鑑機 ── */
+  --dex-red:      #DC0A2D;
+  --dex-red-dark: #8A0A20;
+  --dex-screen:   #26313D;
+  --dex-bezel:    #3C4A58;
+  --dex-gold:     #FFD400;
+  --led-red:      #FF5252;
+  --led-yellow:   #FFD400;
+  --led-green:    #3DDC84;
 }
 
 /* ── Reset ─────────────────────────────────────────────────────────────────── */
