@@ -1,2 +1,5 @@
 .superpowers/
 .claude/worktrees/
+
+# 開發用的本機設定,不進版控
+.claude/launch.json
