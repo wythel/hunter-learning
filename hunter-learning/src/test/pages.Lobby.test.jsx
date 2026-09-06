@@ -90,8 +90,8 @@ describe('Lobby page', () => {
   it('gives every sprite fixed dimensions to avoid layout shift', () => {
     const { container } = renderLobby();
     for (const img of container.querySelectorAll('img[data-pokemon]')) {
-      expect(img.getAttribute('width')).toBe('44');
-      expect(img.getAttribute('height')).toBe('44');
+      expect(img.getAttribute('width')).toBe('60');
+      expect(img.getAttribute('height')).toBe('60');
       expect(img.getAttribute('loading')).toBe('lazy');
     }
   });

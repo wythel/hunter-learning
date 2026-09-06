@@ -73,8 +73,8 @@ function GameCard({ game, index, onPlay }) {
         data-pokemon
         src={pokemonSprite(id)}
         alt=""
-        width={44}
-        height={44}
+        width={60}
+        height={60}
         loading="lazy"
         onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
         style={{ imageRendering: 'pixelated', position: 'relative', zIndex: 1 }}
