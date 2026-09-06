@@ -5,6 +5,8 @@ import StarField from '../../components/StarField';
 import ResultScreen from '../../components/ResultScreen';
 import Hole from './Hole';
 import { useGame } from './useGame';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 
 export default function MoleGame() {
   const location = useLocation();
@@ -37,7 +39,8 @@ export default function MoleGame() {
   const urgent = timeLeft <= 10;
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <GameLayout>
+      <DexStrip onBack={() => navigate('/math-mole')} />
       <StarField />
       <div style={{
         flex: 1,
@@ -45,13 +48,12 @@ export default function MoleGame() {
         flexDirection: 'column',
         alignItems: 'center',
         padding: '16px 20px',
-        paddingTop: 'max(16px, env(safe-area-inset-top))',
-        paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
         position: 'relative',
         zIndex: 1,
         maxWidth: 440,
         margin: '0 auto',
         width: '100%',
+        overflowY: 'auto',
       }}>
         {/* Header */}
         <Group justify="space-between" style={{ width: '100%', marginBottom: 16 }}>
@@ -114,6 +116,6 @@ export default function MoleGame() {
           ))}
         </div>
       </div>
-    </div>
+    </GameLayout>
   );
 }

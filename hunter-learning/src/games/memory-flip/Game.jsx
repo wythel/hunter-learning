@@ -5,6 +5,8 @@ import StarField from '../../components/StarField';
 import ResultScreen from '../../components/ResultScreen';
 import FlipCard from './Card';
 import { useGame } from './useGame';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 
 export default function MemoryGame() {
   const location = useLocation();
@@ -35,7 +37,8 @@ export default function MemoryGame() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <GameLayout>
+      <DexStrip onBack={() => navigate('/memory-flip')} />
       <StarField />
       <div style={{
         flex: 1,
@@ -43,13 +46,12 @@ export default function MemoryGame() {
         flexDirection: 'column',
         alignItems: 'center',
         padding: '16px',
-        paddingTop: 'max(16px, env(safe-area-inset-top))',
-        paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
         position: 'relative',
         zIndex: 1,
         maxWidth: 480,
         margin: '0 auto',
         width: '100%',
+        overflowY: 'auto',
       }}>
         <Group justify="space-between" style={{ width: '100%', marginBottom: 16 }}>
           <Text size="sm" c="teal.4" fw={700}>{pairs} 對 / {matched.size / 2 | 0} 配對</Text>
@@ -79,6 +81,6 @@ export default function MemoryGame() {
           ))}
         </motion.div>
       </div>
-    </div>
+    </GameLayout>
   );
 }
