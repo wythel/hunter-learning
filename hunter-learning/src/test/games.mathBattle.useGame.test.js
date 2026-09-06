@@ -16,6 +16,21 @@ vi.mock('../utils/math', async () => {
 });
 
 import { useGame } from '../games/math-battle/useGame';
+import { EVOLUTION_STAGES, stageIndexFor } from '../games/math-battle/sprites';
+
+async function answerCorrectly(result) {
+  for (const digit of String(result.current.question.answer)) {
+    await act(async () => { result.current.handleKey(digit); });
+  }
+  await act(async () => { result.current.handleKey('ok'); });
+}
+
+async function answerWrong(result) {
+  for (const digit of String(result.current.question.answer + 100)) {
+    await act(async () => { result.current.handleKey(digit); });
+  }
+  await act(async () => { result.current.handleKey('ok'); });
+}
 
 describe('useGame (math-battle)', () => {
   it('initial state: phase=playing, currentQ=0, playerHP=3, answer=""', () => {
@@ -126,6 +141,48 @@ describe('useGame (math-battle)', () => {
     await waitFor(() => {
       expect(result.current.phase).toBe('result');
     });
+  });
+
+  it('一擊必殺: 對手最大 HP 是 1,答對一題就換下一隻', async () => {
+    const { result } = renderHook(() => useGame({ difficulty: 'easy', count: 10 }));
+    expect(result.current.monsterMaxHP).toBe(1);
+    expect(result.current.monsterHP).toBe(1);
+    const first = result.current.monster;
+    await answerCorrectly(result);
+    await waitFor(() => expect(result.current.currentQ).toBe(1));
+    expect(result.current.monster).not.toBe(first);
+    expect(result.current.monsterHP).toBe(1);
+  });
+
+  it('答錯不換怪: 同一隻留在場上', async () => {
+    const { result } = renderHook(() => useGame({ difficulty: 'easy', count: 10 }));
+    const first = result.current.monster;
+    await answerWrong(result);
+    await waitFor(() => expect(result.current.currentQ).toBe(1));
+    expect(result.current.monster).toBe(first);
+  });
+
+  it('進化階段跟著題目進度走: 全對打完一輪依序是 1→2→3 階段', async () => {
+    const count = 6;
+    const { result } = renderHook(() => useGame({ difficulty: 'easy', count }));
+    const seen = [];
+    for (let i = 0; i < count; i++) {
+      seen.push(result.current.monster);
+      await answerCorrectly(result);
+      if (i < count - 1) await waitFor(() => expect(result.current.currentQ).toBe(i + 1));
+    }
+    seen.forEach((m, i) => {
+      expect(EVOLUTION_STAGES[stageIndexFor(i, count)]).toContain(m);
+    });
+  });
+
+  it('nextMonsterImg 指向答對後會登場的下一隻', async () => {
+    const { result } = renderHook(() => useGame({ difficulty: 'easy', count: 10 }));
+    const preloaded = result.current.nextMonsterImg;
+    expect(preloaded).toBeTruthy();
+    await answerCorrectly(result);
+    await waitFor(() => expect(result.current.currentQ).toBe(1));
+    expect(result.current.monster.img).toBe(preloaded);
   });
 
   it('訂正: wrong answer records { text, answer }', async () => {

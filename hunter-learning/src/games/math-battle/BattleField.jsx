@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MONSTERS, PLAYER } from './sprites';
+import { PLAYER } from './sprites';
 
 const STARS = Array.from({ length: 38 }, (_, i) => ({
   x: (i * 37 + 11) % 100,
@@ -10,19 +10,20 @@ const STARS = Array.from({ length: 38 }, (_, i) => ({
 }));
 
 export default function BattleField({
-  monsterImg, monsterName, monsterHP, monsterMaxHP,
+  monsterImg, monsterName, monsterHP, monsterMaxHP, nextMonsterImg,
   playerImg, playerHP,
   monsterFlash, playerFlash,
   playerAttacking, monsterAttacking,
 }) {
-  const maxHP = monsterMaxHP ?? 3;
+  const maxHP   = monsterMaxHP ?? 1;
+  const hp      = monsterHP ?? maxHP;
+  const hpRatio = maxHP > 0 ? Math.min(1, Math.max(0, hp / maxHP)) : 0;
+  const healthy = hpRatio > 0.34;
 
   // 預載下一隻寶可夢的圖,換怪時不會空窗
   useEffect(() => {
-    const idx = MONSTERS.findIndex(m => m.img === monsterImg);
-    const next = MONSTERS[(idx + 1) % MONSTERS.length];
-    if (next) new Image().src = next.img;
-  }, [monsterImg]);
+    if (nextMonsterImg) new Image().src = nextMonsterImg;
+  }, [nextMonsterImg]);
 
   return (
     <div style={{
@@ -147,15 +148,15 @@ export default function BattleField({
               border: '1px solid rgba(255,255,255,0.12)',
             }}>
               <motion.div
-                animate={{ width: `${Math.max(0, (monsterHP / maxHP)) * 100}%` }}
+                animate={{ width: `${hpRatio * 100}%` }}
                 transition={{ duration: 0.35, ease: 'easeOut' }}
                 style={{
                   height: '100%',
-                  background: monsterHP > 1
+                  background: healthy
                     ? 'linear-gradient(90deg, #12b886, #0dcfaa)'
                     : 'linear-gradient(90deg, #ff6b6b, #ee3333)',
                   borderRadius: 5,
-                  boxShadow: monsterHP > 1
+                  boxShadow: healthy
                     ? '0 0 6px rgba(18,184,134,0.6)'
                     : '0 0 6px rgba(255,60,60,0.6)',
                 }}

@@ -19,7 +19,7 @@ export default function ChainMathGame() {
 
   const {
     question, answer, phase, currentQ, stats,
-    playerHP, monster, monsterHP, monsterMaxHP, playerImg,
+    playerHP, monster, monsterHP, monsterMaxHP, nextMonsterImg, playerImg,
     monsterFlash, playerFlash, playerAttacking, monsterAttacking,
     stars, title, elapsedSec, handleKey,
     timeoutAnswer, timerPaused, handleTimeout, wrong,
@@ -92,6 +92,7 @@ export default function ChainMathGame() {
         monsterName={monster.name}
         monsterHP={monsterHP}
         monsterMaxHP={monsterMaxHP}
+        nextMonsterImg={nextMonsterImg}
         playerImg={playerImg}
         playerHP={playerHP}
         monsterFlash={monsterFlash}

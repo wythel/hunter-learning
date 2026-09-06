@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { generateArith, delay } from '../../utils/math';
 import { calculateStars, getResultTitle } from '../../utils/scoring';
 import { useSound } from '../../hooks/useSound';
-import { MONSTERS, PLAYER } from './sprites';
+import { buildMonsterRoster, MONSTER_MAX_HP, PLAYER } from './sprites';
 
 export function useGame({ difficulty, count }) {
   const [question, setQuestion]           = useState(() => generateArith(difficulty));
@@ -11,8 +11,9 @@ export function useGame({ difficulty, count }) {
   const [currentQ, setCurrentQ]           = useState(0);
   const [stats, setStats]                 = useState({ correct: 0, wrong: 0 });
   const [playerHP, setPlayerHP]           = useState(3);
+  const [roster]                          = useState(() => buildMonsterRoster(count));
   const [monsterIdx, setMonsterIdx]       = useState(0);
-  const [monsterHP, setMonsterHP]         = useState(3);
+  const [monsterHP, setMonsterHP]         = useState(MONSTER_MAX_HP);
   const [monsterFlash, setMonsterFlash]   = useState(false);
   const [playerFlash, setPlayerFlash]     = useState(false);
   const [playerAttacking, setPlayerAttacking] = useState(false);
@@ -26,7 +27,7 @@ export function useGame({ difficulty, count }) {
   const questionRef   = useRef(question);
   const currentQRef   = useRef(0);
   const playerHPRef   = useRef(3);
-  const monsterHPRef  = useRef(3);
+  const monsterHPRef  = useRef(MONSTER_MAX_HP);
   const startTime     = useRef(Date.now());
   const wrongRef      = useRef([]); // 答錯的題目(供結算頁訂正)
   const sound         = useSound();
@@ -79,9 +80,10 @@ export function useGame({ difficulty, count }) {
       setStats(s => ({ ...s, correct: s.correct + 1 }));
       const nextMonsterHP = monsterHPRef.current - 1;
       if (nextMonsterHP <= 0) {
-        setMonsterIdx(i => (i + 1) % MONSTERS.length);
-        setMonsterHP(3);
-        monsterHPRef.current = 3;
+        // 打倒了 → 下一題的對手,階段跟著題目進度走
+        setMonsterIdx(Math.min(newQ, roster.length - 1));
+        setMonsterHP(MONSTER_MAX_HP);
+        monsterHPRef.current = MONSTER_MAX_HP;
       } else {
         setMonsterHP(nextMonsterHP);
         monsterHPRef.current = nextMonsterHP;
@@ -125,7 +127,7 @@ export function useGame({ difficulty, count }) {
 
     setTimerPaused(false);
     locked.current = false;
-  }, [count, difficulty, sound]);
+  }, [count, difficulty, roster, sound]);
 
   // 限時模式:10 秒未作答 → 視同答錯並公布正確答案
   const handleTimeout = useCallback(async () => {
@@ -184,11 +186,14 @@ export function useGame({ difficulty, count }) {
   const stars = calculateStars(stats.correct, stats.wrong);
   const title = getResultTitle(stars, completed);
   const elapsedSec = Math.round((Date.now() - startTime.current) / 1000);
-  const monster = MONSTERS[monsterIdx];
+  const monster     = roster[monsterIdx] ?? roster[0];
+  // 答對就換怪,先把下一隻的圖抓起來,免得換的瞬間空窗
+  const nextMonster = roster[Math.min(currentQ + 1, roster.length - 1)];
 
   return {
     question, answer, phase, currentQ, stats, playerHP,
-    monster, monsterHP, monsterMaxHP: 3, playerImg: PLAYER.img,
+    monster, monsterHP, monsterMaxHP: MONSTER_MAX_HP,
+    nextMonsterImg: nextMonster?.img, playerImg: PLAYER.img,
     monsterFlash, playerFlash, playerAttacking, monsterAttacking,
     stars, title, elapsedSec, handleKey,
     timeoutAnswer, timerPaused, handleTimeout,

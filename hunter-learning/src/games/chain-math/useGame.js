@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { rand, delay } from '../../utils/math';
 import { calculateStars, getResultTitle } from '../../utils/scoring';
 import { useSound } from '../../hooks/useSound';
-import { MONSTERS, PLAYER } from '../math-battle/sprites';
+import { MONSTERS, PLAYER } from './sprites';
 
 function generateChainQuestion(operation, difficulty) {
   const max = difficulty === 'easy' ? 9 : 19;
@@ -206,7 +206,9 @@ export function useGame({ operation, difficulty, count }) {
 
   return {
     question, answer, phase, currentQ, stats, playerHP,
-    monster: MONSTERS[monsterIdx], monsterHP, monsterMaxHP: 3, playerImg: PLAYER.img,
+    monster: MONSTERS[monsterIdx], monsterHP, monsterMaxHP: 3,
+    nextMonsterImg: MONSTERS[(monsterIdx + 1) % MONSTERS.length].img,
+    playerImg: PLAYER.img,
     monsterFlash, playerFlash, playerAttacking, monsterAttacking,
     stars, title, elapsedSec, handleKey,
     timeoutAnswer, timerPaused, handleTimeout,

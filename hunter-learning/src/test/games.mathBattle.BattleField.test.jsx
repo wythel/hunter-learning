@@ -16,13 +16,15 @@ vi.mock('framer-motion', async () => {
 });
 
 import BattleField from '../games/math-battle/BattleField';
-import { MONSTERS, PLAYER } from '../games/math-battle/sprites';
+import { EVOLUTION_STAGES, PLAYER } from '../games/math-battle/sprites';
+
+const ALL_MONSTERS = EVOLUTION_STAGES.flat();
 
 function renderWithMantine(ui) {
   return render(<MantineProvider>{ui}</MantineProvider>);
 }
 
-const monster = MONSTERS[0];
+const monster = ALL_MONSTERS[0];
 
 function renderField(overrides = {}) {
   return renderWithMantine(
@@ -42,8 +44,8 @@ function renderField(overrides = {}) {
 
 describe('sprites', () => {
   it('every monster has a name and a PokeAPI artwork URL', () => {
-    expect(MONSTERS.length).toBeGreaterThan(0);
-    for (const m of MONSTERS) {
+    expect(ALL_MONSTERS.length).toBeGreaterThan(0);
+    for (const m of ALL_MONSTERS) {
       expect(m.name).toBeTruthy();
       expect(m.img).toMatch(/^https:\/\/raw\.githubusercontent\.com\/PokeAPI\/sprites\/.+\/\d+\.png$/);
     }
