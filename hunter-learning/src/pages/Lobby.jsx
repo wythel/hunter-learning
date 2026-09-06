@@ -134,6 +134,8 @@ export default function Lobby() {
               transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
               style={{ marginBottom: 14 }}
             >
+              {/* 沒有 loading="lazy":這張圖在 above the fold,是小朋友打開頁面第一眼看到的東西,
+                  lazy 只會延後它出現——跟下面 15 張卡片 sprite(捲動後才進視窗)情況不同 */}
               <img
                 src={pokemonArtwork(25)}
                 alt=""

@@ -10,7 +10,7 @@ export const POKEMON_ROSTER = [
   { path: '/symmetry',      id: 12,  name: '巴大蝶',     color: '#7C6FE0' },
   { path: '/odd-even',      id: 137, name: '多邊獸',     color: '#4BC0D9' },
   { path: '/make-ten',      id: 102, name: '蛋蛋',       color: '#F09A37' },
-  { path: '/column-math',   id: 95,  name: '大岩蛇',     color: '#7A8CA0' },
+  { path: '/column-math',   id: 95,  name: '大岩蛇',     color: '#96A8BE' },
   { path: '/note-staff',    id: 39,  name: '胖丁',       color: '#EE99AC' },
   { path: '/word-hunt',     id: 52,  name: '喵喵',       color: '#D9A441' },
   { path: '/moon-phases',   id: 35,  name: '皮皮',       color: '#9FB3E8' },

@@ -5,7 +5,7 @@ const LEDS = ['var(--led-red)', 'var(--led-yellow)', 'var(--led-green)'];
 export default function DexFrame({ children, dexNo }) {
   return (
     <div style={{
-      minHeight: '100dvh',
+      height: '100dvh',
       background: 'var(--dex-red)',
       padding: '10px 9px',
       paddingTop: 'max(10px, env(safe-area-inset-top))',
@@ -53,6 +53,9 @@ export default function DexFrame({ children, dexNo }) {
         // 'auto' 不是 'hidden':這是 flex item,overflow:hidden 會把它的自動最小高度歸零,
         // 讓螢幕卡在 100dvh-上蓋-下方按鈕列的高度、內容過長時被無聲裁切且沒有捲軸。
         // 用 auto 仍保留圓角裁切,但內容過長時可以捲動——不要「整理」回 hidden。
+        // 但光 auto 還不夠:外層 wrapper 必須是 height:'100dvh'(不是 minHeight)才會把殼釘死在
+        // 視窗高度,這個 screen 才會被擠壓成固定高度、auto 才真正生效捲動;
+        // 否則外層會長到跟內容一樣高,auto 永遠不會觸發,連鏡頭/燈號/按鈕列都會被捲走。
         overflow: 'auto',
         position: 'relative',
       }}>

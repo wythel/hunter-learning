@@ -28,6 +28,8 @@ vi.mock('react-router-dom', async () => {
 });
 
 import Lobby from '../pages/Lobby';
+import { POKEMON_ROSTER } from '../utils/pokemonRoster';
+import { pokemonSprite } from '../utils/pokemon';
 
 function renderLobby() {
   return render(
@@ -92,6 +94,21 @@ describe('Lobby page', () => {
       expect(img.getAttribute('height')).toBe('44');
       expect(img.getAttribute('loading')).toBe('lazy');
     }
+  });
+
+  it('renders every card with the pokemon that its own roster entry specifies', () => {
+    // The two tests above only check the sprite *count* and the *format* of the
+    // first sprite's url — a scrambled id-to-card mapping (e.g. math-battle
+    // silently rendering chain-math's pokemon) would still pass both. GAMES
+    // (this file's rendering order, in Lobby.jsx) and POKEMON_ROSTER (../utils/
+    // pokemonRoster) are hand-authored in the same path order, so the Nth
+    // rendered card is always the Nth roster entry — pin every one of the 15.
+    const { container } = renderLobby();
+    const sprites = [...container.querySelectorAll('img[data-pokemon]')];
+    expect(sprites).toHaveLength(POKEMON_ROSTER.length);
+    POKEMON_ROSTER.forEach((entry, i) => {
+      expect(sprites[i].getAttribute('src')).toBe(pokemonSprite(entry.id));
+    });
   });
 
   it('clicking 算數大戰 navigates to /math-battle', () => {
