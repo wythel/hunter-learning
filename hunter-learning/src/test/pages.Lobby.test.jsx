@@ -59,6 +59,9 @@ describe('Lobby page', () => {
     expect(screen.getByText('湊十大師')).toBeInTheDocument();
     expect(screen.getByText('音符星球')).toBeInTheDocument();
     expect(screen.getByText('看圖認字')).toBeInTheDocument();
+    expect(screen.getByText('月相星球')).toBeInTheDocument();
+    expect(screen.getByText('永晝永夜')).toBeInTheDocument();
+    expect(screen.getByText('太陽系')).toBeInTheDocument();
   });
 
   it('renders game descriptions', () => {
@@ -68,11 +71,27 @@ describe('Lobby page', () => {
     expect(screen.getByText('考驗記憶力！')).toBeInTheDocument();
   });
 
-  it('renders game icons', () => {
-    renderLobby();
-    expect(screen.getByText('⚔️')).toBeInTheDocument();
-    expect(screen.getByText('🃏')).toBeInTheDocument();
-    expect(screen.getByText('🦔')).toBeInTheDocument();
+  it('renders a pokemon sprite for every game', () => {
+    const { container } = renderLobby();
+    const sprites = container.querySelectorAll('img[data-pokemon]');
+    expect(sprites).toHaveLength(15);
+  });
+
+  it('points each sprite at the small classic sprite url', () => {
+    const { container } = renderLobby();
+    const first = container.querySelector('img[data-pokemon]');
+    expect(first.getAttribute('src')).toMatch(
+      /sprites\/pokemon\/\d+\.png$/
+    );
+  });
+
+  it('gives every sprite fixed dimensions to avoid layout shift', () => {
+    const { container } = renderLobby();
+    for (const img of container.querySelectorAll('img[data-pokemon]')) {
+      expect(img.getAttribute('width')).toBe('44');
+      expect(img.getAttribute('height')).toBe('44');
+      expect(img.getAttribute('loading')).toBe('lazy');
+    }
   });
 
   it('clicking 算數大戰 navigates to /math-battle', () => {
