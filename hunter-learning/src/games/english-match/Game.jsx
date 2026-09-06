@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Stack, Text, Title } from '@mantine/core';
 import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 import ResultScreen from '../../components/ResultScreen';
 import ChoiceReview from '../../components/ChoiceReview';
 import StarField from '../../components/StarField';
@@ -75,7 +76,11 @@ export default function EnglishGame() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <GameLayout>
+      <DexStrip
+        onBack={() => navigate('/english-match')}
+        progress={`第 ${currentQ + 1} / ${count} 題`}
+      />
       <StarField />
       <div style={{
         flex: 1,
@@ -84,18 +89,14 @@ export default function EnglishGame() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '24px 20px',
-        paddingTop: 'max(24px, env(safe-area-inset-top))',
         position: 'relative',
         zIndex: 1,
         maxWidth: 440,
         margin: '0 auto',
         width: '100%',
+        overflowY: 'auto',
       }}>
         <Stack gap={20} style={{ width: '100%' }}>
-          <Text size="xs" c="dimmed" ta="center">
-            第 {currentQ + 1} / {count} 題
-          </Text>
-
           {/* Question card */}
           <motion.div
             key={currentQ}
@@ -168,6 +169,6 @@ export default function EnglishGame() {
           </div>
         </Stack>
       </div>
-    </div>
+    </GameLayout>
   );
 }

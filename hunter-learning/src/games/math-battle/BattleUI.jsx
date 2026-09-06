@@ -37,11 +37,8 @@ export default function BattleUI({ question, answer, currentQ, count, onKey, loc
         />
       </div>
 
-      {/* Progress label + question */}
+      {/* 題目（題號已移到頂條的 DexStrip） */}
       <div style={{ textAlign: 'center', marginBottom: 10 }}>
-        <div style={{ fontSize: 11, color: 'rgba(139,163,190,0.55)', fontWeight: 700, letterSpacing: '0.06em', marginBottom: 4 }}>
-          第 {currentQ + 1} / {count} 題
-        </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
           <span style={{ fontSize: 24, fontWeight: 900, color: '#e6edf3', letterSpacing: '0.02em' }}>
             {question} =

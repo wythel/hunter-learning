@@ -91,10 +91,6 @@ describe('BattleUI', () => {
     });
   });
 
-  it('renders progress text', () => {
-    renderWithMantine(
-      <BattleUI question="3 + 4" answer="" currentQ={2} count={10} onKey={vi.fn()} locked={false} />
-    );
-    expect(screen.getByText('第 3 / 10 題')).toBeInTheDocument();
-  });
+  // 題號文字「第 X / Y 題」已移到頂條的 DexStrip（見 Game.jsx），BattleUI 不再渲染它，
+  // 但 currentQ/count 兩個 prop 仍保留給下面的進度條動畫使用（見 BattleUI.jsx 的 `progress`）。
 });

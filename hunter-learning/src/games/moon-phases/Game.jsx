@@ -2,6 +2,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Text, Button } from '@mantine/core';
 import StarField from '../../components/StarField';
 import ResultScreen from '../../components/ResultScreen';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 import MoonSystem from './MoonSystem';
 import { useGame } from './useGame';
 import { PHASES, phaseKeysForDifficulty } from './data';
@@ -42,20 +44,19 @@ export default function MoonPhasesGame() {
       : '從地球看，這是什麼月相？';
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <GameLayout>
+      <DexStrip
+        onBack={() => navigate('/moon-phases')}
+        progress={!isSandbox ? `第 ${g.currentQ + 1} / ${count} 題` : undefined}
+      />
       <StarField />
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-        padding: '16px', paddingTop: 'max(16px, env(safe-area-inset-top))',
-        paddingBottom: 'max(16px, env(safe-area-inset-bottom))', position: 'relative', zIndex: 1,
+        padding: '16px', position: 'relative', zIndex: 1,
+        overflowY: 'auto',
       }}>
-        {/* 進度 / 提示 */}
+        {/* 提示 */}
         <div style={{ textAlign: 'center', minHeight: 48, marginBottom: 4 }}>
-          {!isSandbox && (
-            <Text size="sm" style={{ color: 'rgba(139,163,190,0.8)', fontWeight: 700 }}>
-              第 {g.currentQ + 1} / {count} 題
-            </Text>
-          )}
           <Text style={{ fontSize: 17, fontWeight: 800, color: '#e9edf7' }}>{banner}</Text>
         </div>
 
@@ -108,6 +109,6 @@ export default function MoonPhasesGame() {
           )}
         </div>
       </div>
-    </div>
+    </GameLayout>
   );
 }

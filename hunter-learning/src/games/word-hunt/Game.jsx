@@ -6,6 +6,8 @@ import ResultScreen from '../../components/ResultScreen';
 import ChoiceReview from '../../components/ChoiceReview';
 import StarField from '../../components/StarField';
 import TimeBar from '../../components/TimeBar';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 import { useCountdown, TIMED_SECONDS } from '../../hooks/useCountdown';
 import { useGame } from './useGame';
 
@@ -87,7 +89,11 @@ function WordHuntGameInner() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <GameLayout>
+      <DexStrip
+        onBack={() => navigate('/word-hunt')}
+        progress={`第 ${currentQ + 1} / ${count} 題`}
+      />
       <StarField />
       <div style={{
         flex: 1,
@@ -96,18 +102,14 @@ function WordHuntGameInner() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '24px 20px',
-        paddingTop: 'max(24px, env(safe-area-inset-top))',
         position: 'relative',
         zIndex: 1,
         maxWidth: 440,
         margin: '0 auto',
         width: '100%',
+        overflowY: 'auto',
       }}>
         <Stack gap={20} style={{ width: '100%' }}>
-          <Text size="xs" c="dimmed" ta="center">
-            第 {currentQ + 1} / {count} 題
-          </Text>
-
           {timed && <TimeBar fraction={fraction} />}
 
           {/* Question card */}
@@ -186,6 +188,6 @@ function WordHuntGameInner() {
           </div>
         </Stack>
       </div>
-    </div>
+    </GameLayout>
   );
 }

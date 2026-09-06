@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Stack, Text, Button, Group } from '@mantine/core';
 import StarField from '../../components/StarField';
 import ResultScreen from '../../components/ResultScreen';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 import ClockSVG from './ClockSVG';
 import { useGame } from './useGame';
 
@@ -46,7 +48,11 @@ export default function ClockGame() {
                                  : (mode === 'set' ? (displayMinute !== null ? String(displayMinute).padStart(2, '0') : '??') : '??');
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <GameLayout>
+      <DexStrip
+        onBack={() => navigate('/clock-reading')}
+        progress={`第 ${currentQ + 1} / ${count} 題`}
+      />
       <StarField />
       <div style={{
         flex: 1,
@@ -55,17 +61,14 @@ export default function ClockGame() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
-        paddingTop: 'max(20px, env(safe-area-inset-top))',
-        paddingBottom: 'max(20px, env(safe-area-inset-bottom))',
         position: 'relative',
         zIndex: 1,
         maxWidth: 420,
         margin: '0 auto',
         width: '100%',
+        overflowY: 'auto',
       }}>
         <Stack gap={16} align="center" style={{ width: '100%' }}>
-          <Text size="xs" c="dimmed">第 {currentQ + 1} / {count} 題</Text>
-
           {/* Clock */}
           <motion.div
             key={`${question.hour}-${question.minute}`}
@@ -160,6 +163,6 @@ export default function ClockGame() {
           )}
         </Stack>
       </div>
-    </div>
+    </GameLayout>
   );
 }

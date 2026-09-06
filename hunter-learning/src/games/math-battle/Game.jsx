@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 import ResultScreen from '../../components/ResultScreen';
 import KeypadReview from '../../components/KeypadReview';
 import BattleField from './BattleField';
@@ -65,6 +66,11 @@ export default function MathBattleGame() {
 
   return (
     <GameLayout>
+      <DexStrip
+        onBack={() => navigate('/math-battle')}
+        progress={`第 ${currentQ + 1} / ${count} 題`}
+        right={timed ? <TimeBar fraction={fraction} /> : undefined}
+      />
       {timeoutAnswer != null && (
         <div style={{
           position: 'absolute', top: '34%', left: '50%',
@@ -93,11 +99,6 @@ export default function MathBattleGame() {
         playerAttacking={playerAttacking}
         monsterAttacking={monsterAttacking}
       />
-      {timed && (
-        <div style={{ padding: '0 16px 6px' }}>
-          <TimeBar fraction={fraction} />
-        </div>
-      )}
       <BattleUI
         question={question.text}
         answer={answer}

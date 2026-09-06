@@ -4,6 +4,8 @@ import { Text, Button } from '@mantine/core';
 import { Reorder, motion } from 'framer-motion';
 import StarField from '../../components/StarField';
 import ResultScreen from '../../components/ResultScreen';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 import Planet from './Planet';
 import { useGame } from './useGame';
 import { PLANETS, planetByKey } from './data';
@@ -163,20 +165,21 @@ export default function SolarSystemGame() {
     : '把正確的行星拖進空格！';
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <GameLayout>
+      <DexStrip
+        onBack={() => navigate('/solar-system')}
+        progress={g.phase === 'playing' && c ? `第 ${g.currentQ + 1} / ${count} 題` : undefined}
+      />
       <StarField />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-        padding: '16px', paddingTop: 'max(16px, env(safe-area-inset-top))',
-        paddingBottom: 'max(16px, env(safe-area-inset-bottom))', position: 'relative', zIndex: 1 }}>
+        padding: '16px', position: 'relative', zIndex: 1,
+        overflowY: 'auto' }}>
 
         {g.phase === 'explore' && <Explore onStart={g.startChallenge} />}
 
         {g.phase === 'playing' && c && (
           <>
             <div style={{ textAlign: 'center', minHeight: 48, marginBottom: 8 }}>
-              <Text size="sm" style={{ color: 'rgba(139,163,190,0.8)', fontWeight: 700 }}>
-                第 {g.currentQ + 1} / {count} 題
-              </Text>
               <Text style={{ fontSize: 17, fontWeight: 800, color: '#e9edf7' }}>{banner}</Text>
             </div>
 
@@ -215,6 +218,6 @@ export default function SolarSystemGame() {
           </>
         )}
       </div>
-    </div>
+    </GameLayout>
   );
 }

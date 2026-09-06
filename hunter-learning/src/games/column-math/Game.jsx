@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 import ResultScreen from '../../components/ResultScreen';
 import KeypadReview from '../../components/KeypadReview';
 import StarField from '../../components/StarField';
@@ -258,6 +259,10 @@ export default function ColumnMathGame() {
 
   return (
     <GameLayout>
+      <DexStrip
+        onBack={() => navigate('/column-math')}
+        progress={`第 ${currentQ + 1} / ${count} 題`}
+      />
       <StarField />
 
       {timeoutAnswer != null && (
@@ -298,7 +303,7 @@ export default function ColumnMathGame() {
           fontSize: 12, color: 'rgba(139,163,190,0.65)',
           fontWeight: 700, letterSpacing: '0.06em',
         }}>
-          第 {currentQ + 1} / {count} 題 · 從個位開始填 👇
+          從個位開始填 👇
         </div>
       </div>
 
@@ -306,6 +311,7 @@ export default function ColumnMathGame() {
       <div style={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
         position: 'relative', zIndex: 1, padding: '8px 16px',
+        overflowY: 'auto',
       }}>
         <Board
           question={question}
