@@ -54,21 +54,20 @@ describe('OptionGroup', () => {
     expect(onChange).toHaveBeenCalledWith('hard');
   });
 
-  // 選中邊框為 rgba(18,184,134,0.85)（teal 帶透明度）
-  it('selected option has teal border', () => {
+  it('highlights the selected option with the dex gold border', () => {
     renderWithMantine(
       <OptionGroup label="難度" options={options} selected="easy" onChange={vi.fn()} />
     );
     const easyBtn = screen.getByText('簡單').closest('button');
-    expect(easyBtn.style.border).toMatch(/rgba?\(18, 184, 134/);
+    expect(easyBtn.style.border).toMatch(/rgba?\(255, 212, 0/);
   });
 
-  it('non-selected option does not have teal border', () => {
+  it('does not highlight unselected options', () => {
     renderWithMantine(
       <OptionGroup label="難度" options={options} selected="easy" onChange={vi.fn()} />
     );
     const hardBtn = screen.getByText('困難').closest('button');
-    expect(hardBtn.style.border).not.toMatch(/rgba?\(18, 184, 134/);
+    expect(hardBtn.style.border).not.toMatch(/rgba?\(255, 212, 0/);
   });
 
   it('works without icon and sub', () => {

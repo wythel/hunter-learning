@@ -19,15 +19,15 @@ export default function OptionGroup({ label, options, selected, onChange }) {
               style={{
                 padding: '13px 8px',
                 borderRadius: 16,
-                border: active ? '2px solid rgba(18,184,134,0.85)' : '2px solid rgba(26,44,61,0.9)',
+                border: active ? '2px solid rgba(255,212,0,0.85)' : '2px solid rgba(26,44,61,0.9)',
                 background: active
-                  ? 'linear-gradient(145deg, rgba(18,184,134,0.22), rgba(13,207,170,0.10))'
+                  ? 'linear-gradient(145deg, rgba(255,212,0,0.22), rgba(255,170,0,0.10))'
                   : 'rgba(10,22,38,0.75)',
-                color: active ? '#12b886' : 'rgba(100,120,145,0.9)',
+                color: active ? 'var(--dex-gold)' : 'rgba(100,120,145,0.9)',
                 cursor: 'pointer',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
                 fontFamily: 'inherit',
-                boxShadow: active ? '0 0 18px rgba(18,184,134,0.22), inset 0 0 12px rgba(18,184,134,0.06)' : 'none',
+                boxShadow: active ? '0 0 18px rgba(255,212,0,0.22), inset 0 0 12px rgba(255,212,0,0.06)' : 'none',
                 transition: 'all 0.18s ease',
                 position: 'relative', overflow: 'hidden',
               }}
@@ -35,7 +35,7 @@ export default function OptionGroup({ label, options, selected, onChange }) {
               {active && (
                 <div style={{
                   position: 'absolute', inset: 0,
-                  background: 'linear-gradient(105deg, transparent 30%, rgba(18,184,134,0.1) 50%, transparent 70%)',
+                  background: 'linear-gradient(105deg, transparent 30%, rgba(255,212,0,0.1) 50%, transparent 70%)',
                   backgroundSize: '200% 100%',
                   animation: 'shimmer 2.2s ease infinite',
                   pointerEvents: 'none',
@@ -44,7 +44,7 @@ export default function OptionGroup({ label, options, selected, onChange }) {
               {opt.icon && <span style={{ fontSize: 24, lineHeight: 1 }}>{opt.icon}</span>}
               <Text size="sm" style={{ color: 'inherit', fontWeight: active ? 800 : 600, lineHeight: 1.2 }}>{opt.text}</Text>
               {opt.sub && (
-                <Text size="xs" style={{ color: active ? 'rgba(18,184,134,0.65)' : 'rgba(100,120,145,0.6)', lineHeight: 1.2 }}>
+                <Text size="xs" style={{ color: active ? 'rgba(255,212,0,0.65)' : 'rgba(100,120,145,0.6)', lineHeight: 1.2 }}>
                   {opt.sub}
                 </Text>
               )}
