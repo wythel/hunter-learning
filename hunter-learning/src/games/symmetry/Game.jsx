@@ -9,6 +9,8 @@ import ShapeDisplay from './ShapeDisplay';
 import GridPuzzle from './GridPuzzle';
 import { useGame } from './useGame';
 import { calculateStars, getResultTitle } from '../../utils/scoring';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 
 // ─── Mode 1: which shape prompt text ─────────────────────────────────────────
 
@@ -97,7 +99,11 @@ export default function SymmetryGame() {
 
   // ── Game screen ──────────────────────────────────────────────────────────
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <GameLayout>
+      <DexStrip
+        onBack={() => navigate('/')}
+        progress={`第 ${currentQ + 1} / ${count} 題`}
+      />
       <StarField />
       <div
         style={{
@@ -107,29 +113,13 @@ export default function SymmetryGame() {
           alignItems:     'center',
           justifyContent: 'center',
           padding:        '24px 20px',
-          paddingTop:     'max(24px, env(safe-area-inset-top))',
-          paddingBottom:  'max(24px, env(safe-area-inset-bottom))',
           position:       'relative',
           zIndex:         1,
+          overflowY:      'auto',
         }}
       >
         <div style={{ width: '100%', maxWidth: 480 }}>
           <Stack gap={20}>
-            {/* Header: back button + progress */}
-            <Group justify="space-between" align="center">
-              <button
-                onClick={() => navigate('/')}
-                style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  color: '#8b949e', fontSize: 22, padding: '4px 8px',
-                  fontFamily: 'inherit',
-                }}
-              >
-                ← 大廳
-              </button>
-              <Text size="xs" c="dimmed">第 {currentQ + 1} / {count} 題</Text>
-            </Group>
-
             {/* Progress bar */}
             <div style={{ background: 'rgba(48,54,61,0.5)', borderRadius: 6, height: 6, overflow: 'hidden' }}>
               <motion.div
@@ -169,7 +159,7 @@ export default function SymmetryGame() {
           </Stack>
         </div>
       </div>
-    </div>
+    </GameLayout>
   );
 }
 

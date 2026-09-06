@@ -10,6 +10,8 @@ import { calculateStars, getResultTitle } from '../../utils/scoring';
 import OddEvenTeaching from './Teaching';
 import { useCountdown, TIMED_SECONDS } from '../../hooks/useCountdown';
 import TimeBar from '../../components/TimeBar';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 
 // ── Dot visualiser ────────────────────────────────────────────────────────────
 
@@ -286,26 +288,21 @@ export default function OddEvenGame() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <GameLayout>
+      <DexStrip
+        onBack={() => navigate('/')}
+        progress={`第 ${currentQ + 1} / ${count} 題`}
+      />
       <StarField />
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
         padding: '24px 20px',
-        paddingTop: 'max(24px, env(safe-area-inset-top))',
-        paddingBottom: 'max(24px, env(safe-area-inset-bottom))',
         position: 'relative', zIndex: 1,
+        overflowY: 'auto',
       }}>
         <div style={{ width: '100%', maxWidth: 480 }}>
           <Stack gap={16}>
-
-            {/* Header */}
-            <Group justify="space-between" align="center">
-              <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8b949e', fontSize: 22, padding: '4px 8px', fontFamily: 'inherit' }}>
-                ← 大廳
-              </button>
-              <Text size="xs" c="dimmed">第 {currentQ + 1} / {count} 題</Text>
-            </Group>
 
             {/* Progress bar */}
             <div style={{ background: 'rgba(48,54,61,0.5)', borderRadius: 6, height: 6, overflow: 'hidden' }}>
@@ -332,6 +329,6 @@ export default function OddEvenGame() {
           </Stack>
         </div>
       </div>
-    </div>
+    </GameLayout>
   );
 }

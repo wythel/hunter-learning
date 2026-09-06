@@ -8,6 +8,8 @@ import Teaching from './Teaching';
 import { useGame } from './useGame';
 import { useCountdown, TIMED_SECONDS } from '../../hooks/useCountdown';
 import TimeBar from '../../components/TimeBar';
+import GameLayout from '../../components/GameLayout';
+import DexStrip from '../../components/DexStrip';
 
 // ── Ten-frame (2 rows × 5 cols) ───────────────────────────────────────────────
 
@@ -44,7 +46,7 @@ function TenFrame({ given, size = 36 }) {
 
 // ── Choose mode view ──────────────────────────────────────────────────────────
 
-function ChooseView({ question, currentQ, count, feedback, onAnswer }) {
+function ChooseView({ question, feedback, onAnswer }) {
   const { given, correct, choices } = question;
 
   return (
@@ -82,9 +84,6 @@ function ChooseView({ question, currentQ, count, feedback, onAnswer }) {
 
       {/* Question */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 11, fontWeight: 800, color: 'rgba(139,163,190,0.5)', letterSpacing: '0.07em', marginBottom: 10 }}>
-          第 {currentQ + 1} / {count} 題
-        </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 48, fontWeight: 900, color: '#e6edf3', lineHeight: 1 }}>{given}</span>
           <span style={{ fontSize: 36, fontWeight: 700, color: 'rgba(139,163,190,0.5)' }}>+</span>
@@ -193,9 +192,6 @@ function MatchView({ tiles, selId, wrongPair, matchCount, count, onTap }) {
               }}
             />
           ))}
-        </div>
-        <div style={{ fontSize: 12, color: 'rgba(139,163,190,0.5)', marginTop: 6, fontWeight: 700 }}>
-          {matchCount} / {count} 對
         </div>
       </div>
 
@@ -357,70 +353,58 @@ export default function MakeTenGame() {
   }
 
   return (
-    <div style={{
-      minHeight: '100dvh',
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      padding: '20px 20px',
-      paddingTop: 'max(20px, env(safe-area-inset-top))',
-      paddingBottom: 'max(20px, env(safe-area-inset-bottom))',
-      position: 'relative',
-    }}>
+    <GameLayout>
+      <DexStrip
+        onBack={() => navigate('/make-ten')}
+        progress={mode === 'match'
+          ? `${matchCount} / ${count} 對`
+          : `第 ${currentQ + 1} / ${count} 題`}
+        right={timedActive ? <TimeBar fraction={fraction} /> : undefined}
+      />
       <StarField />
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 16 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.4, type: 'spring', stiffness: 260, damping: 22 }}
-        style={{ width: '100%', maxWidth: 400, position: 'relative', zIndex: 1 }}
-      >
-        {/* Back button */}
-        <button
-          onClick={() => navigate('/make-ten')}
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: 'rgba(139,163,190,0.6)', fontSize: 13, fontWeight: 700,
-            padding: '0 0 14px', fontFamily: 'inherit',
-            display: 'flex', alignItems: 'center', gap: 5,
-          }}
+      <div style={{
+        flex: 1,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        padding: '20px 20px',
+        position: 'relative',
+        overflowY: 'auto',
+      }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.4, type: 'spring', stiffness: 260, damping: 22 }}
+          style={{ width: '100%', maxWidth: 400, position: 'relative', zIndex: 1 }}
         >
-          ← 設定
-        </button>
-
-        {/* Game card */}
-        <div style={{
-          background: 'rgba(10,22,38,0.93)',
-          border: '1px solid rgba(26,44,61,0.95)',
-          borderRadius: 26,
-          padding: '22px 20px 20px',
-          backdropFilter: 'blur(18px)',
-          boxShadow: '0 8px 48px rgba(0,0,0,0.45), 0 0 60px rgba(18,184,134,0.06), 0 1px 0 rgba(255,255,255,0.04) inset',
-        }}>
-          {timedActive && (
-            <div style={{ marginBottom: 14 }}>
-              <TimeBar fraction={fraction} />
-            </div>
-          )}
-          {mode === 'choose' ? (
-            <ChooseView
-              question={question}
-              currentQ={currentQ}
-              count={count}
-              feedback={feedback}
-              onAnswer={handleAnswer}
-            />
-          ) : (
-            <MatchView
-              tiles={tiles}
-              selId={selId}
-              wrongPair={wrongPair}
-              matchCount={matchCount}
-              count={count}
-              onTap={handleTap}
-            />
-          )}
-        </div>
-      </motion.div>
-    </div>
+          {/* Game card */}
+          <div style={{
+            background: 'rgba(10,22,38,0.93)',
+            border: '1px solid rgba(26,44,61,0.95)',
+            borderRadius: 26,
+            padding: '22px 20px 20px',
+            backdropFilter: 'blur(18px)',
+            boxShadow: '0 8px 48px rgba(0,0,0,0.45), 0 0 60px rgba(18,184,134,0.06), 0 1px 0 rgba(255,255,255,0.04) inset',
+          }}>
+            {mode === 'choose' ? (
+              <ChooseView
+                question={question}
+                feedback={feedback}
+                onAnswer={handleAnswer}
+              />
+            ) : (
+              <MatchView
+                tiles={tiles}
+                selId={selId}
+                wrongPair={wrongPair}
+                matchCount={matchCount}
+                count={count}
+                onTap={handleTap}
+              />
+            )}
+          </div>
+        </motion.div>
+      </div>
+    </GameLayout>
   );
 }
