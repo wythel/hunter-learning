@@ -1,9 +1,19 @@
+import { useState } from 'react';
+import ExitConfirm from './ExitConfirm';
+import { useBackGuard } from '../hooks/useBackGuard';
+
 // 圖鑑機外殼的收合版:遊戲進行中只留這條 26px 頂條,
 // 保留鏡頭與三顆燈號當作主題延續,同時提供返回與進度。
 const LEDS = ['var(--led-red)', 'var(--led-yellow)', 'var(--led-green)'];
 
 export default function DexStrip({ onBack, progress, right }) {
+  // DexStrip 只在遊戲進行中出現(結算走 ResultScreen),正好就是該擋返回的區間。
+  // 掛在這裡,15 個 Game.jsx 一行都不用改。
+  const [asking, setAsking] = useState(false);
+  useBackGuard(() => setAsking(true));
+
   return (
+    <>
     <div style={{
       height: 26, flex: 'none',
       background: 'var(--dex-red)',
@@ -12,7 +22,7 @@ export default function DexStrip({ onBack, progress, right }) {
     }}>
       <button
         type="button"
-        onClick={onBack}
+        onClick={() => setAsking(true)}
         aria-label="返回"
         style={{
           display: 'flex', alignItems: 'center', gap: 6,
@@ -60,5 +70,7 @@ export default function DexStrip({ onBack, progress, right }) {
         )}
       </div>
     </div>
+    {asking && <ExitConfirm onStay={() => setAsking(false)} onLeave={onBack} />}
+    </>
   );
 }

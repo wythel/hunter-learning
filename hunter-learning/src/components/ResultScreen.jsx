@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { Stack, Text, Group } from '@mantine/core';
 import { motion } from 'framer-motion';
 import StarField from './StarField';
 import DexFrame from '../components/DexFrame';
+import { releaseBackGuard } from '../hooks/useBackGuard';
 
 // Tier styling per star count
 const TIER = {
@@ -21,6 +23,10 @@ const starVariants = {
 
 export default function ResultScreen({ title, stars, stats, onRetry, onMenu, onLobby, onReview }) {
   const tier = TIER[Math.min(stars, 3)] ?? TIER[0];
+
+  // 遊戲進行中 DexStrip 在 history 上疊了一個哨兵擋返回手勢。到了結算畫面
+  // DexStrip 已經卸載,哨兵要在這裡收掉,否則小朋友第一次滑返回會沒反應。
+  useEffect(() => { releaseBackGuard(); }, []);
 
   return (
     <DexFrame>

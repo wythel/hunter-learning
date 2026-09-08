@@ -18,6 +18,7 @@ vi.mock('framer-motion', async () => {
 });
 
 import ResultScreen from '../components/ResultScreen';
+import { GUARD_KEY } from '../hooks/useBackGuard';
 
 function renderWithMantine(ui) {
   return render(<MantineProvider>{ui}</MantineProvider>);
@@ -123,5 +124,29 @@ describe('ResultScreen', () => {
     renderWithMantine(<ResultScreen {...defaultProps} onReview={onReview} />);
     fireEvent.click(screen.getByText(/訂正錯題/));
     expect(onReview).toHaveBeenCalledOnce();
+  });
+});
+
+// 遊戲進行中 DexStrip 會在 history 上疊一個哨兵擋返回手勢;打完進結算畫面時
+// DexStrip 已經卸載,哨兵得在這裡清掉,否則小朋友在結算畫面第一次滑返回會沒反應。
+describe('ResultScreen back guard cleanup', () => {
+  it('drops the in-game back-guard sentinel on mount', () => {
+    const back = vi.spyOn(window.history, 'back');
+    window.history.pushState({ ...window.history.state, [GUARD_KEY]: true }, '');
+
+    renderWithMantine(<ResultScreen {...defaultProps} />);
+
+    expect(window.history.state?.[GUARD_KEY]).toBeFalsy();
+    expect(back).toHaveBeenCalledTimes(1);
+    back.mockRestore();
+  });
+
+  it('leaves history alone when no sentinel is armed', () => {
+    const back = vi.spyOn(window.history, 'back');
+
+    renderWithMantine(<ResultScreen {...defaultProps} />);
+
+    expect(back).not.toHaveBeenCalled();
+    back.mockRestore();
   });
 });

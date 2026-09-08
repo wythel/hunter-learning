@@ -76,3 +76,8 @@ body::before {
   from { opacity: 1; }
   to   { opacity: 0.55; }
 }
+
+@keyframes dex-pop {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}

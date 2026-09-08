@@ -13,8 +13,8 @@
   - `Game.jsx` — 從 `location.state` 解構設定（**都給預設值**以向後相容），呼叫 `useGame`，渲染題目/選項/結果。
   - `useGame.js` — 遊戲邏輯 hook；純狀態機，題目與選項多半用 `useRef` + `useState` 在首次 render 建好。
   - `data.js` — 該遊戲的題庫（選填，有些遊戲吃 `src/utils/data/`）。
-- `src/components/` — 共用 UI：`SettingsPage`、`OptionGroup`（設定選項按鈕）、`ResultScreen`、`GameLayout`、`StarField`、`TimeBar`、`DexFrame`、`DexStrip`（後兩者見下方主題章節）。
-- `src/hooks/` — `useSound`、`useSpeech`（TTS，帶語言碼如 `en-US`/`zh-TW`）、`useCountdown`（計時模式）、`useTimer`。
+- `src/components/` — 共用 UI：`SettingsPage`、`OptionGroup`（設定選項按鈕）、`ResultScreen`、`GameLayout`、`StarField`、`TimeBar`、`ExitConfirm`（離開遊戲確認框）、`DexFrame`、`DexStrip`（後兩者見下方主題章節）。
+- `src/hooks/` — `useSound`、`useSpeech`（TTS，帶語言碼如 `en-US`/`zh-TW`）、`useCountdown`（計時模式）、`useTimer`、`useBackGuard`（見下方返回守衛）。
 - `src/utils/` — `math.js`（含 Fisher–Yates `shuffle`、`delay`）、`scoring.js`（`calculateStars`/`getResultTitle`）、`timedSetting.js`（共用 `TIMED_SETTING` 開關）、`pokemon.js`／`pokemonRoster.js`（見下方主題章節）、`data/`（`words.js`、`confusables.js`、`cardPairs.js`）。
 
 ### 慣例（照抄現有遊戲即可）
@@ -38,6 +38,19 @@
   `utils.pokemonRoster.test.js` 硬寫了 15 組對照，改配對要連測試一起改（刻意的）。
 - **`utils/pokemon.js`** — `pokemonSprite(id)` 是 96×96 經典 sprite（約 600 bytes，大廳卡片與小圖示用）；
   `pokemonArtwork(id)` 是官方 artwork（115–200KB，hero 與對戰畫面用）。大廳 15 張若用 artwork 會是 2.1MB，別換。
+
+### 返回守衛（誤觸返回手勢不會踢掉整局）
+
+手機的返回手勢很容易誤觸，遊戲進行中被 pop 掉整局進度就沒了。`useBackGuard`（`src/hooks/useBackGuard.js`）
+在進遊戲時往 `history` 疊一個「哨兵」entry——複製 router 寫的 `state`（`usr`/`key`/`idx`）再蓋一個標記，
+**網址一個字都不改**，所以 HashRouter 完全不會察覺。返回手勢先吃掉哨兵，hook 攔到 `popstate` 後補回哨兵並跳 `ExitConfirm`。
+
+- 掛在 `DexStrip` 裡，所以 **15 個 `Game.jsx` 都不用改**；`DexStrip` 只在遊戲進行中出現，正好就是該擋的區間。
+- `DexStrip` 的 ← 按鈕也走同一個確認框。
+- `ResultScreen` 掛載時呼叫 `releaseBackGuard()` 收掉哨兵，否則結算畫面第一次滑返回會「沒反應」。
+  加新的結束畫面（不走 `ResultScreen` 的）記得也要收。
+- `pushState` 只傳兩個參數——第三個 url 給空字串會被當相對網址解析，把 hash 洗掉。
+- Teaching 畫面沒有 `DexStrip`，所以那裡沒有守衛。
 
 **teal 的處理原則**：`#12b886` 在這個專案有兩種用途，換膚時只換了其中一種。
 **品牌色**（主要按鈕、標題、裝飾漸層、`TimeBar`）已改成圖鑑金 `--dex-gold`；

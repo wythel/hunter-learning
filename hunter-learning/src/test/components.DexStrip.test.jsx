@@ -1,14 +1,49 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import DexStrip from '../components/DexStrip';
 
 describe('DexStrip', () => {
-  it('calls onBack when the back control is clicked', () => {
+  // 遊戲進行中離開就是整局重來,所以 ← 和手機的返回手勢都要先問一聲
+  it('asks before leaving when the back control is clicked', () => {
     const onBack = vi.fn();
     render(<DexStrip onBack={onBack} />);
     fireEvent.click(screen.getByRole('button', { name: '返回' }));
+    expect(screen.getByText('要離開遊戲嗎？')).toBeInTheDocument();
+    expect(onBack).not.toHaveBeenCalled();
+  });
+
+  it('leaves once the confirmation is accepted', () => {
+    const onBack = vi.fn();
+    render(<DexStrip onBack={onBack} />);
+    fireEvent.click(screen.getByRole('button', { name: '返回' }));
+    fireEvent.click(screen.getByRole('button', { name: '離開' }));
     expect(onBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('stays in the game when the confirmation is dismissed', () => {
+    const onBack = vi.fn();
+    render(<DexStrip onBack={onBack} />);
+    fireEvent.click(screen.getByRole('button', { name: '返回' }));
+    fireEvent.click(screen.getByRole('button', { name: '繼續遊戲' }));
+    expect(screen.queryByText('要離開遊戲嗎？')).not.toBeInTheDocument();
+    expect(onBack).not.toHaveBeenCalled();
+  });
+
+  it('shows no confirmation until something asks to leave', () => {
+    render(<DexStrip onBack={vi.fn()} />);
+    expect(screen.queryByText('要離開遊戲嗎？')).not.toBeInTheDocument();
+  });
+
+  // 這是這次要修的 bug:手機誤觸返回手勢,整局進度直接沒了
+  it('asks instead of leaving when the device back gesture fires', async () => {
+    const onBack = vi.fn();
+    render(<DexStrip onBack={onBack} />);
+
+    window.history.back();
+
+    await waitFor(() => expect(screen.getByText('要離開遊戲嗎？')).toBeInTheDocument());
+    expect(onBack).not.toHaveBeenCalled();
   });
 
   it('renders progress when given', () => {
