@@ -283,16 +283,13 @@ export default function ColumnMathGame() {
         </div>
       )}
 
-      {/* 收服進度:一題一格,收服的亮起來 */}
-      <div style={{ padding: '8px 16px 0', position: 'relative', zIndex: 1 }}>
-        <CaughtRow caught={caught} total={count} />
-        <div style={{
-          textAlign: 'center', marginTop: 4,
-          fontSize: 12, color: 'rgba(139,163,190,0.65)',
-          fontWeight: 700, letterSpacing: '0.06em',
-        }}>
-          從個位開始填 👇
-        </div>
+      <div style={{
+        padding: '10px 16px 0', position: 'relative', zIndex: 1,
+        textAlign: 'center',
+        fontSize: 12, color: 'rgba(139,163,190,0.65)',
+        fontWeight: 700, letterSpacing: '0.06em',
+      }}>
+        從個位開始填 👇
       </div>
 
       {/* 直式題目 */}
@@ -315,6 +312,11 @@ export default function ColumnMathGame() {
           wrongShake={wrongShake}
           celebrating={celebrating}
         />
+      </div>
+
+      {/* 收服進度:一題一格。夾在算式和鍵盤中間——收服的瞬間就落在按完鍵的視線上 */}
+      <div style={{ padding: '0 16px 6px', position: 'relative', zIndex: 1 }}>
+        <CaughtRow caught={caught} total={count} />
       </div>
 
       {timed && (
