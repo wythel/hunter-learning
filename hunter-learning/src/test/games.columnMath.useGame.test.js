@@ -190,3 +190,66 @@ describe('useGame (column-math)', () => {
     });
   });
 });
+
+describe('useGame (column-math) 寶可夢夥伴', () => {
+  const opts = { operation: 'add', difficulty: 'easy', digits: 2, count: 10 };
+
+  it('每題都有一隻夥伴,帶 id / 名字 / 圖', () => {
+    const { result } = renderHook(() => useGame(opts));
+    const m = result.current.monster;
+    expect(m).toBeTruthy();
+    expect(typeof m.id).toBe('number');
+    expect(typeof m.name).toBe('string');
+    expect(m.img).toMatch(/official-artwork/);
+  });
+
+  it('開場還沒收服任何寶可夢', () => {
+    const { result } = renderHook(() => useGame(opts));
+    expect(result.current.caught).toEqual([]);
+  });
+
+  it('整題填完就收服當前那隻', async () => {
+    const { result } = renderHook(() => useGame(opts));
+    const shown = result.current.monster;
+    await fillAnswer(result);
+    await waitFor(() => expect(result.current.caught).toHaveLength(1));
+    expect(result.current.caught[0].id).toBe(shown.id);
+  });
+
+  it('按錯過但把整題填完,還是收服得到', async () => {
+    const { result } = renderHook(() => useGame(opts));
+    const ansStr = String(result.current.question.answer);
+    const correctOnes = Number(ansStr[ansStr.length - 1]);
+    await act(async () => { result.current.handleDigit(String((correctOnes + 1) % 10)); });
+    await fillAnswer(result);
+    await waitFor(() => expect(result.current.caught).toHaveLength(1));
+  });
+
+  it('限時逾時那題不收服,但仍換下一隻', async () => {
+    const { result } = renderHook(() => useGame(opts));
+    const shown = result.current.monster;
+    await act(async () => { await result.current.handleTimeout(); });
+    expect(result.current.caught).toHaveLength(0);
+    expect(result.current.monster.id).not.toBe(shown.id);
+  });
+
+  it('整場的夥伴一題換一隻,不重複', async () => {
+    const count = 3;
+    const { result } = renderHook(() => useGame({ ...opts, count }));
+    for (let i = 0; i < count; i++) {
+      await fillAnswer(result);
+      if (i < count - 1) await waitFor(() => expect(result.current.currentQ).toBe(i + 1));
+    }
+    await waitFor(() => expect(result.current.phase).toBe('result'));
+    const ids = result.current.caught.map(m => m.id);
+    expect(ids).toHaveLength(count);
+    expect(new Set(ids).size).toBe(count);
+  });
+
+  it('打完最後一題,monster 仍有值(結算前不會炸)', async () => {
+    const { result } = renderHook(() => useGame({ ...opts, count: 1 }));
+    await fillAnswer(result);
+    await waitFor(() => expect(result.current.phase).toBe('result'));
+    expect(result.current.monster).toBeTruthy();
+  });
+});

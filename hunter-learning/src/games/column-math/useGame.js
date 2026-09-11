@@ -2,6 +2,8 @@ import { useState, useRef, useCallback } from 'react';
 import { rand, delay } from '../../utils/math';
 import { calculateStars, getResultTitle } from '../../utils/scoring';
 import { useSound } from '../../hooks/useSound';
+// 每題換一隻夥伴,直接沿用算數大戰那份關都三階段進化池,不另外維護一份名單
+import { buildMonsterRoster } from '../math-battle/sprites';
 
 // 直式一格一格填,給比一般 10 秒更寬裕的時間
 export const COLUMN_TIMED_SECONDS = 20;
@@ -57,6 +59,7 @@ export function useGame({ operation, difficulty, digits, count }) {
   const [celebrating, setCelebrating]   = useState(false);
   const [timeoutAnswer, setTimeoutAnswer] = useState(null);
   const [timerPaused, setTimerPaused]   = useState(false);
+  const [caught, setCaught]             = useState([]); // 已收服的夥伴(整題填完才算)
 
   const locked      = useRef(false);
   const filledRef   = useRef(0);
@@ -65,7 +68,10 @@ export function useGame({ operation, difficulty, digits, count }) {
   const erredRef    = useRef(false); // 這一題是否按錯過
   const wrongRef    = useRef([]);    // 答錯的題目(供結算頁訂正)
   const startTime   = useRef(Date.now());
+  const rosterRef   = useRef(null);  // 開場一次抽好整場的夥伴,每題一隻
   const sound       = useSound();
+
+  if (rosterRef.current === null) rosterRef.current = buildMonsterRoster(count);
 
   questionRef.current = question;
   currentQRef.current = currentQ;
@@ -115,6 +121,7 @@ export function useGame({ operation, difficulty, digits, count }) {
     } else {
       setStats(s => ({ ...s, correct: s.correct + 1 }));
     }
+    setCaught(c => [...c, rosterRef.current[currentQRef.current]]);
     sound.correct();
     setCelebrating(true);
     await delay(700);
@@ -143,9 +150,13 @@ export function useGame({ operation, difficulty, digits, count }) {
   const title = getResultTitle(stars);
   const elapsedSec = Math.round((Date.now() - startTime.current) / 1000);
 
+  // 最後一題答完 currentQ 會等於 count,夾住才不會在結算前一刻讀到 undefined
+  const monster = rosterRef.current[Math.min(currentQ, count - 1)];
+
   return {
     question, filled, phase, currentQ, stats,
     wrongShake, celebrating, timeoutAnswer, timerPaused,
+    monster, caught,
     stars, title, elapsedSec,
     handleDigit, handleTimeout,
     wrong: wrongRef.current,

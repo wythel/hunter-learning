@@ -6,11 +6,11 @@ import DexStrip from '../../components/DexStrip';
 import ResultScreen from '../../components/ResultScreen';
 import KeypadReview from '../../components/KeypadReview';
 import StarField from '../../components/StarField';
+import Buddy, { CaughtRow } from './Buddy';
 import TimeBar from '../../components/TimeBar';
 import { useGame, COLUMN_TIMED_SECONDS } from './useGame';
 import { useCountdown } from '../../hooks/useCountdown';
-
-const CELL = 48;
+import { CELL, boardMinWidth } from './layout';
 
 const digitAt = (n, p) => Math.floor(n / 10 ** p) % 10;
 const numLen = n => String(n).length;
@@ -18,7 +18,7 @@ const numLen = n => String(n).length;
 // 直式版面:標記列(進/退位)、上數、運算符+下數、橫線、答案格。
 // 進位「1」在該位算完後浮現在下一位上方;退位在作答該位時把被借的位劃掉、
 // 上方寫減 1 後的數字,並在被借入的位左上角標小「1」——跟課本寫法一致。
-function Board({ question, filled, wrongShake, celebrating }) {
+function Board({ question, filled, wrongShake, celebrating, minWidth }) {
   const { a, b, op, answer, flags } = question;
   const isAdd = op === '+';
   const cols = Math.max(numLen(a), numLen(answer));
@@ -34,6 +34,8 @@ function Board({ question, filled, wrongShake, celebrating }) {
       background: 'rgba(10,22,38,0.92)',
       border: `1.5px solid ${celebrating ? 'rgba(18,184,134,0.7)' : 'rgba(26,44,61,0.95)'}`,
       borderRadius: 24,
+      flexShrink: 0,
+      minWidth,
       padding: '18px 26px 22px',
       boxShadow: celebrating
         ? '0 0 34px rgba(18,184,134,0.35)'
@@ -215,6 +217,7 @@ export default function ColumnMathGame() {
   const {
     question, filled, phase, currentQ, stats,
     wrongShake, celebrating, timeoutAnswer, timerPaused,
+    monster, caught,
     stars, title, elapsedSec, handleDigit, handleTimeout, wrong,
   } = useGame({ operation, difficulty, digits, count });
 
@@ -255,8 +258,6 @@ export default function ColumnMathGame() {
     );
   }
 
-  const progress = count > 0 ? currentQ / count : 0;
-
   return (
     <GameLayout>
       <DexStrip
@@ -282,24 +283,11 @@ export default function ColumnMathGame() {
         </div>
       )}
 
-      {/* 進度 */}
-      <div style={{ padding: '12px 16px 0', position: 'relative', zIndex: 1 }}>
+      {/* 收服進度:一題一格,收服的亮起來 */}
+      <div style={{ padding: '8px 16px 0', position: 'relative', zIndex: 1 }}>
+        <CaughtRow caught={caught} total={count} />
         <div style={{
-          height: 3, background: 'rgba(255,255,255,0.06)',
-          borderRadius: 2, overflow: 'hidden',
-        }}>
-          <motion.div
-            animate={{ width: `${progress * 100}%` }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            style={{
-              height: '100%', borderRadius: 2,
-              background: 'linear-gradient(90deg, #FFD400, #FFAA00)',
-              boxShadow: '0 0 6px rgba(255,212,0,0.5)',
-            }}
-          />
-        </div>
-        <div style={{
-          textAlign: 'center', marginTop: 8,
+          textAlign: 'center', marginTop: 4,
           fontSize: 12, color: 'rgba(139,163,190,0.65)',
           fontWeight: 700, letterSpacing: '0.06em',
         }}>
@@ -310,10 +298,18 @@ export default function ColumnMathGame() {
       {/* 直式題目 */}
       <div style={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        position: 'relative', zIndex: 1, padding: '8px 16px',
+        gap: 8, position: 'relative', zIndex: 1, padding: '8px 6px',
         overflowY: 'auto',
       }}>
+        <Buddy
+          monster={monster}
+          filled={filled}
+          wrongShake={wrongShake}
+          celebrating={celebrating}
+          fainted={timeoutAnswer != null}
+        />
         <Board
+          minWidth={boardMinWidth(digits, operation)}
           question={question}
           filled={filled}
           wrongShake={wrongShake}
