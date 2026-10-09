@@ -23,6 +23,7 @@ const GAMES = [
   { path: '/moon-phases',   title: '月相星球',   desc: '認識月亮！' },
   { path: '/polar-day',     title: '永晝永夜',   desc: '太陽不下山？' },
   { path: '/solar-system',  title: '太陽系',     desc: '認識八大行星！' },
+  { path: '/sentence-listen', title: '英文聽句', desc: '聽句子排單字！' },
 ];
 
 function hexToRgb(hex) {

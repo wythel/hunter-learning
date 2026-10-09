@@ -31,6 +31,8 @@ import MoonPhasesGame     from './games/moon-phases/Game';
 const PolarDay = lazy(() => import('./games/polar-day/PolarDay'));
 import SolarSystemSettings from './games/solar-system/Settings';
 import SolarSystemGame      from './games/solar-system/Game';
+import SentenceListenSettings from './games/sentence-listen/Settings';
+import SentenceListenGame     from './games/sentence-listen/Game';
 
 export default function App() {
   return (
@@ -73,6 +75,8 @@ export default function App() {
         } />
         <Route path="/solar-system"       element={<SolarSystemSettings />} />
         <Route path="/solar-system/play"  element={<SolarSystemGame />} />
+        <Route path="/sentence-listen"      element={<SentenceListenSettings />} />
+        <Route path="/sentence-listen/play" element={<SentenceListenGame />} />
       </Routes>
     </HashRouter>
   );

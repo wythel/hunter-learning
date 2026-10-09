@@ -3,8 +3,8 @@ import { POKEMON_ROSTER, rosterByPath } from '../utils/pokemonRoster';
 import { pokemonSprite, pokemonArtwork } from '../utils/pokemon';
 
 describe('pokemonRoster', () => {
-  it('covers all 15 games', () => {
-    expect(POKEMON_ROSTER).toHaveLength(15);
+  it('covers all 16 games', () => {
+    expect(POKEMON_ROSTER).toHaveLength(16);
   });
 
   it('every entry has path, id, name and color', () => {
@@ -18,13 +18,13 @@ describe('pokemonRoster', () => {
 
   it('paths are unique', () => {
     const paths = POKEMON_ROSTER.map(e => e.path);
-    expect(new Set(paths).size).toBe(15);
+    expect(new Set(paths).size).toBe(16);
   });
 
   // 撞色會讓大廳兩張卡分不出來，spec 明確要求手動偏移
   it('colors are unique', () => {
     const colors = POKEMON_ROSTER.map(e => e.color.toUpperCase());
-    expect(new Set(colors).size).toBe(15);
+    expect(new Set(colors).size).toBe(16);
   });
 
   it('rosterByPath indexes by path', () => {
@@ -32,9 +32,9 @@ describe('pokemonRoster', () => {
     expect(rosterByPath['/note-staff'].id).toBe(39);
   });
 
-  // These 15 game-to-Pokémon mappings are a documented design decision (spec).
+  // These 16 game-to-Pokémon mappings are a documented design decision (spec).
   // Any change here must be intentional; hardcoded expectations catch accidental changes.
-  it('all 15 game-to-Pokémon mappings are correct', () => {
+  it('all 16 game-to-Pokémon mappings are correct', () => {
     const expectedMapping = {
       '/math-battle': 25,
       '/chain-math': 82,
@@ -51,6 +51,7 @@ describe('pokemonRoster', () => {
       '/moon-phases': 35,
       '/polar-day': 338,
       '/solar-system': 120,
+      '/sentence-listen': 441,
     };
 
     for (const [path, expectedId] of Object.entries(expectedMapping)) {

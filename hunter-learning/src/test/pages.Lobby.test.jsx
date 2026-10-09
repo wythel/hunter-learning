@@ -64,6 +64,7 @@ describe('Lobby page', () => {
     expect(screen.getByText('月相星球')).toBeInTheDocument();
     expect(screen.getByText('永晝永夜')).toBeInTheDocument();
     expect(screen.getByText('太陽系')).toBeInTheDocument();
+    expect(screen.getByText('英文聽句')).toBeInTheDocument();
   });
 
   it('renders game descriptions', () => {
@@ -76,7 +77,7 @@ describe('Lobby page', () => {
   it('renders a pokemon sprite for every game', () => {
     const { container } = renderLobby();
     const sprites = container.querySelectorAll('img[data-pokemon]');
-    expect(sprites).toHaveLength(15);
+    expect(sprites).toHaveLength(16);
   });
 
   it('points each sprite at the small classic sprite url', () => {
@@ -102,7 +103,7 @@ describe('Lobby page', () => {
     // silently rendering chain-math's pokemon) would still pass both. GAMES
     // (this file's rendering order, in Lobby.jsx) and POKEMON_ROSTER (../utils/
     // pokemonRoster) are hand-authored in the same path order, so the Nth
-    // rendered card is always the Nth roster entry — pin every one of the 15.
+    // rendered card is always the Nth roster entry — pin every one of the 16.
     const { container } = renderLobby();
     const sprites = [...container.querySelectorAll('img[data-pokemon]')];
     expect(sprites).toHaveLength(POKEMON_ROSTER.length);

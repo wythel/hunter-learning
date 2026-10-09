@@ -1,5 +1,5 @@
 // 每個遊戲配一隻寶可夢。挑選理由見 spec；顏色以官方屬性色為基底，
-// 撞色者手動偏移色相，確保大廳 15 張卡在同一格線上可辨識。
+// 撞色者手動偏移色相，確保大廳 16 張卡在同一格線上可辨識。
 export const POKEMON_ROSTER = [
   { path: '/math-battle',   id: 25,  name: '皮卡丘',     color: '#F8D030' },
   { path: '/chain-math',    id: 82,  name: '三合一磁怪', color: '#B8B8D0' },
@@ -16,6 +16,7 @@ export const POKEMON_ROSTER = [
   { path: '/moon-phases',   id: 35,  name: '皮皮',       color: '#9FB3E8' },
   { path: '/polar-day',     id: 338, name: '太陽岩',     color: '#FF7043' },
   { path: '/solar-system',  id: 120, name: '海星星',     color: '#5AB4E8' },
+  { path: '/sentence-listen', id: 441, name: '聒噪鳥',   color: '#3F7FD9' },
 ];
 
 export const rosterByPath = Object.fromEntries(

@@ -33,11 +33,11 @@
 - **`DexStrip`** — 26px 紅色頂條，放在每個遊戲畫面 `<GameLayout>` 的第一個 child。
   `props: { onBack, progress?, right? }`；`right` 給計時模式塞 `<TimeBar>`。
   **26px 高度是 load-bearing**：遊戲畫面是 `height:100dvh` + `overflow:hidden`，頂條長高就會把遊戲擠出畫面。有測試守著。
-- **`utils/pokemonRoster.js`** — 15 個遊戲對寶可夢的唯一真實來源（`path`／`id`／中文名／卡片色）。
+- **`utils/pokemonRoster.js`** — 16 個遊戲對寶可夢的唯一真實來源（`path`／`id`／中文名／卡片色）。
   **新增遊戲時必須補一筆**，否則 `Lobby` 會在 `rosterByPath[path]` 解構時整頁白掉。
-  `utils.pokemonRoster.test.js` 硬寫了 15 組對照，改配對要連測試一起改（刻意的）。
+  `utils.pokemonRoster.test.js` 硬寫了 16 組對照，改配對要連測試一起改（刻意的）。
 - **`utils/pokemon.js`** — `pokemonSprite(id)` 是 96×96 經典 sprite（約 600 bytes，大廳卡片與小圖示用）；
-  `pokemonArtwork(id)` 是官方 artwork（115–200KB，hero 與對戰畫面用）。大廳 15 張若用 artwork 會是 2.1MB，別換。
+  `pokemonArtwork(id)` 是官方 artwork（115–200KB，hero 與對戰畫面用）。大廳 16 張若用 artwork 會是 2.2MB，別換。
 
 ### 返回守衛（誤觸返回手勢不會踢掉整局）
 
@@ -45,7 +45,7 @@
 在進遊戲時往 `history` 疊一個「哨兵」entry——複製 router 寫的 `state`（`usr`/`key`/`idx`）再蓋一個標記，
 **網址一個字都不改**，所以 HashRouter 完全不會察覺。返回手勢先吃掉哨兵，hook 攔到 `popstate` 後補回哨兵並跳 `ExitConfirm`。
 
-- 掛在 `DexStrip` 裡，所以 **15 個 `Game.jsx` 都不用改**；`DexStrip` 只在遊戲進行中出現，正好就是該擋的區間。
+- 掛在 `DexStrip` 裡，所以 **16 個 `Game.jsx` 都不用改**；`DexStrip` 只在遊戲進行中出現，正好就是該擋的區間。
 - `DexStrip` 的 ← 按鈕也走同一個確認框。
 - `ResultScreen` 掛載時呼叫 `releaseBackGuard()` 收掉哨兵，否則結算畫面第一次滑返回會「沒反應」。
   加新的結束畫面（不走 `ResultScreen` 的）記得也要收。
