@@ -33,6 +33,8 @@ import SolarSystemSettings from './games/solar-system/Settings';
 import SolarSystemGame      from './games/solar-system/Game';
 import SentenceListenSettings from './games/sentence-listen/Settings';
 import SentenceListenGame     from './games/sentence-listen/Game';
+import WordPictureSettings from './games/word-picture/Settings';
+import WordPictureGame     from './games/word-picture/Game';
 
 export default function App() {
   return (
@@ -77,6 +79,8 @@ export default function App() {
         <Route path="/solar-system/play"  element={<SolarSystemGame />} />
         <Route path="/sentence-listen"      element={<SentenceListenSettings />} />
         <Route path="/sentence-listen/play" element={<SentenceListenGame />} />
+        <Route path="/word-picture"         element={<WordPictureSettings />} />
+        <Route path="/word-picture/play"    element={<WordPictureGame />} />
       </Routes>
     </HashRouter>
   );

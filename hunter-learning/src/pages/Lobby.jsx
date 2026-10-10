@@ -24,6 +24,7 @@ const GAMES = [
   { path: '/polar-day',     title: '永晝永夜',   desc: '太陽不下山？' },
   { path: '/solar-system',  title: '太陽系',     desc: '認識八大行星！' },
   { path: '/sentence-listen', title: '英文聽句', desc: '聽句子排單字！' },
+  { path: '/word-picture',  title: '看字選圖',   desc: '讀字找圖片！' },
 ];
 
 function hexToRgb(hex) {

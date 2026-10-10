@@ -17,6 +17,7 @@ export const POKEMON_ROSTER = [
   { path: '/polar-day',     id: 338, name: '太陽岩',     color: '#FF7043' },
   { path: '/solar-system',  id: 120, name: '海星星',     color: '#5AB4E8' },
   { path: '/sentence-listen', id: 441, name: '聒噪鳥',   color: '#3F7FD9' },
+  { path: '/word-picture',  id: 201, name: '未知圖騰',   color: '#C2557A' },
 ];
 
 export const rosterByPath = Object.fromEntries(
